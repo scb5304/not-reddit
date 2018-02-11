@@ -9,10 +9,6 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/activity_margin"
-        android:layout_marginEnd="@dimen/activity_margin"
-        android:layout_marginStart="@dimen/activity_margin"
-        android:layout_marginTop="@dimen/activity_margin"
         tools:background="@color/primary_light" />
 
 </LinearLayout>

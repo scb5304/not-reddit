@@ -3,55 +3,85 @@ package com.jollyremedy.notreddit.ui.posts;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
-import android.content.SharedPreferences;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.jollyremedy.notreddit.api.OAuthRedditApi;
 import com.jollyremedy.notreddit.data.PostRepository;
 import com.jollyremedy.notreddit.models.ListingResponse;
+import com.jollyremedy.notreddit.models.Post;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import io.reactivex.SingleObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
-public class PostListViewModel extends AndroidViewModel{
+public class PostListViewModel extends AndroidViewModel {
 
     private static final String TAG = "PostListViewModel";
-    private final MediatorLiveData<ListingResponse> mObservableListingResponse;
     private PostRepository mPostRepository;
+    private MutableLiveData<List<Post>> mPostsLiveData;
+    private String mLatestAfter;
 
     @Inject
     PostListViewModel(Application application, PostRepository postRepository) {
         super(application);
         mPostRepository = postRepository;
-
-        mObservableListingResponse = new MediatorLiveData<>();
-        mObservableListingResponse.setValue(null);
-
-        MutableLiveData<ListingResponse> listingResponse = mPostRepository.getDummyListingResponse(application);
-        mObservableListingResponse.addSource(listingResponse, mObservableListingResponse::setValue);
+        mPostsLiveData = new MutableLiveData<>();
+        mPostRepository.getNewPosts(new ListingResponseFetchObserver(FetchMode.START_FRESH), mLatestAfter);
     }
 
-    LiveData<ListingResponse> getListingResponse() {
-        return mObservableListingResponse;
+    LiveData<List<Post>> getObservablePosts() {
+        return mPostsLiveData;
     }
 
     void onSwipeToRefresh() {
-        mPostRepository.getListingResponse();
+        mPostRepository.getNewPosts(new ListingResponseFetchObserver(FetchMode.START_FRESH), mLatestAfter);
     }
 
-    void onTestButtonClicked() {
-        mPostRepository.getDummyListingResponseAgain(getApplication());
+    void onLoadMore() {
+        mPostRepository.getNewPosts(new ListingResponseFetchObserver(FetchMode.ADD_TO_EXISTING_POSTS), mLatestAfter);
+    }
+
+    public enum FetchMode {
+        START_FRESH,
+        ADD_TO_EXISTING_POSTS
+    }
+
+    private class ListingResponseFetchObserver implements SingleObserver<ListingResponse> {
+        private FetchMode mFetchMode;
+
+        ListingResponseFetchObserver(FetchMode fetchMode) {
+            mFetchMode = fetchMode;
+        }
+
+        @Override
+        public void onSubscribe(Disposable d) {
+            Log.i(TAG, "Getting a listing response...");
+        }
+
+        @Override
+        public void onSuccess(ListingResponse listingResponse) {
+            List<Post> postsFetched = listingResponse.getListingData().getPosts();
+            if (mFetchMode == FetchMode.START_FRESH) {
+                mPostsLiveData.postValue(postsFetched);
+            } else {
+                List<Post> postsWeAlreadyHave = mPostsLiveData.getValue();
+                List<Post> allPosts = new ArrayList<>();
+                if (postsWeAlreadyHave != null) {
+                    allPosts.addAll(postsWeAlreadyHave);
+                }
+                allPosts.addAll(postsFetched);
+                mPostsLiveData.postValue(allPosts);
+            }
+            mLatestAfter = listingResponse.getListingData().getAfter();
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.e(TAG, "Failed to get a listing response.", e);
+        }
     }
 }

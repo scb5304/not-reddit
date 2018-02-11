@@ -20,7 +20,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
     private List<Post> mPosts;
 
     void updateData(List<Post> posts) {
-        mPosts.addAll(posts);
+        mPosts = posts;
         notifyDataSetChanged();
     }
 
@@ -37,7 +37,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
     @Override
     public void onBindViewHolder(SubredditViewHolder holder, int position) {
         holder.postTitleTextView.setText(mPosts.get(position).getTitle());
-        holder.postTimeTextView.setText(""+mPosts.get(position).getCreatedDateTime());
+        holder.postTimeTextView.setText(String.valueOf(mPosts.get(position).getCreatedDateTime()));
     }
 
     @Override
