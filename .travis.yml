@@ -1,9 +1,15 @@
 language: android
 sudo: required
-before_install:
-  - chmod +x gradlew
-  - sudo echo "CLIENT_ID=1234567890" > /home/travis/build/scb5304/not-reddit/client.properties
 android:
   components:
+  # https://docs.travis-ci.com/user/languages/android/
     - build-tools-26.0.2
     - android-26
+before_install:
+  # To prevent gradlew permission denied: https://stackoverflow.com/a/33820642
+  - chmod +x gradlew
+
+  # The properties file containing the Reddit client ID is gitignored and must be created on the build box.
+  - sudo echo "CLIENT_ID=1234567890" > /home/travis/build/scb5304/not-reddit/client.properties
+script:
+  - ./gradlew clean build test --stacktrace

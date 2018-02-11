@@ -21,6 +21,10 @@ android {
             }
         }
 
+        lintOptions {
+            abortOnError false
+        }
+
         buildConfigField "String", "CLIENT_ID", "\"" + clientProperties['CLIENT_ID'] + "\""
     }
     buildTypes {
