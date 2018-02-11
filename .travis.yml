@@ -2,6 +2,7 @@ language: android
 sudo: required
 before_install:
   - chmod +x gradlew
+  - echo "CLIENT_ID=1234567890" > /home/travis/build/scb5304/not-reddit/client.properties
 android:
   components:
     - build-tools-26.0.2
