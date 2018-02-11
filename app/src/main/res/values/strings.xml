@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">NotReddit</string>
+    <string name="sync_account_type" translatable="false">notreddit.jollyremedy.com</string>
+</resources>
