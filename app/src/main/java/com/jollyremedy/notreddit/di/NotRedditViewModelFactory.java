@@ -11,11 +11,11 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 @Singleton
-public class MyViewModelFactory implements ViewModelProvider.Factory {
+public class NotRedditViewModelFactory implements ViewModelProvider.Factory {
     private final Map<Class<? extends ViewModel>, Provider<ViewModel>> creators;
 
     @Inject
-    MyViewModelFactory(Map<Class<? extends ViewModel>, Provider<ViewModel>> creators) {
+    NotRedditViewModelFactory(Map<Class<? extends ViewModel>, Provider<ViewModel>> creators) {
         this.creators = creators;
     }
 

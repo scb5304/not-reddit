@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Add subreddit list fragment if this is first creation
+        // Add post list fragment if this is first creation
         if (savedInstanceState == null) {
             PostListFragment fragment = new PostListFragment();
 

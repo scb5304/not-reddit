@@ -13,7 +13,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * When the {@link RequestTokenInterceptor} fetches a token, this interceptor will add the required
+ * When the {@link OAuthTokenInterceptor} fetches a token, this interceptor will add the required
  * Basic Auth credentials to the header.
  */
 public class RequestTokenInterceptor implements Interceptor {

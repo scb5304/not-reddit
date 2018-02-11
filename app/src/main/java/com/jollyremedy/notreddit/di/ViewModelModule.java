@@ -17,5 +17,5 @@ abstract class ViewModelModule {
     abstract ViewModel bindUserViewModel(PostListViewModel userViewModel);
 
     @Binds
-    abstract ViewModelProvider.Factory bindViewModelFactory(MyViewModelFactory factory);
+    abstract ViewModelProvider.Factory bindViewModelFactory(NotRedditViewModelFactory factory);
 }
