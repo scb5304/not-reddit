@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "9c5bc69a1d2510baecc0f4a49638f5fa",
+    "identityHash": "cd7bdbb670d91a38488a91b52eeb9a5e",
     "entities": [
       {
         "tableName": "posts",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER NOT NULL, `title` TEXT, `domain` TEXT, `subreddit` TEXT, PRIMARY KEY(`uid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER NOT NULL, `title` TEXT, `domain` TEXT, `subreddit` TEXT, `createdDateTime` INTEGER NOT NULL, PRIMARY KEY(`uid`))",
         "fields": [
           {
             "fieldPath": "uid",
@@ -31,6 +31,12 @@
             "columnName": "subreddit",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "createdDateTime",
+            "columnName": "createdDateTime",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -45,7 +51,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9c5bc69a1d2510baecc0f4a49638f5fa\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"cd7bdbb670d91a38488a91b52eeb9a5e\")"
     ]
   }
 }

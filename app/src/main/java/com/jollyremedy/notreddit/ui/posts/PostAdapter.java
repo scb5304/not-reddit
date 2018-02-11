@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.models.Post;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -19,8 +20,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
     private List<Post> mPosts;
 
     void updateData(List<Post> posts) {
-        mPosts = posts;
+        mPosts.addAll(posts);
         notifyDataSetChanged();
+    }
+
+    PostAdapter() {
+        mPosts = new ArrayList<>();
     }
 
     @Override
@@ -32,6 +37,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
     @Override
     public void onBindViewHolder(SubredditViewHolder holder, int position) {
         holder.postTitleTextView.setText(mPosts.get(position).getTitle());
+        holder.postTimeTextView.setText(""+mPosts.get(position).getCreatedDateTime());
     }
 
     @Override
@@ -40,8 +46,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
     }
 
     class SubredditViewHolder extends RecyclerView.ViewHolder {
-
         @BindView(R.id.item_post_title) TextView postTitleTextView;
+        @BindView(R.id.item_post_time) TextView postTimeTextView;
 
         SubredditViewHolder(View itemView) {
             super(itemView);

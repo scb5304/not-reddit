@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import dagger.android.support.AndroidSupportInjection;
 
 public class PostListFragment extends Fragment implements Injectable,
@@ -39,9 +40,6 @@ public class PostListFragment extends Fragment implements Injectable,
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
-
-    @Inject
-    Gson mGson;
 
     public static final String TAG = "PostListFragment";
     private PostAdapter mPostAdapter;
@@ -78,18 +76,20 @@ public class PostListFragment extends Fragment implements Injectable,
         mViewModel.onSwipeToRefresh();
     }
 
+    @OnClick(R.id.test_button)
+    void onTestButtonClicked() {
+        mViewModel.onTestButtonClicked();
+    }
+
     private void subscribeUi() {
-        mViewModel.getListingResponse().observe(this, new Observer<ListingResponse>() {
-            @Override
-            public void onChanged(@Nullable ListingResponse listingResponse) {
-                mSwipeRefreshLayout.setRefreshing(false);
-                if (listingResponse == null) {
-                    Log.i(TAG, "The view got a null listing response.");
-                    mPostAdapter.updateData(new ArrayList<Post>());
-                } else {
-                    Log.i(TAG, "The view got a listing response: " + new Gson().toJson(listingResponse));
-                    mPostAdapter.updateData(listingResponse.getListingData().getPosts());
-                }
+        mViewModel.getListingResponse().observe(this, listingResponse -> {
+            mSwipeRefreshLayout.setRefreshing(false);
+            if (listingResponse == null) {
+                Log.i(TAG, "The view got a null listing response.");
+                mPostAdapter.updateData(new ArrayList<>());
+            } else {
+                Log.i(TAG, "The view got a listing response: " + new Gson().toJson(listingResponse));
+                mPostAdapter.updateData(listingResponse.getListingData().getPosts());
             }
         });
     }

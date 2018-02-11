@@ -29,28 +29,18 @@ public class PostListViewModel extends AndroidViewModel{
 
     private static final String TAG = "PostListViewModel";
     private final MediatorLiveData<ListingResponse> mObservableListingResponse;
-    private OAuthRedditApi mRedditApi;
     private PostRepository mPostRepository;
-    MutableLiveData<ListingResponse> listingResponse;
 
     @Inject
-    PostListViewModel(Application application,
-                      OAuthRedditApi redditApi,
-                      PostRepository postRepository) {
+    PostListViewModel(Application application, PostRepository postRepository) {
         super(application);
-        mRedditApi = redditApi;
         mPostRepository = postRepository;
 
         mObservableListingResponse = new MediatorLiveData<>();
         mObservableListingResponse.setValue(null);
 
-        listingResponse = mPostRepository.getListingResponse();
-        mObservableListingResponse.addSource(listingResponse, new Observer<ListingResponse>() {
-            @Override
-            public void onChanged(@Nullable ListingResponse value) {
-                mObservableListingResponse.setValue(value);
-            }
-        });
+        MutableLiveData<ListingResponse> listingResponse = mPostRepository.getDummyListingResponse(application);
+        mObservableListingResponse.addSource(listingResponse, mObservableListingResponse::setValue);
     }
 
     LiveData<ListingResponse> getListingResponse() {
@@ -59,5 +49,9 @@ public class PostListViewModel extends AndroidViewModel{
 
     void onSwipeToRefresh() {
         mPostRepository.getListingResponse();
+    }
+
+    void onTestButtonClicked() {
+        mPostRepository.getDummyListingResponseAgain(getApplication());
     }
 }
