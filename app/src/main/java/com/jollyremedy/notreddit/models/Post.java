@@ -7,8 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.time.LocalDateTime;
-import java.util.Date;
+import org.threeten.bp.LocalDateTime;
 
 @Entity(tableName = "posts")
 public class Post {
@@ -18,23 +17,19 @@ public class Post {
 
     @ColumnInfo(name = "title")
     @SerializedName("title")
-    @Expose
     private String title;
 
     @ColumnInfo(name = "domain")
     @SerializedName("domain")
-    @Expose
     private String domain;
 
     @ColumnInfo(name = "subreddit")
     @SerializedName("subreddit")
-    @Expose
     private String subreddit;
 
     @ColumnInfo(name="createdDateTime")
     @SerializedName("created")
-    @Expose
-    private long createdDateTime;
+    private LocalDateTime createdDateTime;
 
     public int getUid() {
         return uid;
@@ -68,11 +63,11 @@ public class Post {
         this.subreddit = subreddit;
     }
 
-    public long getCreatedDateTime() {
+    public LocalDateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(long createdDateTime) {
+    public void setCreatedDateTime(LocalDateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 }

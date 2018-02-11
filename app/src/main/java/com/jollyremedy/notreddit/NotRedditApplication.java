@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 
 import com.facebook.stetho.Stetho;
 import com.google.common.base.Strings;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.jollyremedy.notreddit.data.NotRedditDatabase;
 import com.jollyremedy.notreddit.di.AppComponent;
 import com.jollyremedy.notreddit.di.AppInjector;
@@ -34,6 +35,7 @@ public class NotRedditApplication extends Application implements HasActivityInje
         super.onCreate();
         AppInjector.init(this);
         Stetho.initializeWithDefaults(this);
+        AndroidThreeTen.init(this);
 
         mAppComponent = DaggerAppComponent.builder()
                 .application(this)

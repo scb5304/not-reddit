@@ -6,6 +6,7 @@ import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
@@ -13,6 +14,7 @@ import com.jollyremedy.notreddit.data.daos.PostDao;
 import com.jollyremedy.notreddit.models.Post;
 
 @Database(entities = {Post.class}, version = 1)
+@TypeConverters(DateTypeConverter.class)
 public abstract class NotRedditDatabase extends RoomDatabase {
 
     private static NotRedditDatabase sInstance;
