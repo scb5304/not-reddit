@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
-import com.jollyremedy.notreddit.NotRedditExecutors;
 import com.jollyremedy.notreddit.api.OAuthRedditApi;
 import com.jollyremedy.notreddit.models.ListingResponse;
 import com.jollyremedy.notreddit.models.Post;

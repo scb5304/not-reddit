@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import com.facebook.stetho.Stetho;
 import com.google.common.base.Strings;
 import com.jollyremedy.notreddit.data.NotRedditDatabase;
-import com.jollyremedy.notreddit.data.PostRepository;
 import com.jollyremedy.notreddit.di.AppComponent;
 import com.jollyremedy.notreddit.di.AppInjector;
 import com.jollyremedy.notreddit.di.DaggerAppComponent;
@@ -28,7 +27,6 @@ public class NotRedditApplication extends Application implements HasActivityInje
     @Inject
     SharedPreferences mSharedPreferences;
 
-    private NotRedditExecutors mAppExecutors;
     private static AppComponent mAppComponent;
 
     @Override
@@ -43,7 +41,6 @@ public class NotRedditApplication extends Application implements HasActivityInje
         mAppComponent.inject(this);
 
         ensureHaveDeviceId();
-        mAppExecutors = new NotRedditExecutors();
     }
 
     private void ensureHaveDeviceId() {
@@ -56,7 +53,7 @@ public class NotRedditApplication extends Application implements HasActivityInje
     }
 
     public NotRedditDatabase getDatabase() {
-        return NotRedditDatabase.getInstance(this, mAppExecutors);
+        return NotRedditDatabase.getInstance(this);
     }
 
     public static AppComponent getAppComponent() {
