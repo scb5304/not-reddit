@@ -4,6 +4,8 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.ViewModel;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import com.jollyremedy.notreddit.repository.PostRepository;
@@ -18,7 +20,7 @@ import javax.inject.Inject;
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 
-public class PostListViewModel extends AndroidViewModel {
+public class PostListViewModel extends ViewModel {
 
     private static final String TAG = "PostListViewModel";
     private PostRepository mPostRepository;
@@ -26,8 +28,7 @@ public class PostListViewModel extends AndroidViewModel {
     private String mLatestAfter;
 
     @Inject
-    PostListViewModel(Application application, PostRepository postRepository) {
-        super(application);
+    PostListViewModel(PostRepository postRepository) {
         mPostRepository = postRepository;
         mPostsLiveData = new MutableLiveData<>();
         mPostRepository.getNewPosts(new ListingResponseFetchObserver(FetchMode.START_FRESH), mLatestAfter);
@@ -50,8 +51,9 @@ public class PostListViewModel extends AndroidViewModel {
         ADD_TO_EXISTING_POSTS
     }
 
-    private class ListingResponseFetchObserver implements SingleObserver<ListingResponse> {
-        private FetchMode mFetchMode;
+    protected class ListingResponseFetchObserver implements SingleObserver<ListingResponse> {
+        @VisibleForTesting
+        FetchMode mFetchMode;
 
         ListingResponseFetchObserver(FetchMode fetchMode) {
             mFetchMode = fetchMode;
