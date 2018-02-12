@@ -17,7 +17,7 @@ import dagger.android.support.HasSupportFragmentInjector;
 public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
 
     @Inject
-    DispatchingAndroidInjector<Fragment> fragmentDispatchingAndroidInjector;
+    DispatchingAndroidInjector<Fragment> mFragmentDispatchingAndroidInjector;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,6 +38,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     public AndroidInjector<Fragment> supportFragmentInjector() {
-        return fragmentDispatchingAndroidInjector;
+        return mFragmentDispatchingAndroidInjector;
     }
 }

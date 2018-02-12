@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class ListingResponse extends RedditResponse {
 
-    @Expose
     @SerializedName("data")
     protected ListingData listingData;
 

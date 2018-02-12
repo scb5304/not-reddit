@@ -1,16 +1,14 @@
 package com.jollyremedy.notreddit.ui.postlist;
 
-import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
-import com.jollyremedy.notreddit.repository.PostRepository;
 import com.jollyremedy.notreddit.models.ListingResponse;
 import com.jollyremedy.notreddit.models.Post;
+import com.jollyremedy.notreddit.repository.PostRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +37,7 @@ public class PostListViewModel extends ViewModel {
     }
 
     void onSwipeToRefresh() {
+        mLatestAfter = null;
         mPostRepository.getNewPosts(new ListingResponseFetchObserver(FetchMode.START_FRESH), mLatestAfter);
     }
 

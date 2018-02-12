@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import com.facebook.stetho.Stetho;
 import com.google.common.base.Strings;
 import com.jakewharton.threetenabp.AndroidThreeTen;
+import com.jollyremedy.notreddit.Constants.SharedPreferenceKeys;
 import com.jollyremedy.notreddit.db.NotRedditDatabase;
 import com.jollyremedy.notreddit.di.AppComponent;
 import com.jollyremedy.notreddit.di.auto.AppInjector;
@@ -46,10 +47,10 @@ public class NotRedditApplication extends Application implements HasActivityInje
     }
 
     private void ensureHaveDeviceId() {
-        String deviceId = mSharedPreferences.getString("device_id", null);
+        String deviceId = mSharedPreferences.getString(SharedPreferenceKeys.DEVICE_ID, null);
         if (Strings.isNullOrEmpty(deviceId)) {
             mSharedPreferences.edit()
-                    .putString("device_id", UUID.randomUUID().toString())
+                    .putString(SharedPreferenceKeys.DEVICE_ID, UUID.randomUUID().toString())
                     .apply();
         }
     }

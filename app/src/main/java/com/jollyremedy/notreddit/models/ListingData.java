@@ -8,23 +8,18 @@ import java.util.List;
 
 public class ListingData {
 
-    @Expose
     @SerializedName("after")
     private String after;
 
-    @Expose
     @SerializedName("dist")
     private int dist;
 
-    @Expose
     @SerializedName("mod_hash")
     private String modHash;
 
-    @Expose
     @SerializedName("whitelist_status")
     private String whitelistStatus;
 
-    @Expose
     @SerializedName("children")
     private List<Post> posts;
 
