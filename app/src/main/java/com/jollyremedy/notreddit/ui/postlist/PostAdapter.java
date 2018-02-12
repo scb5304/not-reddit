@@ -1,4 +1,4 @@
-package com.jollyremedy.notreddit.ui.posts;
+package com.jollyremedy.notreddit.ui.postlist;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

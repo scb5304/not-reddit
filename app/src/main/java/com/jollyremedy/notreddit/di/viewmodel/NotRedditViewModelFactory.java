@@ -1,4 +1,4 @@
-package com.jollyremedy.notreddit.di;
+package com.jollyremedy.notreddit.di.viewmodel;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
@@ -10,6 +10,10 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+/**
+ * We create our own ViewModel factory to support Dagger.
+ * {@see https://stackoverflow.com/a/44506312}
+ */
 @Singleton
 public class NotRedditViewModelFactory implements ViewModelProvider.Factory {
     private final Map<Class<? extends ViewModel>, Provider<ViewModel>> creators;

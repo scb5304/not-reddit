@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.jollyremedy.notreddit.di;
+package com.jollyremedy.notreddit.di.auto;
 
 import android.app.Activity;
 import android.app.Application;
@@ -24,6 +24,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
 import com.jollyremedy.notreddit.NotRedditApplication;
+import com.jollyremedy.notreddit.di.DaggerAppComponent;
 
 import dagger.android.support.AndroidSupportInjection;
 

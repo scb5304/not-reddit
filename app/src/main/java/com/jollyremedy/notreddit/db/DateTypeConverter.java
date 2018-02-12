@@ -1,4 +1,4 @@
-package com.jollyremedy.notreddit.data;
+package com.jollyremedy.notreddit.db;
 
 import android.arch.persistence.room.TypeConverter;
 

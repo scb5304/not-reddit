@@ -1,4 +1,4 @@
-package com.jollyremedy.notreddit.ui.posts;
+package com.jollyremedy.notreddit.ui;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -97,7 +97,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     }
     
     // Call this method whenever performing new searches
-    void resetState() {
+    public void resetState() {
         this.currentPage = this.startingPageIndex;
         this.previousTotalItemCount = 0;
         this.loading = true;

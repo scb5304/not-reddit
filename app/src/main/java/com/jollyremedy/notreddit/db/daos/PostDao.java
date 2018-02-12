@@ -1,4 +1,4 @@
-package com.jollyremedy.notreddit.data.daos;
+package com.jollyremedy.notreddit.db.daos;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;

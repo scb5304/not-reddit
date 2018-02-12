@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
-import com.jollyremedy.notreddit.ui.posts.PostListFragment;
+import com.jollyremedy.notreddit.ui.postlist.PostListFragment;
 
 import javax.inject.Inject;
 

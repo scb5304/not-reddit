@@ -1,4 +1,4 @@
-package com.jollyremedy.notreddit.data;
+package com.jollyremedy.notreddit.db;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -10,7 +10,7 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.jollyremedy.notreddit.data.daos.PostDao;
+import com.jollyremedy.notreddit.db.daos.PostDao;
 import com.jollyremedy.notreddit.models.Post;
 
 @Database(entities = {Post.class}, version = 1)

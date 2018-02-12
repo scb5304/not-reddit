@@ -1,4 +1,4 @@
-package com.jollyremedy.notreddit.data;
+package com.jollyremedy.notreddit.repository;
 
 import android.support.annotation.Nullable;
 

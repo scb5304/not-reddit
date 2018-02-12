@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package com.jollyremedy.notreddit.di;
+package com.jollyremedy.notreddit.di.auto;
 
 /**
- * Marks an activity / fragment injectable.
+ * Marks an activity / fragment injectable. See {@link AppInjector}.
  */
-public interface Injectable {
-}
+public interface Injectable {}

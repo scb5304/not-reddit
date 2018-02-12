@@ -1,4 +1,4 @@
-package com.jollyremedy.notreddit.ui.posts;
+package com.jollyremedy.notreddit.ui.postlist;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
@@ -13,7 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jollyremedy.notreddit.R;
-import com.jollyremedy.notreddit.di.Injectable;
+import com.jollyremedy.notreddit.di.auto.Injectable;
+import com.jollyremedy.notreddit.ui.EndlessRecyclerViewScrollListener;
 import com.jollyremedy.notreddit.util.NotRedditViewUtils;
 
 import javax.inject.Inject;

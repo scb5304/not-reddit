@@ -1,4 +1,4 @@
-package com.jollyremedy.notreddit.ui.posts;
+package com.jollyremedy.notreddit.ui.postlist;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -6,7 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
-import com.jollyremedy.notreddit.data.PostRepository;
+import com.jollyremedy.notreddit.repository.PostRepository;
 import com.jollyremedy.notreddit.models.ListingResponse;
 import com.jollyremedy.notreddit.models.Post;
 

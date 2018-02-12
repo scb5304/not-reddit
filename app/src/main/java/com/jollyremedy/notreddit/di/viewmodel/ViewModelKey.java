@@ -1,4 +1,4 @@
-package com.jollyremedy.notreddit.di;
+package com.jollyremedy.notreddit.di.viewmodel;
 
 import android.arch.lifecycle.ViewModel;
 
