@@ -50,20 +50,20 @@ public class PostListViewModelTest {
     @Test
     public void observablePosts_areNotNull() {
         mPostListViewModel = new PostListViewModel(mPostRepository);
-        assertThat(mPostListViewModel.getObservablePosts(), notNullValue());
+        assertThat(mPostListViewModel.getObservablePosts("all"), notNullValue());
     }
 
     @Test
     public void constructingViewModel_callsRepoToGetsNewPosts() {
         mPostListViewModel = new PostListViewModel(mPostRepository);
-        mPostListViewModel.getObservablePosts().observeForever(mock(Observer.class));
-        verify(mPostRepository).getNewPosts(any(SingleObserver.class), any());
+        mPostListViewModel.getObservablePosts("all").observeForever(mock(Observer.class));
+        verify(mPostRepository).getHotPosts(any(SingleObserver.class), any(), any());
     }
 
     @Test
     public void sendsPostsToUi() {
         mPostListViewModel = new PostListViewModel(mPostRepository);
-        MutableLiveData<List<Post>> observablePosts = (MutableLiveData<List<Post>>) mPostListViewModel.getObservablePosts();
+        MutableLiveData<List<Post>> observablePosts = (MutableLiveData<List<Post>>) mPostListViewModel.getObservablePosts("all");
         List<Post> repoPosts = Collections.nCopies(5, mock(Post.class));
 
         Observer postObserver = mock(Observer.class);
@@ -80,7 +80,7 @@ public class PostListViewModelTest {
         ArgumentCaptor<ListingResponseFetchObserver> captor = ArgumentCaptor.forClass(ListingResponseFetchObserver.class);
 
         mPostListViewModel.onSwipeToRefresh();
-        verify(mPostRepository).getNewPosts(captor.capture(), any());
+        verify(mPostRepository).getHotPosts(captor.capture(), any(), any());
         assertThat(captor.getValue().mFetchMode, is(PostListViewModel.FetchMode.START_FRESH));
     }
 
@@ -91,7 +91,7 @@ public class PostListViewModelTest {
         ArgumentCaptor<ListingResponseFetchObserver> captor = ArgumentCaptor.forClass(ListingResponseFetchObserver.class);
 
         mPostListViewModel.onLoadMore();
-        verify(mPostRepository).getNewPosts(captor.capture(), any());
+        verify(mPostRepository).getHotPosts(captor.capture(), any(), any());
         assertThat(captor.getValue().mFetchMode, is(PostListViewModel.FetchMode.ADD_TO_EXISTING_POSTS));
     }
 }

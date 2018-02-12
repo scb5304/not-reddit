@@ -17,6 +17,7 @@
 package com.jollyremedy.notreddit.di;
 
 import com.jollyremedy.notreddit.ui.postlist.PostListFragment;
+import com.jollyremedy.notreddit.ui.subreddits.SubredditsFragment;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -30,4 +31,7 @@ import dagger.android.ContributesAndroidInjector;
 abstract class FragmentBuildersModule {
     @ContributesAndroidInjector
     abstract PostListFragment contributePostListFragment();
+
+    @ContributesAndroidInjector
+    abstract SubredditsFragment contributeSubredditsFragment();
 }

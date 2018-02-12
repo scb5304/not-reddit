@@ -24,25 +24,27 @@ public class PostListViewModel extends ViewModel {
     private PostRepository mPostRepository;
     private MutableLiveData<List<Post>> mPostsLiveData;
     private String mLatestAfter;
+    private String mSubredditName = "all";
 
     @Inject
     PostListViewModel(PostRepository postRepository) {
         mPostRepository = postRepository;
         mPostsLiveData = new MutableLiveData<>();
-        mPostRepository.getNewPosts(new ListingResponseFetchObserver(FetchMode.START_FRESH), mLatestAfter);
     }
 
-    LiveData<List<Post>> getObservablePosts() {
+    LiveData<List<Post>> getObservablePosts(String subredditName) {
+        mSubredditName = subredditName;
+        mPostRepository.getHotPosts(new ListingResponseFetchObserver(FetchMode.START_FRESH), mSubredditName, mLatestAfter);
         return mPostsLiveData;
     }
 
     void onSwipeToRefresh() {
         mLatestAfter = null;
-        mPostRepository.getNewPosts(new ListingResponseFetchObserver(FetchMode.START_FRESH), mLatestAfter);
+        mPostRepository.getHotPosts(new ListingResponseFetchObserver(FetchMode.START_FRESH), mSubredditName, mLatestAfter);
     }
 
     void onLoadMore() {
-        mPostRepository.getNewPosts(new ListingResponseFetchObserver(FetchMode.ADD_TO_EXISTING_POSTS), mLatestAfter);
+        mPostRepository.getHotPosts(new ListingResponseFetchObserver(FetchMode.ADD_TO_EXISTING_POSTS), mSubredditName, mLatestAfter);
     }
 
     public enum FetchMode {

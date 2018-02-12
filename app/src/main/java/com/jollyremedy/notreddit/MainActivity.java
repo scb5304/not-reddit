@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 import com.jollyremedy.notreddit.ui.postlist.PostListFragment;
+import com.jollyremedy.notreddit.ui.subreddits.SubredditsFragment;
 
 import javax.inject.Inject;
 
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
         // Add post list fragment if this is first creation
         if (savedInstanceState == null) {
-            PostListFragment fragment = new PostListFragment();
+            SubredditsFragment fragment = new SubredditsFragment();
 
             getSupportFragmentManager().beginTransaction().add(
                     R.id.fragment_container,

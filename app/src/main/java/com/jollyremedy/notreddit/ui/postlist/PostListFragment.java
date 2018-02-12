@@ -35,9 +35,18 @@ public class PostListFragment extends Fragment implements Injectable,
     ViewModelProvider.Factory mViewModelFactory;
 
     public static final String TAG = "PostListFragment";
+    private static final String EXTRA_SUBREDDIT_NAME = "extra_subreddit_name";
     private PostAdapter mPostAdapter;
     private PostListViewModel mViewModel;
     private EndlessRecyclerViewScrollListener mEndlessScrollListener;
+
+    public static PostListFragment newInstance(String subredditName) {
+        PostListFragment fragment = new PostListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(EXTRA_SUBREDDIT_NAME, subredditName);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -85,7 +94,7 @@ public class PostListFragment extends Fragment implements Injectable,
     }
 
     private void subscribeUi() {
-        mViewModel.getObservablePosts().observe(this, posts -> {
+        mViewModel.getObservablePosts(getArguments().getString(EXTRA_SUBREDDIT_NAME)).observe(this, posts -> {
             mSwipeRefreshLayout.setRefreshing(false);
             mPostAdapter.updateData(posts);
         });
