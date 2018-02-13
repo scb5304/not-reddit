@@ -1,5 +1,6 @@
 package com.jollyremedy.notreddit.ui.postlist;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +19,15 @@ import butterknife.ButterKnife;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewHolder> {
 
     private List<Post> mPosts;
+    private Context mContext;
 
     void updateData(List<Post> posts) {
         mPosts = posts;
         notifyDataSetChanged();
     }
 
-    PostAdapter() {
+    PostAdapter(Context context) {
+        mContext = context;
         mPosts = new ArrayList<>();
     }
 
@@ -36,8 +39,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
 
     @Override
     public void onBindViewHolder(SubredditViewHolder holder, int position) {
-        holder.postTitleTextView.setText(mPosts.get(position).getTitle());
-        holder.postTimeTextView.setText(String.valueOf(mPosts.get(position).getCreatedDateTime()));
+        Post post = mPosts.get(position);
+        holder.postTitleTextView.setText(post.getTitle());
+        holder.postSubredditTextView.setText(mContext.getString(R.string.subreddit_with_prefix, post.getSubreddit()));
+        holder.postCommentCountTextView.setText(mContext.getString(R.string.item_post_comment_count, post.getCommentCount()));
     }
 
     @Override
@@ -47,7 +52,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
 
     class SubredditViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.item_post_title) TextView postTitleTextView;
-        @BindView(R.id.item_post_time) TextView postTimeTextView;
+        @BindView(R.id.item_post_subreddit) TextView postSubredditTextView;
+        @BindView(R.id.item_post_comment_count) TextView postCommentCountTextView;
 
         SubredditViewHolder(View itemView) {
             super(itemView);

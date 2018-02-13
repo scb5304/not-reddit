@@ -51,6 +51,7 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support:cardview-v7:26.1.0'
+    implementation 'com.android.support:gridlayout-v7:26.1.0'
 
     //Stetho
     implementation 'com.facebook.stetho:stetho:1.5.0'
@@ -98,6 +99,9 @@ dependencies {
 
     // Paging
     implementation "android.arch.paging:runtime:1.0.0-alpha5"
+
+    implementation 'uk.co.markormesher:android-fab:2.2.0'
+
 
     testImplementation 'junit:junit:4.12'
     testImplementation "android.arch.core:core-testing:1.1.0"

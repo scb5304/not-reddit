@@ -27,9 +27,13 @@ public class Post {
     @SerializedName("subreddit")
     private String subreddit;
 
-    @ColumnInfo(name="createdDateTime")
+    @ColumnInfo(name="created_date_time")
     @SerializedName("created")
     private LocalDateTime createdDateTime;
+
+    @ColumnInfo(name="comment_count")
+    @SerializedName("num_comments")
+    private Integer commentCount;
 
     public int getUid() {
         return uid;
@@ -69,5 +73,13 @@ public class Post {
 
     public void setCreatedDateTime(LocalDateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public Integer getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(Integer commentCount) {
+        this.commentCount = commentCount;
     }
 }

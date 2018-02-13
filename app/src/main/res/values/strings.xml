@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">NotReddit</string>
     <string name="sync_account_type" translatable="false">notreddit.jollyremedy.com</string>
+    <string name="subreddit_with_prefix">/r/%1$s</string>
+    <string name="item_post_comment_count">%1$d</string>
 </resources>

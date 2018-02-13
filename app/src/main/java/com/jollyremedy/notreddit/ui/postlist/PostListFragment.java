@@ -72,7 +72,7 @@ public class PostListFragment extends Fragment implements Injectable,
     }
 
     private void initRecyclerView() {
-        mPostAdapter = new PostAdapter();
+        mPostAdapter = new PostAdapter(getActivity());
         mRecyclerView.setAdapter(mPostAdapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -85,7 +85,7 @@ public class PostListFragment extends Fragment implements Injectable,
             }
         };
         mRecyclerView.addOnScrollListener(mEndlessScrollListener);
-        NotRedditViewUtils.applyHorizontalItemDecorationToRecyclerView(getActivity(), mRecyclerView);
+        //NotRedditViewUtils.applyHorizontalItemDecorationToRecyclerView(getActivity(), mRecyclerView);
     }
 
     private void initSwipeRefreshLayout() {

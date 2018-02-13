@@ -2,5 +2,4 @@
 <resources>
     <dimen name="activity_margin">16dp</dimen>
     <dimen name="list_item_vertical_padding">12dp</dimen>
-    <dimen name="list_item_horizontal_padding">16dp</dimen>
 </resources>
