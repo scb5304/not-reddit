@@ -4,6 +4,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 
+import com.jollyremedy.notreddit.models.ListingData;
 import com.jollyremedy.notreddit.models.Post;
 import com.jollyremedy.notreddit.repository.PostRepository;
 import com.jollyremedy.notreddit.ui.postlist.PostListViewModel.ListingResponseFetchObserver;
@@ -28,6 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @SuppressWarnings("unchecked")
@@ -50,27 +52,29 @@ public class PostListViewModelTest {
     @Test
     public void observablePosts_areNotNull() {
         mPostListViewModel = new PostListViewModel(mPostRepository);
-        assertThat(mPostListViewModel.getObservablePosts("all"), notNullValue());
+        assertThat(mPostListViewModel.getObservableListing("all"), notNullValue());
     }
 
     @Test
     public void constructingViewModel_callsRepoToGetsNewPosts() {
         mPostListViewModel = new PostListViewModel(mPostRepository);
-        mPostListViewModel.getObservablePosts("all").observeForever(mock(Observer.class));
+        mPostListViewModel.getObservableListing("all").observeForever(mock(Observer.class));
         verify(mPostRepository).getHotPosts(any(SingleObserver.class), any(), any());
     }
 
     @Test
     public void sendsPostsToUi() {
         mPostListViewModel = new PostListViewModel(mPostRepository);
-        MutableLiveData<List<Post>> observablePosts = (MutableLiveData<List<Post>>) mPostListViewModel.getObservablePosts("all");
+        MutableLiveData<ListingData> observablePosts = (MutableLiveData<ListingData>) mPostListViewModel.getObservableListing("all");
         List<Post> repoPosts = Collections.nCopies(5, mock(Post.class));
+        ListingData listingData = mock(ListingData.class);
+        when(listingData.getPosts()).thenReturn(repoPosts);
 
         Observer postObserver = mock(Observer.class);
         observablePosts.observeForever(postObserver);
 
-        observablePosts.postValue(repoPosts);
-        verify(postObserver).onChanged(repoPosts);
+        observablePosts.postValue(listingData);
+        verify(postObserver).onChanged(listingData);
     }
 
     @Test

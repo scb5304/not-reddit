@@ -94,9 +94,15 @@ public class PostListFragment extends Fragment implements Injectable,
     }
 
     private void subscribeUi() {
-        mViewModel.getObservablePosts(getArguments().getString(EXTRA_SUBREDDIT_NAME)).observe(this, posts -> {
-            mSwipeRefreshLayout.setRefreshing(false);
-            mPostAdapter.updateData(posts);
+        String subredditName = getArguments().getString(EXTRA_SUBREDDIT_NAME);
+        mViewModel.getObservableListing(subredditName).observe(this, listingData -> {
+            if (listingData != null) {
+                mSwipeRefreshLayout.setRefreshing(false);
+                mPostAdapter.updateData(listingData.getPosts());
+                if (getActivity() != null) {
+                    getActivity().setTitle(subredditName);
+                }
+            }
         });
     }
 }

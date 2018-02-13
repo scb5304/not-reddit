@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
+import com.jollyremedy.notreddit.models.ListingData;
 import com.jollyremedy.notreddit.models.ListingResponse;
 import com.jollyremedy.notreddit.models.Post;
 import com.jollyremedy.notreddit.repository.PostRepository;
@@ -22,20 +23,21 @@ public class PostListViewModel extends ViewModel {
 
     private static final String TAG = "PostListViewModel";
     private PostRepository mPostRepository;
-    private MutableLiveData<List<Post>> mPostsLiveData;
+    private MutableLiveData<ListingData> mListingLiveData;
+    private ListingData mListingData;
     private String mLatestAfter;
     private String mSubredditName = "all";
 
     @Inject
     PostListViewModel(PostRepository postRepository) {
         mPostRepository = postRepository;
-        mPostsLiveData = new MutableLiveData<>();
+        mListingLiveData = new MutableLiveData<>();
     }
 
-    LiveData<List<Post>> getObservablePosts(String subredditName) {
+    LiveData<ListingData> getObservableListing(String subredditName) {
         mSubredditName = subredditName;
         mPostRepository.getHotPosts(new ListingResponseFetchObserver(FetchMode.START_FRESH), mSubredditName, mLatestAfter);
-        return mPostsLiveData;
+        return mListingLiveData;
     }
 
     void onSwipeToRefresh() {
@@ -61,25 +63,16 @@ public class PostListViewModel extends ViewModel {
         }
 
         @Override
-        public void onSubscribe(Disposable d) {
-            Log.i(TAG, "Getting a listing response...");
-        }
+        public void onSubscribe(Disposable d) {}
 
         @Override
         public void onSuccess(ListingResponse listingResponse) {
-            List<Post> postsFetched = listingResponse.getListingData().getPosts();
             if (mFetchMode == FetchMode.START_FRESH) {
-                mPostsLiveData.postValue(postsFetched);
+                mListingData = listingResponse.getListingData();
             } else {
-                List<Post> postsWeAlreadyHave = mPostsLiveData.getValue();
-                List<Post> allPosts = new ArrayList<>();
-                if (postsWeAlreadyHave != null) {
-                    allPosts.addAll(postsWeAlreadyHave);
-                }
-                allPosts.addAll(postsFetched);
-                mPostsLiveData.postValue(allPosts);
+                mListingData.getPosts().addAll(listingResponse.getListingData().getPosts());
             }
-            mLatestAfter = listingResponse.getListingData().getAfter();
+            mListingLiveData.postValue(mListingData);
         }
 
         @Override

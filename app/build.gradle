@@ -25,6 +25,10 @@ android {
             abortOnError false
         }
 
+        dataBinding {
+            enabled = true
+        }
+
         buildConfigField "String", "CLIENT_ID", "\"" + clientProperties['CLIENT_ID'] + "\""
     }
     buildTypes {
