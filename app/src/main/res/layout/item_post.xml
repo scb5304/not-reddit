@@ -1,101 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="2dp"
-    app:cardCornerRadius="0dp">
+    android:orientation="vertical">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:elevation="8dp"
-        android:focusable="true">
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/post_image"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@+id/item_post_content_meat"
-            android:layout_alignTop="@+id/item_post_content_meat"
-            android:layout_centerVertical="true"
-            android:adjustViewBounds="true"
-            android:maxWidth="80dp"
-            android:src="@drawable/test_reddit_image" />
-
-        <RelativeLayout
-            android:id="@+id/item_post_content_meat"
-            android:layout_width="wrap_content"
+        <!-- Top row -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/post_image"
-            android:orientation="vertical"
-            android:paddingBottom="8dp"
-            android:paddingTop="@dimen/list_item_vertical_padding">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
+            <!-- Thumbnail -->
+            <ImageView
+                android:id="@+id/item_post_image"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:maxWidth="70dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/test_reddit_image" />
+
+            <!-- Title -->
             <TextView
                 android:id="@+id/item_post_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxWidth="230dp"
-                android:paddingStart="16dp"
+                android:layout_marginStart="16dp"
+                android:maxWidth="220dp"
+                android:paddingBottom="@dimen/default_gap"
+                android:paddingTop="@dimen/default_gap"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/primary_dark"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 tools:ignore="RtlSymmetry"
-                tools:text="My test post title that a a a a a a a a a" />
+                tools:text="My test post title test post title test post title test post title test post title" />
 
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Comment bubble/count wrapper -->
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp">
+
+                <!-- Comment bubble -->
+                <ImageView
+                    android:id="@+id/item_post_comment_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginBottom="@dimen/default_gap"
+                    android:paddingBottom="2dp"
+                    android:src="@drawable/comment_multiple_outline" />
+
+                <!-- Comment count -->
+                <TextView
+                    android:id="@+id/item_post_comment_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/item_post_comment_icon"
+                    android:layout_centerHorizontal="true"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="@android:color/black"
+                    android:textSize="10sp"
+                    tools:text="230" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <!-- Bottom row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/secondary_background_gray"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/default_gap"
+            android:paddingTop="@dimen/default_gap">
+
+            <!-- Subreddit -->
             <TextView
                 android:id="@+id/item_post_subreddit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@id/item_post_title"
-                android:layout_below="@id/item_post_title"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:maxWidth="230dp"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textStyle="italic"
-                tools:text="/r/leagueoflegends" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/item_post_content_meat"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/item_post_content_meat"
-            android:layout_centerVertical="true"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp">
-
-            <ImageView
-                android:id="@+id/item_post_comment_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:src="@drawable/comment_multiple_outline" />
-
-            <TextView
-                android:id="@+id/item_post_comment_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/item_post_comment_icon"
-                android:layout_centerHorizontal="true"
+                android:paddingEnd="@dimen/default_gap"
+                android:paddingStart="@dimen/default_gap"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textColor="@android:color/black"
                 android:textSize="12sp"
-                tools:text="230" />
-        </RelativeLayout>
+                tools:text="leagueoflegends" />
 
-    </RelativeLayout>
+            <!-- Domain (i.reddit.com, imgur.com, etc.) -->
+            <TextView
+                android:id="@+id/item_post_domain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/default_gap"
+                android:paddingStart="@dimen/default_gap"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textSize="12sp"
+                android:textStyle="italic"
+                tools:text="(i.reddit.com)" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 </android.support.v7.widget.CardView>

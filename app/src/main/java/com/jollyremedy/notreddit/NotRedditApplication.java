@@ -3,6 +3,7 @@ package com.jollyremedy.notreddit;
 import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.support.multidex.MultiDexApplication;
 
 import com.facebook.stetho.Stetho;
 import com.google.common.base.Strings;
@@ -21,7 +22,7 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 
-public class NotRedditApplication extends Application implements HasActivityInjector {
+public class NotRedditApplication extends MultiDexApplication implements HasActivityInjector {
 
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;

@@ -1,10 +1,17 @@
 package com.jollyremedy.notreddit.ui.postlist;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jollyremedy.notreddit.R;
@@ -12,12 +19,14 @@ import com.jollyremedy.notreddit.models.Post;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewHolder> {
 
+    private static final String TAG = "PostAdapter";
     private List<Post> mPosts;
     private Context mContext;
 
@@ -43,6 +52,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
         holder.postTitleTextView.setText(post.getTitle());
         holder.postSubredditTextView.setText(mContext.getString(R.string.subreddit_with_prefix, post.getSubreddit()));
         holder.postCommentCountTextView.setText(mContext.getString(R.string.item_post_comment_count, post.getCommentCount()));
+        holder.postDomainTextView.setText(mContext.getString(R.string.item_post_domain, post.getDomain()));
     }
 
     @Override
@@ -51,9 +61,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
     }
 
     class SubredditViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.item_post_image) ImageView postImageView;
         @BindView(R.id.item_post_title) TextView postTitleTextView;
         @BindView(R.id.item_post_subreddit) TextView postSubredditTextView;
         @BindView(R.id.item_post_comment_count) TextView postCommentCountTextView;
+        @BindView(R.id.item_post_domain) TextView postDomainTextView;
 
         SubredditViewHolder(View itemView) {
             super(itemView);

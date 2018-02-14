@@ -13,6 +13,7 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         javaCompileOptions {
@@ -46,6 +47,7 @@ android {
 
 // https://developer.android.com/topic/libraries/architecture/adding-components.html
 dependencies {
+    implementation 'com.android.support:multidex:1.0.2'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'com.android.support:appcompat-v7:26.1.0'
@@ -87,7 +89,7 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.14.1'
 
     //Google Guava
-    compile 'com.google.guava:guava:24.0-android'
+    implementation 'com.google.guava:guava:24.0-android'
 
     // Room
     implementation "android.arch.persistence.room:runtime:1.0.0"
