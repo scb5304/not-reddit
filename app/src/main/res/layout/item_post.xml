@@ -4,7 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_marginBottom="1dp"
+    android:orientation="vertical"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,6 +17,7 @@
 
         <!-- Top row -->
         <LinearLayout
+            android:minHeight="70dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -52,8 +56,9 @@
 
             <!-- Comment bubble/count wrapper -->
             <RelativeLayout
+                android:id="@+id/item_post_comment_views_wrapper"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
