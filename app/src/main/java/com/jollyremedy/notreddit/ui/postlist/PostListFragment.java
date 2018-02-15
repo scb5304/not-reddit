@@ -95,10 +95,10 @@ public class PostListFragment extends Fragment implements Injectable,
 
     private void subscribeUi() {
         String subredditName = getArguments().getString(EXTRA_SUBREDDIT_NAME);
-        mViewModel.getObservableListing(subredditName).observe(this, listingData -> {
-            if (listingData != null) {
+        mViewModel.getObservableListing(subredditName).observe(this, postListing -> {
+            if (postListing != null) {
                 mSwipeRefreshLayout.setRefreshing(false);
-                mPostAdapter.updateData(listingData.getPosts());
+                mPostAdapter.updateData(postListing.getData().getPosts());
                 if (getActivity() != null) {
                     getActivity().setTitle(subredditName);
                 }

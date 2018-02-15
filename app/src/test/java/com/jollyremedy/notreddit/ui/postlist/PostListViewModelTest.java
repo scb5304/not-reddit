@@ -4,8 +4,8 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 
-import com.jollyremedy.notreddit.models.ListingData;
-import com.jollyremedy.notreddit.models.Post;
+import com.jollyremedy.notreddit.models.post.Post;
+import com.jollyremedy.notreddit.models.post.PostListing;
 import com.jollyremedy.notreddit.repository.PostRepository;
 import com.jollyremedy.notreddit.ui.postlist.PostListViewModel.ListingResponseFetchObserver;
 
@@ -65,10 +65,9 @@ public class PostListViewModelTest {
     @Test
     public void sendsPostsToUi() {
         mPostListViewModel = new PostListViewModel(mPostRepository);
-        MutableLiveData<ListingData> observablePosts = (MutableLiveData<ListingData>) mPostListViewModel.getObservableListing("all");
+        MutableLiveData<PostListing> observablePosts = (MutableLiveData<PostListing>) mPostListViewModel.getObservableListing("all");
         List<Post> repoPosts = Collections.nCopies(5, mock(Post.class));
-        ListingData listingData = mock(ListingData.class);
-        when(listingData.getPosts()).thenReturn(repoPosts);
+        PostListing listingData = mock(PostListing.class);
 
         Observer postObserver = mock(Observer.class);
         observablePosts.observeForever(postObserver);

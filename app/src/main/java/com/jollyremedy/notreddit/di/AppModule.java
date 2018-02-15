@@ -24,23 +24,11 @@ import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.jollyremedy.notreddit.api.OAuthRedditApi;
 import com.jollyremedy.notreddit.api.OAuthTokenInterceptor;
 import com.jollyremedy.notreddit.api.RequestTokenApi;
 import com.jollyremedy.notreddit.api.RequestTokenInterceptor;
 import com.jollyremedy.notreddit.di.viewmodel.ViewModelModule;
-import com.jollyremedy.notreddit.models.Post;
-
-import org.threeten.bp.Instant;
-import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.ZoneOffset;
-
-import java.lang.reflect.Type;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -74,24 +62,8 @@ class AppModule {
     @Singleton
     @Provides
     Gson provideGson() {
+        //TODO: Date/time transformation?
         return new GsonBuilder()
-                .registerTypeAdapter(Post.class, new JsonDeserializer<Post>() {
-                    Gson gson = new Gson();
-                    @Override
-                    public Post deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                        //Remove the wrapper around each Post. Because wrapping each one in a "data" field is annoying.
-                        JsonObject postJsonObject = json.getAsJsonObject().getAsJsonObject("data");
-
-                        //Convert the UNIX millis from Reddit into a LocalDateTime.
-                        long millis = postJsonObject.remove("created").getAsLong() * 1000;
-                        LocalDateTime builtDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.UTC);
-
-                        //Build the post then set the actual creation time.
-                        Post post = gson.fromJson(postJsonObject, Post.class);
-                        post.setCreatedDateTime(builtDateTime);
-                        return post;
-                    }
-                })
                 .create();
     }
 

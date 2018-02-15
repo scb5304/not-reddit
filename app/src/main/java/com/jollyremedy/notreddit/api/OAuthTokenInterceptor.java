@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.jollyremedy.notreddit.Constants;
-import com.jollyremedy.notreddit.models.Token;
+import com.jollyremedy.notreddit.models.auth.Token;
 
 import java.io.IOException;
 

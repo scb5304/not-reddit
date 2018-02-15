@@ -9,7 +9,6 @@ import com.facebook.stetho.Stetho;
 import com.google.common.base.Strings;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.jollyremedy.notreddit.Constants.SharedPreferenceKeys;
-import com.jollyremedy.notreddit.db.NotRedditDatabase;
 import com.jollyremedy.notreddit.di.AppComponent;
 import com.jollyremedy.notreddit.di.auto.AppInjector;
 import com.jollyremedy.notreddit.di.DaggerAppComponent;
@@ -54,10 +53,6 @@ public class NotRedditApplication extends MultiDexApplication implements HasActi
                     .putString(SharedPreferenceKeys.DEVICE_ID, UUID.randomUUID().toString())
                     .apply();
         }
-    }
-
-    public NotRedditDatabase getDatabase() {
-        return NotRedditDatabase.getInstance(this);
     }
 
     public static AppComponent getAppComponent() {

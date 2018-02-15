@@ -6,13 +6,8 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
-import com.jollyremedy.notreddit.models.ListingData;
-import com.jollyremedy.notreddit.models.ListingResponse;
-import com.jollyremedy.notreddit.models.Post;
+import com.jollyremedy.notreddit.models.post.PostListing;
 import com.jollyremedy.notreddit.repository.PostRepository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -23,8 +18,7 @@ public class PostListViewModel extends ViewModel {
 
     private static final String TAG = "PostListViewModel";
     private PostRepository mPostRepository;
-    private MutableLiveData<ListingData> mListingLiveData;
-    private ListingData mListingData;
+    private MutableLiveData<PostListing> mListingLiveData;
     private String mLatestAfter;
     private String mSubredditName = "all";
 
@@ -34,7 +28,7 @@ public class PostListViewModel extends ViewModel {
         mListingLiveData = new MutableLiveData<>();
     }
 
-    LiveData<ListingData> getObservableListing(String subredditName) {
+    LiveData<PostListing> getObservableListing(String subredditName) {
         mSubredditName = subredditName;
         mPostRepository.getHotPosts(new ListingResponseFetchObserver(FetchMode.START_FRESH), mSubredditName, mLatestAfter);
         return mListingLiveData;
@@ -54,7 +48,7 @@ public class PostListViewModel extends ViewModel {
         ADD_TO_EXISTING_POSTS
     }
 
-    protected class ListingResponseFetchObserver implements SingleObserver<ListingResponse> {
+    protected class ListingResponseFetchObserver implements SingleObserver<PostListing> {
         @VisibleForTesting
         FetchMode mFetchMode;
 
@@ -66,13 +60,8 @@ public class PostListViewModel extends ViewModel {
         public void onSubscribe(Disposable d) {}
 
         @Override
-        public void onSuccess(ListingResponse listingResponse) {
-            if (mFetchMode == FetchMode.START_FRESH) {
-                mListingData = listingResponse.getListingData();
-            } else {
-                mListingData.getPosts().addAll(listingResponse.getListingData().getPosts());
-            }
-            mListingLiveData.postValue(mListingData);
+        public void onSuccess(PostListing listingResponse) {
+            mListingLiveData.postValue(listingResponse);
         }
 
         @Override

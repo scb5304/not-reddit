@@ -1,25 +1,19 @@
 package com.jollyremedy.notreddit.ui.postlist;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jollyremedy.notreddit.R;
-import com.jollyremedy.notreddit.models.Post;
+import com.jollyremedy.notreddit.models.post.Post;
+import com.jollyremedy.notreddit.models.post.PostData;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,11 +42,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
 
     @Override
     public void onBindViewHolder(SubredditViewHolder holder, int position) {
-        Post post = mPosts.get(position);
-        holder.postTitleTextView.setText(post.getTitle());
-        holder.postSubredditTextView.setText(mContext.getString(R.string.subreddit_with_prefix, post.getSubreddit()));
-        holder.postCommentCountTextView.setText(mContext.getString(R.string.item_post_comment_count, post.getCommentCount()));
-        holder.postDomainTextView.setText(mContext.getString(R.string.item_post_domain, post.getDomain()));
+        PostData postData = mPosts.get(position).getData();
+        holder.postTitleTextView.setText(postData.getTitle());
+        holder.postSubredditTextView.setText(mContext.getString(R.string.subreddit_with_prefix, postData.getSubreddit()));
+        holder.postCommentCountTextView.setText(mContext.getString(R.string.item_post_comment_count, postData.getCommentCount()));
+        holder.postDomainTextView.setText(mContext.getString(R.string.item_post_domain, postData.getDomain()));
     }
 
     @Override
