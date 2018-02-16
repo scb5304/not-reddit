@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
+import com.jollyremedy.notreddit.ui.common.NavigationController;
 import com.jollyremedy.notreddit.ui.postlist.PostListFragment;
 
 import javax.inject.Inject;
@@ -19,6 +20,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     @Inject
     DispatchingAndroidInjector<Fragment> mFragmentDispatchingAndroidInjector;
 
+    @Inject
+    NavigationController mNavigationController;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         AndroidInjection.inject(this);
@@ -27,12 +31,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
         // Add post list fragment if this is first creation
         if (savedInstanceState == null) {
-            PostListFragment fragment = PostListFragment.newInstance("leagueoflegends");
-
-            getSupportFragmentManager().beginTransaction().add(
-                    R.id.fragment_container,
-                    fragment,
-                    PostListFragment.TAG).commit();
+            mNavigationController.navigateToPostList("leagueoflegends");
         }
     }
 

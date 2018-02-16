@@ -19,6 +19,7 @@ public interface OAuthRedditApi {
      * This is a List only because the first object returned by Reddit is actually the Post itself.
      * So...ignore that one.
      */
-    @GET("r/leagueoflegends/comments/7xd37j?threaded")
-    Single<List<CommentListing>> getTestCommentListings();
+    @GET("r/{subredditName}/comments/{postId}?threaded")
+    Single<List<CommentListing>> getCommentListing(@Path("subredditName") String subredditName,
+                                                   @Path("postId") String postId);
 }

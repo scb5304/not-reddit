@@ -29,6 +29,7 @@ import com.jollyremedy.notreddit.api.OAuthTokenInterceptor;
 import com.jollyremedy.notreddit.api.RequestTokenApi;
 import com.jollyremedy.notreddit.api.RequestTokenInterceptor;
 import com.jollyremedy.notreddit.di.viewmodel.ViewModelModule;
+import com.jollyremedy.notreddit.ui.common.NavigationController;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -44,16 +45,19 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module(includes = ViewModelModule.class)
 class AppModule {
 
+    @Singleton
     @Provides
     SharedPreferences provideSharedPreferences(Application application) {
         return PreferenceManager.getDefaultSharedPreferences(application);
     }
 
+    @Singleton
     @Provides
     AccountManager provideAccountManager(Application application) {
         return AccountManager.get(application);
     }
 
+    @Singleton
     @Provides
     Context provideContext(Application application) {
         return application.getApplicationContext();

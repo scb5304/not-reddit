@@ -2,39 +2,28 @@ package com.jollyremedy.notreddit.ui.postlist;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 import com.jollyremedy.notreddit.R;
-import com.jollyremedy.notreddit.api.OAuthRedditApi;
 import com.jollyremedy.notreddit.databinding.FragmentPostListBinding;
 import com.jollyremedy.notreddit.di.auto.Injectable;
-import com.jollyremedy.notreddit.models.comment.CommentListing;
+import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.ui.EndlessRecyclerViewScrollListener;
-import com.jollyremedy.notreddit.util.NotRedditViewUtils;
-import com.jollyremedy.notreddit.util.Utility;
-
-import java.util.Arrays;
-import java.util.List;
+import com.jollyremedy.notreddit.ui.common.NavigationController;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.SingleObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class PostListFragment extends Fragment implements Injectable {
 
@@ -45,8 +34,7 @@ public class PostListFragment extends Fragment implements Injectable {
     Gson mGson;
 
     @Inject
-    OAuthRedditApi mRedditApi;
-
+    NavigationController mNavigationController;
 
     @BindView(R.id.post_list_recycler_view)
     RecyclerView mRecyclerView;
@@ -93,7 +81,7 @@ public class PostListFragment extends Fragment implements Injectable {
     }
 
     private void initRecyclerView() {
-        mPostAdapter = new PostAdapter(getActivity());
+        mPostAdapter = new PostAdapter(post -> mNavigationController.navigateToPostDetail(post));
         mRecyclerView.setAdapter(mPostAdapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());

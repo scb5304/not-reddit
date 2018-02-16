@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
+import android.view.View;
 
 import com.jollyremedy.notreddit.models.post.PostListing;
 import com.jollyremedy.notreddit.models.post.PostListingData;
@@ -35,6 +36,7 @@ public class PostListViewModel extends ViewModel {
     @Inject
     PostListViewModel(PostRepository postRepository) {
         mPostRepository = postRepository;
+
         mListingLiveData = new MutableLiveData<>();
         mEndlessScrollResetLiveData = new MutableLiveData<>();
         mDataBindIsRefreshing = new ObservableBoolean();
@@ -52,11 +54,9 @@ public class PostListViewModel extends ViewModel {
         return mEndlessScrollResetLiveData;
     }
 
-
     void onLoadMore() {
         mPostRepository.getHotPosts(new ListingResponseFetchObserver(FetchMode.ADD_TO_EXISTING_POSTS), mSubredditName, getCurrentAfter());
     }
-
 
     @Nullable
     private String getCurrentAfter() {

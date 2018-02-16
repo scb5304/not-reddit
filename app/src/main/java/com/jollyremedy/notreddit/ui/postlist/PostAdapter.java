@@ -2,6 +2,7 @@ package com.jollyremedy.notreddit.ui.postlist;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,16 +24,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
 
     private static final String TAG = "PostAdapter";
     private List<Post> mPosts;
-    private Context mContext;
+    private PostClickedCallback mPostClickedCallback;
 
     void updateData(List<Post> posts) {
         mPosts = posts;
         notifyDataSetChanged();
     }
 
-    PostAdapter(Context context) {
-        mContext = context;
+    PostAdapter(PostClickedCallback postClickedCallback) {
+        mPostClickedCallback = postClickedCallback;
         mPosts = new ArrayList<>();
+    }
+
+    public interface PostClickedCallback {
+        void onPostClicked(Post post);
     }
 
     @Override
@@ -44,8 +49,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
 
     @Override
     public void onBindViewHolder(SubredditViewHolder holder, int position) {
-        PostData postData = mPosts.get(position).getData();
-        holder.bind(postData);
+        holder.bind(mPosts.get(position));
     }
 
     @Override
@@ -61,8 +65,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
             this.binding = binding;
         }
 
-        public void bind(PostData postData) {
-            binding.setPostData(postData);
+        public void bind(Post post) {
+            binding.setPost(post);
+            binding.setPostClickedCallback(mPostClickedCallback);
             binding.executePendingBindings();
         }
     }
