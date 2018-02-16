@@ -9,7 +9,7 @@ import com.jollyremedy.notreddit.models.parent.ListingData;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class CommentListingData extends ListingData implements Parcelable {
+public class CommentListingData extends ListingData implements Parcelable {
     @SerializedName("children")
     private List<Comment> comments;
 

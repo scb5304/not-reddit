@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 import com.jollyremedy.notreddit.models.parent.RedditType;
 
-public final class Post extends RedditType implements Parcelable {
+public class Post extends RedditType implements Parcelable {
     @SerializedName("data")
     private PostData data;
 

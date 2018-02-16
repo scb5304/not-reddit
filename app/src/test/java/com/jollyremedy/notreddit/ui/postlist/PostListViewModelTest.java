@@ -82,7 +82,7 @@ public class PostListViewModelTest {
         reset(mPostRepository);
         ArgumentCaptor<ListingResponseFetchObserver> captor = ArgumentCaptor.forClass(ListingResponseFetchObserver.class);
 
-        mPostListViewModel.onSwipeToRefresh();
+        mPostListViewModel.onRefresh();
         verify(mPostRepository).getHotPosts(captor.capture(), any(), any());
         assertThat(captor.getValue().mFetchMode, is(PostListViewModel.FetchMode.START_FRESH));
     }

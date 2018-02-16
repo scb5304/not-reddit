@@ -9,7 +9,7 @@ import com.jollyremedy.notreddit.util.EmptyStringAsNullTypeAdapter;
 
 import java.util.List;
 
-public final class CommentData implements Parcelable {
+public class CommentData implements Parcelable {
     @SerializedName("body")
     private String body;
 
