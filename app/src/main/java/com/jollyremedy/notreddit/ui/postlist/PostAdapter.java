@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jollyremedy.notreddit.R;
+import com.jollyremedy.notreddit.databinding.ItemPostBinding;
 import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.models.post.PostData;
 
@@ -36,17 +37,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
 
     @Override
     public SubredditViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post, parent, false);
-        return new SubredditViewHolder(view);
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        ItemPostBinding itemPostBinding = ItemPostBinding.inflate(layoutInflater, parent, false);
+        return new SubredditViewHolder(itemPostBinding);
     }
 
     @Override
     public void onBindViewHolder(SubredditViewHolder holder, int position) {
         PostData postData = mPosts.get(position).getData();
-        holder.postTitleTextView.setText(postData.getTitle());
-        holder.postSubredditTextView.setText(mContext.getString(R.string.subreddit_with_prefix, postData.getSubreddit()));
-        holder.postCommentCountTextView.setText(mContext.getString(R.string.item_post_comment_count, postData.getCommentCount()));
-        holder.postDomainTextView.setText(mContext.getString(R.string.item_post_domain, postData.getDomain()));
+        holder.bind(postData);
     }
 
     @Override
@@ -55,15 +54,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
     }
 
     class SubredditViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.item_post_image) ImageView postImageView;
-        @BindView(R.id.item_post_title) TextView postTitleTextView;
-        @BindView(R.id.item_post_subreddit) TextView postSubredditTextView;
-        @BindView(R.id.item_post_comment_count) TextView postCommentCountTextView;
-        @BindView(R.id.item_post_domain) TextView postDomainTextView;
+        private final ItemPostBinding binding;
 
-        SubredditViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        SubredditViewHolder(ItemPostBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
+        public void bind(PostData postData) {
+            binding.setPostData(postData);
+            binding.executePendingBindings();
         }
     }
 }

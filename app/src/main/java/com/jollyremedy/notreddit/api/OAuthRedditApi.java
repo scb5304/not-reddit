@@ -15,6 +15,10 @@ public interface OAuthRedditApi {
     Single<PostListing> getPostsBySubreddit(@Path("subredditName") String subredditName,
                                             @Query("after") String after);
 
+    /**
+     * This is a List only because the first object returned by Reddit is actually the Post itself.
+     * So...ignore that one.
+     */
     @GET("r/leagueoflegends/comments/7xd37j?threaded")
     Single<List<CommentListing>> getTestCommentListings();
 }

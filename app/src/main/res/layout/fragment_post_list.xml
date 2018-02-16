@@ -1,34 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="postListViewModel"
+            type="com.jollyremedy.notreddit.ui.postlist.PostListViewModel" />
+        <import type="android.view.View"/>
+    </data>
 
-    <RelativeLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/post_list_swipe_refresh_layout"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/post_list_recycler_view"
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/post_list_swipe_refresh_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scrollbars="vertical"
-                app:layoutManager="LinearLayoutManager" />
-        </android.support.v4.widget.SwipeRefreshLayout>
+                app:onRefreshListener="@{() -> postListViewModel.onRefresh()}"
+                app:refreshing="@{postListViewModel.isRefreshing}">
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            app:fab_icon="@drawable/eye_white" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/post_list_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="vertical"
+                    app:layoutManager="LinearLayoutManager" />
+            </android.support.v4.widget.SwipeRefreshLayout>
 
-    </RelativeLayout>
-</android.support.design.widget.CoordinatorLayout>
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                app:fab_icon="@drawable/eye_white" />
+
+        </RelativeLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</layout>
