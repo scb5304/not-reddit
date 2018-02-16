@@ -13,7 +13,7 @@ public final class CommentListingData extends ListingData implements Parcelable 
     @SerializedName("children")
     private List<Comment> comments;
 
-    protected CommentListingData(Parcel in) {
+    private CommentListingData(Parcel in) {
         super(in);
         if (in.readByte() == 0x01) {
             comments = new ArrayList<>();

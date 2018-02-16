@@ -9,7 +9,7 @@ import com.jollyremedy.notreddit.util.EmptyStringAsNullTypeAdapter;
 
 import java.util.List;
 
-public class CommentData implements Parcelable {
+public final class CommentData implements Parcelable {
     @SerializedName("body")
     private String body;
 
@@ -21,7 +21,7 @@ public class CommentData implements Parcelable {
         return body;
     }
 
-    protected CommentData(Parcel in) {
+    private CommentData(Parcel in) {
         body = in.readString();
         replies = (CommentListing) in.readValue(CommentListing.class.getClassLoader());
     }

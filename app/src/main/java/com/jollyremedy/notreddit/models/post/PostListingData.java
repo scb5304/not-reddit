@@ -30,7 +30,7 @@ public class PostListingData extends ListingData implements Parcelable {
         this.posts = posts;
     }
 
-    protected PostListingData(Parcel in) {
+    private PostListingData(Parcel in) {
         super(in);
         if (in.readByte() == 0x01) {
             posts = new ArrayList<>();

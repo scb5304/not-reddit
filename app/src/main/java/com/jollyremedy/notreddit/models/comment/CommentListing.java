@@ -9,7 +9,7 @@ import com.jollyremedy.notreddit.models.parent.RedditType;
 import com.jollyremedy.notreddit.models.post.PostListingData;
 import com.jollyremedy.notreddit.util.EmptyStringAsNullTypeAdapter;
 
-public class CommentListing extends RedditType implements Parcelable {
+public final class CommentListing extends RedditType implements Parcelable {
 
     @SerializedName("data")
     private CommentListingData data;
@@ -19,7 +19,7 @@ public class CommentListing extends RedditType implements Parcelable {
         return data;
     }
 
-    protected CommentListing(Parcel in) {
+    private CommentListing(Parcel in) {
         super(in);
         data = (CommentListingData) in.readValue(CommentListingData.class.getClassLoader());
     }

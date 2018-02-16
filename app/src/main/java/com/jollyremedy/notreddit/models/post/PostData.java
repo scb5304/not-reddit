@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 import com.jollyremedy.notreddit.models.parent.RedditType;
 
-public class PostData implements Parcelable {
+public final class PostData implements Parcelable {
 
     @SerializedName("title")
     private String title;
@@ -36,7 +36,7 @@ public class PostData implements Parcelable {
         return commentCount;
     }
 
-    protected PostData(Parcel in) {
+    private PostData(Parcel in) {
         title = in.readString();
         domain = in.readString();
         subreddit = in.readString();
