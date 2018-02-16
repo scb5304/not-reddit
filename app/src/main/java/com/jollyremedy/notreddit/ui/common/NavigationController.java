@@ -7,7 +7,7 @@ import com.jollyremedy.notreddit.MainActivity;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.ui.postlist.PostListFragment;
-import com.jollyremedy.notreddit.ui.postlist.postdetail.PostDetailFragment;
+import com.jollyremedy.notreddit.ui.postdetail.PostDetailFragment;
 
 import javax.inject.Inject;
 

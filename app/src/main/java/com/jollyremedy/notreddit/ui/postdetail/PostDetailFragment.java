@@ -1,4 +1,4 @@
-package com.jollyremedy.notreddit.ui.postlist.postdetail;
+package com.jollyremedy.notreddit.ui.postdetail;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
