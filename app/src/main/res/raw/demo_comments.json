@@ -1,0 +1,27 @@
+[
+  {
+    "kind": "Listing",
+    "data": {
+      "children": [
+        {
+          "data": {
+            "body": "comment",
+            "replies": {
+              "kind": "Listing",
+              "data": {
+                "children": [
+                  {
+                    "data": {
+                      "body": "reply to comment",
+                      "replies": ""
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]

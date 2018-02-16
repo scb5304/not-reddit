@@ -62,7 +62,6 @@ class AppModule {
     @Singleton
     @Provides
     Gson provideGson() {
-        //TODO: Date/time transformation?
         return new GsonBuilder()
                 .create();
     }
