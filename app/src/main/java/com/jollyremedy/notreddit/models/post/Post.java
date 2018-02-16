@@ -1,16 +1,12 @@
 package com.jollyremedy.notreddit.models.post;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.jollyremedy.notreddit.models.parent.RedditType;
 
-import org.threeten.bp.LocalDateTime;
-
-public class Post extends RedditType {
+public class Post extends RedditType implements Parcelable {
     @SerializedName("data")
     private PostData data;
 
@@ -18,4 +14,27 @@ public class Post extends RedditType {
     public PostData getData() {
         return data;
     }
+
+    protected Post(Parcel in) {
+        super(in);
+        data = (PostData) in.readValue(PostData.class.getClassLoader());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(data);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Post> CREATOR = new Parcelable.Creator<Post>() {
+        @Override
+        public Post createFromParcel(Parcel in) {
+            return new Post(in);
+        }
+
+        @Override
+        public Post[] newArray(int size) {
+            return new Post[size];
+        }
+    };
 }
