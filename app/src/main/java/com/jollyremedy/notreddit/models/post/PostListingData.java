@@ -13,4 +13,16 @@ public class PostListingData extends ListingData {
     public List<Post> getPosts() {
         return posts;
     }
+
+    public boolean hasPosts() {
+        return posts != null && !posts.isEmpty();
+    }
+
+    public void addAllPosts(List<Post> posts) {
+        this.posts.addAll(posts);
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
 }

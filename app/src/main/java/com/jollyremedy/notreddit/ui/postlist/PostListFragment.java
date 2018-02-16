@@ -122,5 +122,10 @@ public class PostListFragment extends Fragment implements Injectable {
                 }
             }
         });
+        mViewModel.observeResetEndlessScroll().observe(this, shouldReset -> {
+            if (shouldReset != null && shouldReset) {
+                mEndlessScrollListener.resetState();
+            }
+        });
     }
 }

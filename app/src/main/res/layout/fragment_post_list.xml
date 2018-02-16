@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:onRefreshListener="@{() -> postListViewModel.onRefresh()}"
-                app:refreshing="@{postListViewModel.isRefreshing}">
+                app:refreshing="@{postListViewModel.isRefreshing()}">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/post_list_recycler_view"

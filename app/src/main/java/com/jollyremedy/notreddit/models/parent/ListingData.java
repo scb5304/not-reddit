@@ -4,14 +4,34 @@ import com.google.gson.annotations.SerializedName;
 
 public abstract class ListingData {
     @SerializedName("after")
-    private String after;
+    protected String after;
 
     @SerializedName("dist")
-    private int dist;
+    protected int dist;
 
     @SerializedName("modhash")
-    private String modHash;
+    protected String modHash;
 
     @SerializedName("whitelist_status")
-    private String whitelistStatus;
+    protected String whitelistStatus;
+
+    public String getAfter() {
+        return after;
+    }
+
+    public int getDist() {
+        return dist;
+    }
+
+    public String getModHash() {
+        return modHash;
+    }
+
+    public String getWhitelistStatus() {
+        return whitelistStatus;
+    }
+
+    public void setAfter(String after) {
+        this.after = after;
+    }
 }
