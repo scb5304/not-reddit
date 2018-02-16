@@ -3,15 +3,14 @@ package com.jollyremedy.notreddit;
 import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.support.multidex.MultiDexApplication;
 
 import com.facebook.stetho.Stetho;
 import com.google.common.base.Strings;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.jollyremedy.notreddit.Constants.SharedPreferenceKeys;
 import com.jollyremedy.notreddit.di.AppComponent;
-import com.jollyremedy.notreddit.di.auto.AppInjector;
 import com.jollyremedy.notreddit.di.DaggerAppComponent;
+import com.jollyremedy.notreddit.di.auto.AppInjector;
 
 import java.util.UUID;
 
@@ -21,7 +20,7 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 
-public class NotRedditApplication extends MultiDexApplication implements HasActivityInjector {
+public class NotRedditApplication extends Application implements HasActivityInjector {
 
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
