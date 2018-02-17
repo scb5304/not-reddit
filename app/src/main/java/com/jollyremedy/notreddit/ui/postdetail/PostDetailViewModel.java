@@ -10,7 +10,6 @@ import com.jollyremedy.notreddit.repository.CommentRepository;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 

@@ -3,8 +3,8 @@ package com.jollyremedy.notreddit.di.viewmodel;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
-import com.jollyremedy.notreddit.ui.postlist.PostListViewModel;
 import com.jollyremedy.notreddit.ui.postdetail.PostDetailViewModel;
+import com.jollyremedy.notreddit.ui.postlist.PostListViewModel;
 
 import dagger.Binds;
 import dagger.Module;

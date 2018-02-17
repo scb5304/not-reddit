@@ -1,8 +1,8 @@
 package com.jollyremedy.notreddit.models.comment;
 
 import com.google.gson.annotations.JsonAdapter;
-import com.jollyremedy.notreddit.models.post.PostListing;
 import com.jollyremedy.notreddit.api.adapter.SensicalCommentsAdapter;
+import com.jollyremedy.notreddit.models.post.PostListing;
 
 @JsonAdapter(SensicalCommentsAdapter.class)
 public class PostWithCommentListing {

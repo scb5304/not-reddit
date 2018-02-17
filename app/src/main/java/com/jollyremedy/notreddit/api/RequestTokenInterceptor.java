@@ -1,7 +1,6 @@
 package com.jollyremedy.notreddit.api;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.jollyremedy.notreddit.BuildConfig;
 

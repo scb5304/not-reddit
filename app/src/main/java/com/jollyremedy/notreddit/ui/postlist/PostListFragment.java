@@ -16,7 +16,6 @@ import com.google.gson.Gson;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.databinding.FragmentPostListBinding;
 import com.jollyremedy.notreddit.di.auto.Injectable;
-import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.ui.EndlessRecyclerViewScrollListener;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
 

@@ -29,7 +29,6 @@ import com.jollyremedy.notreddit.api.OAuthTokenInterceptor;
 import com.jollyremedy.notreddit.api.RequestTokenApi;
 import com.jollyremedy.notreddit.api.RequestTokenInterceptor;
 import com.jollyremedy.notreddit.di.viewmodel.ViewModelModule;
-import com.jollyremedy.notreddit.ui.common.NavigationController;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

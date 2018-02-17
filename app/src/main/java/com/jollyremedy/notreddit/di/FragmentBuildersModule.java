@@ -16,8 +16,8 @@
 
 package com.jollyremedy.notreddit.di;
 
-import com.jollyremedy.notreddit.ui.postlist.PostListFragment;
 import com.jollyremedy.notreddit.ui.postdetail.PostDetailFragment;
+import com.jollyremedy.notreddit.ui.postlist.PostListFragment;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
