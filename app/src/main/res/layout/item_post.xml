@@ -4,9 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="post"
             type="com.jollyremedy.notreddit.models.post.Post" />
+
         <variable
             name="postClickedCallback"
             type="com.jollyremedy.notreddit.ui.postlist.PostAdapter.PostClickedCallback" />
@@ -37,38 +39,6 @@
                 android:minHeight="70dp"
                 android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:paddingEnd="6dp"
-                    android:paddingStart="4dp">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:src="@drawable/upvote" />
-
-                    <TextView
-                        android:id="@+id/item_post_score"
-                        android:text="@{post.data.score}"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="10009" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:src="@drawable/downvote" />
-
-                </LinearLayout>
                 <!-- Thumbnail -->
                 <ImageView
                     android:id="@+id/item_post_image"
@@ -85,7 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:maxWidth="180dp"
+                    android:maxWidth="220dp"
                     android:paddingBottom="@dimen/default_gap"
                     android:paddingTop="@dimen/default_gap"
                     android:text="@{post.data.title}"
@@ -142,30 +112,44 @@
             <!-- Bottom row -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="34dp"
                 android:background="@color/secondary_background_gray"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingBottom="4dp"
-                android:paddingTop="4dp">
+                android:paddingEnd="@dimen/default_gap">
 
-                <!-- Subreddit -->
-                <TextView
-                    android:id="@+id/item_post_subreddit"
+                <ImageView
+                    android:clickable="true"
+                    android:focusable="true"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="@dimen/default_gap"
-                    android:paddingStart="@dimen/default_gap"
-                    android:text="@{post.data.subreddit}"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@android:color/black"
-                    android:textSize="12sp"
-                    tools:text="leagueoflegends" />
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="-2dp"
+                    android:gravity="center_vertical"
+                    android:src="@drawable/upvote" />
+
+                <TextView
+                    android:id="@+id/item_post_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@{post.data.score}"
+                    tools:text="10009" />
+
+                <ImageView
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="-2dp"
+                    android:gravity="center_vertical"
+                    android:src="@drawable/downvote" />
 
                 <!-- Domain (i.reddit.com, imgur.com, etc.) -->
                 <TextView
                     android:id="@+id/item_post_domain"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:paddingEnd="@dimen/default_gap"
                     android:paddingStart="@dimen/default_gap"
                     android:text="@{post.data.domain}"
@@ -173,6 +157,25 @@
                     android:textSize="12sp"
                     android:textStyle="italic"
                     tools:text="i.reddit.com" />
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <!-- Subreddit TODO: Hide me if i'm browsing a particular subreddit -->
+                <TextView
+                    android:id="@+id/item_post_subreddit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingEnd="@dimen/default_gap"
+                    android:paddingStart="@dimen/default_gap"
+                    android:text="@{post.data.subreddit}"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="@color/accent"
+                    android:textSize="12sp"
+                    tools:text="leagueoflegends" />
 
             </LinearLayout>
 
