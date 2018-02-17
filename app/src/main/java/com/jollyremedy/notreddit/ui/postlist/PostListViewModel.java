@@ -14,6 +14,8 @@ import com.jollyremedy.notreddit.models.post.PostListing;
 import com.jollyremedy.notreddit.models.post.PostListingData;
 import com.jollyremedy.notreddit.repository.PostRepository;
 
+import java.net.UnknownHostException;
+
 import javax.inject.Inject;
 
 import io.reactivex.SingleObserver;
@@ -130,6 +132,9 @@ public class PostListViewModel extends ViewModel {
         @Override
         public void onError(Throwable e) {
             Log.e(TAG, "Failed to get a post listing!", e);
+            if (e instanceof UnknownHostException) {
+                Log.e(TAG, Log.getStackTraceString(e));
+            }
             onPostListingFetchError();
         }
     }

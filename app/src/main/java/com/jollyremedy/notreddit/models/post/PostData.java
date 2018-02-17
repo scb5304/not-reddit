@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
-import com.jollyremedy.notreddit.models.parent.RedditType;
 
 public class PostData implements Parcelable {
 
@@ -28,6 +27,9 @@ public class PostData implements Parcelable {
 
     @SerializedName("num_comments")
     private Integer commentCount;
+
+    @SerializedName("score")
+    private String score;
 
     public String getId() {
         return id;
@@ -57,6 +59,10 @@ public class PostData implements Parcelable {
         return commentCount;
     }
 
+    public String getScore() {
+        return score;
+    }
+
     private PostData(Parcel in) {
         id = in.readString();
         title = in.readString();
@@ -65,6 +71,7 @@ public class PostData implements Parcelable {
         domain = in.readString();
         subreddit = in.readString();
         commentCount = in.readByte() == 0x00 ? null : in.readInt();
+        score = in.readString();
     }
 
     @Override
@@ -86,6 +93,7 @@ public class PostData implements Parcelable {
             dest.writeByte((byte) (0x01));
             dest.writeInt(commentCount);
         }
+        dest.writeString(score);
     }
 
     @SuppressWarnings("unused")
