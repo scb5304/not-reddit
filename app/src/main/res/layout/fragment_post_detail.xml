@@ -18,7 +18,7 @@
             android:id="@+id/post_detail_post_body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:html="@{post.getData().getSelfTextHtml()}" />
+            app:html="@{post.data.selfTextHtml}" />
 
     </LinearLayout>
 
