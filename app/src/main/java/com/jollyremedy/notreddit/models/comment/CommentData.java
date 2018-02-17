@@ -5,9 +5,7 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
-import com.jollyremedy.notreddit.util.EmptyStringAsNullTypeAdapter;
-
-import java.util.List;
+import com.jollyremedy.notreddit.api.adapter.EmptyStringAsNullTypeAdapter;
 
 public class CommentData implements Parcelable {
     @SerializedName("body")

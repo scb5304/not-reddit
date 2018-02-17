@@ -3,11 +3,8 @@ package com.jollyremedy.notreddit.models.comment;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.jollyremedy.notreddit.models.parent.RedditType;
-import com.jollyremedy.notreddit.models.post.PostListingData;
-import com.jollyremedy.notreddit.util.EmptyStringAsNullTypeAdapter;
 
 public class CommentListing extends RedditType implements Parcelable {
 

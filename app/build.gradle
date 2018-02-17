@@ -70,6 +70,9 @@ dependencies {
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.5.2'
 
+    //HTML TextView
+    implementation 'org.sufficientlysecure:html-textview:3.5'
+
     // ViewModel and LiveData
     implementation "android.arch.lifecycle:extensions:1.1.0"
     annotationProcessor "android.arch.lifecycle:compiler:1.1.0"

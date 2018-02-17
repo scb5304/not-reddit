@@ -1,4 +1,4 @@
-package com.jollyremedy.notreddit.util;
+package com.jollyremedy.notreddit.api.adapter;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

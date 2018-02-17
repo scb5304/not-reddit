@@ -8,8 +8,17 @@ import com.jollyremedy.notreddit.models.parent.RedditType;
 
 public class PostData implements Parcelable {
 
+    @SerializedName("id")
+    private String id;
+
     @SerializedName("title")
     private String title;
+
+    @SerializedName("selftext")
+    private String selfText;
+
+    @SerializedName("selftext_html")
+    private String selfTextHtml;
 
     @SerializedName("domain")
     private String domain;
@@ -20,8 +29,20 @@ public class PostData implements Parcelable {
     @SerializedName("num_comments")
     private Integer commentCount;
 
+    public String getId() {
+        return id;
+    }
+
     public String getTitle() {
         return title;
+    }
+
+    public String getSelfText() {
+        return selfText;
+    }
+
+    public String getSelfTextHtml() {
+        return selfTextHtml;
     }
 
     public String getDomain() {
@@ -37,7 +58,10 @@ public class PostData implements Parcelable {
     }
 
     private PostData(Parcel in) {
+        id = in.readString();
         title = in.readString();
+        selfText = in.readString();
+        selfTextHtml = in.readString();
         domain = in.readString();
         subreddit = in.readString();
         commentCount = in.readByte() == 0x00 ? null : in.readInt();
@@ -50,7 +74,10 @@ public class PostData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(title);
+        dest.writeString(selfText);
+        dest.writeString(selfTextHtml);
         dest.writeString(domain);
         dest.writeString(subreddit);
         if (commentCount == null) {

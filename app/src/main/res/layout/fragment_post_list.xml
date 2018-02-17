@@ -6,7 +6,6 @@
         <variable
             name="postListViewModel"
             type="com.jollyremedy.notreddit.ui.postlist.PostListViewModel" />
-        <import type="android.view.View"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout

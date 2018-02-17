@@ -1,9 +1,7 @@
 package com.jollyremedy.notreddit.api;
 
-import com.jollyremedy.notreddit.models.comment.CommentListing;
+import com.jollyremedy.notreddit.models.comment.PostWithCommentListing;
 import com.jollyremedy.notreddit.models.post.PostListing;
-
-import java.util.List;
 
 import io.reactivex.Single;
 import retrofit2.http.GET;
@@ -15,11 +13,6 @@ public interface OAuthRedditApi {
     Single<PostListing> getPostsBySubreddit(@Path("subredditName") String subredditName,
                                             @Query("after") String after);
 
-    /**
-     * This is a List only because the first object returned by Reddit is actually the Post itself.
-     * So...ignore that one.
-     */
-    @GET("r/{subredditName}/comments/{postId}?threaded")
-    Single<List<CommentListing>> getCommentListing(@Path("subredditName") String subredditName,
-                                                   @Path("postId") String postId);
+    @GET("/comments/{postId}?threaded&raw_json=1")
+    Single<PostWithCommentListing> getCommentListing(@Path("postId") String postId);
 }

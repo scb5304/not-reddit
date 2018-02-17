@@ -10,22 +10,23 @@ import com.google.gson.annotations.SerializedName;
  */
 public abstract class RedditType implements Parcelable {
     @SerializedName("kind")
-    protected RedditTypePrefix kind;
+    protected Kind kind;
 
     @SuppressWarnings("unused")
-    public enum RedditTypePrefix {
-        t1, //Comment
-        t2, //Account
-        t3, //Link
-        t4, //Message
-        t5, //Subreddit
-        t6  //Award
+    public enum Kind {
+        @SerializedName("Listing") LISTING,
+        @SerializedName("t1") COMMENT,
+        @SerializedName("t2") ACCOUNT,
+        @SerializedName("t3") LINK,
+        @SerializedName("t4") MESSAGE,
+        @SerializedName("t5") SUBREDDIT,
+        @SerializedName("t6") AWARD,
     }
 
     public abstract Object getData();
 
     protected RedditType(Parcel in) {
-        kind = (RedditTypePrefix) in.readValue(RedditTypePrefix.class.getClassLoader());
+        kind = (Kind) in.readValue(Kind.class.getClassLoader());
     }
 
     @Override
@@ -36,5 +37,9 @@ public abstract class RedditType implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(kind);
+    }
+
+    public Kind getKind() {
+        return kind;
     }
 }
