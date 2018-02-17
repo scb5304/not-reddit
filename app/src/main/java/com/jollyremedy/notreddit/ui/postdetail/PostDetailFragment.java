@@ -62,6 +62,7 @@ public class PostDetailFragment extends Fragment implements Injectable {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(PostDetailViewModel.class);
+        mBinding.setPost(getArguments().getParcelable(EXTRA_POST));
         subscribeUi();
     }
 

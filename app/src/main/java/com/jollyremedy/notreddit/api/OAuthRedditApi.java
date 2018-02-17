@@ -9,7 +9,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface OAuthRedditApi {
-    @GET("/r/{subredditName}")
+    @GET("/r/{subredditName}?&raw_json=1")
     Single<PostListing> getPostsBySubreddit(@Path("subredditName") String subredditName,
                                             @Query("after") String after);
 
