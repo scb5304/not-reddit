@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
 import com.jollyremedy.notreddit.models.comment.PostWithCommentListing;
+import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.repository.CommentRepository;
 
 import javax.inject.Inject;
@@ -45,5 +46,9 @@ public class PostDetailViewModel extends ViewModel {
         public void onError(Throwable e) {
             Log.e(TAG, "Oh no.", e);
         }
+    }
+
+    public boolean shouldShowPostCard(Post post) {
+        return !post.getData().getSelfText().trim().isEmpty();
     }
 }
