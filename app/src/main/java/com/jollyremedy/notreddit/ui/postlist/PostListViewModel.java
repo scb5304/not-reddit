@@ -83,6 +83,7 @@ public class PostListViewModel extends ViewModel {
     /// --------------------------------------
 
     private void onNewPostListingReceived(FetchMode fetchMode, @NonNull PostListing newPostListing) {
+        Log.i(TAG, "Got a post listing.");
         PostListing priorListing = mListingLiveData.getValue();
         if (priorListing == null || fetchMode == FetchMode.START_FRESH) {
             //We didn't have data, or we're starting over; post the fetched ListingResponse.
@@ -104,7 +105,11 @@ public class PostListViewModel extends ViewModel {
         mDataBindIsRefreshing.set(false);
     }
 
-    private void onPostListingFetchError() {
+    private void onPostListingFetchError(Throwable t) {
+        Log.e(TAG, "Failed to get a post listing!", t);
+        if (t instanceof UnknownHostException) {
+            Log.e(TAG, Log.getStackTraceString(t));
+        }
         mDataBindIsRefreshing.set(false);
     }
 
@@ -124,17 +129,12 @@ public class PostListViewModel extends ViewModel {
 
         @Override
         public void onSuccess(PostListing listingResponse) {
-            Log.i(TAG, "Got a post listing.");
             onNewPostListingReceived(mFetchMode, listingResponse);
         }
 
         @Override
-        public void onError(Throwable e) {
-            Log.e(TAG, "Failed to get a post listing!", e);
-            if (e instanceof UnknownHostException) {
-                Log.e(TAG, Log.getStackTraceString(e));
-            }
-            onPostListingFetchError();
+        public void onError(Throwable t) {
+            onPostListingFetchError(t);
         }
     }
 }

@@ -16,7 +16,7 @@
 
 package com.jollyremedy.notreddit.di;
 
-import com.jollyremedy.notreddit.MainActivity;
+import com.jollyremedy.notreddit.ui.main.MainActivity;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;

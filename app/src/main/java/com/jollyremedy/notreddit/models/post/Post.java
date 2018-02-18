@@ -7,6 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import com.jollyremedy.notreddit.models.parent.RedditType;
 
 public class Post extends RedditType implements Parcelable {
+
     @SerializedName("data")
     private PostData data;
 
