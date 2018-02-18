@@ -17,13 +17,14 @@ import com.jollyremedy.notreddit.databinding.FragmentPostDetailBinding;
 import com.jollyremedy.notreddit.di.auto.Injectable;
 import com.jollyremedy.notreddit.models.comment.PostWithCommentListing;
 import com.jollyremedy.notreddit.models.post.Post;
+import com.jollyremedy.notreddit.ui.UpNavigationFragment;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PostDetailFragment extends Fragment implements Injectable {
+public class PostDetailFragment extends Fragment implements Injectable, UpNavigationFragment {
 
     @BindView(R.id.post_detail_post_body)
     TextView mTextView;

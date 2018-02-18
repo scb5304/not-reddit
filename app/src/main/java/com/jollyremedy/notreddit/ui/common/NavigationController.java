@@ -1,29 +1,33 @@
 package com.jollyremedy.notreddit.ui.common;
 
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import com.jollyremedy.notreddit.MainActivity;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.models.post.Post;
+import com.jollyremedy.notreddit.ui.DrawerFragment;
 import com.jollyremedy.notreddit.ui.postdetail.PostDetailFragment;
 import com.jollyremedy.notreddit.ui.postlist.PostListFragment;
 
 import javax.inject.Inject;
 
 public class NavigationController {
+    private MainActivity mMainActivity;
     private final int mContainerId;
     private final FragmentManager mFragmentManager;
-    private static final String TEST_SUBREDDIT_NAME = "leagueoflegends";
 
     @Inject
     public NavigationController(MainActivity mainActivity) {
+        mMainActivity = mainActivity;
         mContainerId = R.id.fragment_container;
         mFragmentManager = mainActivity.getSupportFragmentManager();
+        mFragmentManager.registerFragmentLifecycleCallbacks(new MainActivityFragmentLifecycleListener(), false);
     }
 
     public void navigateToPostList(@NonNull String subreddit) {
-        PostListFragment fragment = PostListFragment.newInstance(TEST_SUBREDDIT_NAME);
+        PostListFragment fragment = PostListFragment.newInstance(subreddit);
         mFragmentManager.beginTransaction().replace(mContainerId, fragment, PostListFragment.TAG)
                 .commit();
     }
@@ -33,5 +37,22 @@ public class NavigationController {
         mFragmentManager.beginTransaction().replace(mContainerId, fragment, PostDetailFragment.TAG)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    /**
+     * Appropriately displays the up-navigation arrow or the drawer icon depending on the fragment
+     * being resumed.
+     */
+    @SuppressWarnings("ConstantConditions")
+    private class MainActivityFragmentLifecycleListener extends FragmentManager.FragmentLifecycleCallbacks {
+        @Override
+        public void onFragmentResumed(FragmentManager fm, Fragment f) {
+            super.onFragmentResumed(fm, f);
+            if (f instanceof DrawerFragment) {
+                mMainActivity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.hamburger);
+            } else {
+                mMainActivity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.arrow_left);
+            }
+        }
     }
 }

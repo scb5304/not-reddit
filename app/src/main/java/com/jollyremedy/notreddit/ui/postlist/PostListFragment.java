@@ -16,7 +16,9 @@ import com.google.gson.Gson;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.databinding.FragmentPostListBinding;
 import com.jollyremedy.notreddit.di.auto.Injectable;
+import com.jollyremedy.notreddit.ui.DrawerFragment;
 import com.jollyremedy.notreddit.ui.EndlessRecyclerViewScrollListener;
+import com.jollyremedy.notreddit.ui.UpNavigationFragment;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
 
 import javax.inject.Inject;
@@ -24,7 +26,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PostListFragment extends Fragment implements Injectable {
+public class PostListFragment extends Fragment implements Injectable, DrawerFragment {
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
