@@ -1,6 +1,5 @@
 package com.jollyremedy.notreddit.ui.postdetail;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -11,11 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.common.base.Preconditions;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.databinding.FragmentPostDetailBinding;
 import com.jollyremedy.notreddit.di.auto.Injectable;
-import com.jollyremedy.notreddit.models.comment.PostWithCommentListing;
 import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.ui.UpNavigationFragment;
 
@@ -25,9 +22,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PostDetailFragment extends Fragment implements Injectable, UpNavigationFragment {
-
-    @BindView(R.id.post_detail_post_body)
-    TextView mTextView;
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
@@ -54,12 +48,6 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
-    }
-
-    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(PostDetailViewModel.class);
@@ -69,14 +57,12 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
 
     private void subscribeUi() {
         Post post = getArguments().getParcelable(EXTRA_POST);
-        Preconditions.checkNotNull(post);
-        Preconditions.checkNotNull(post.getData());
+        mBinding.postDetailPostItem.setPost(post);
 
-        mViewModel.getObservablePostWithComments(post.getData().getId()).observe(this, new Observer<PostWithCommentListing>() {
-            @Override
-            public void onChanged(@Nullable PostWithCommentListing postWithCommentListing) {
-                mBinding.setPost(postWithCommentListing.getPostListing().getData().getPosts().get(0));
-            }
+        //TODO: Is this okay to do in-line?
+        mBinding.postDetailPostItem.itemPostSubreddit.setVisibility(View.GONE);
+        mViewModel.getObservablePostWithComments(post.getData().getId()).observe(this, postWithCommentListing -> {
+            mBinding.setPost(postWithCommentListing.getPostListing().getData().getPosts().get(0));
         });
     }
 }

@@ -20,7 +20,7 @@
         android:layout_marginBottom="1.5dp"
         android:orientation="vertical"
         app:cardCornerRadius="0dp"
-        app:cardElevation="8dp">
+        app:cardElevation="2dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -112,18 +112,18 @@
             <!-- Bottom row -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="34dp"
+                android:layout_height="36dp"
                 android:background="@color/secondary_background_gray"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingEnd="@dimen/default_gap">
 
                 <ImageView
-                    android:clickable="true"
-                    android:focusable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginTop="-2dp"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center_vertical"
                     android:src="@drawable/upvote" />
 
@@ -131,16 +131,18 @@
                     android:id="@+id/item_post_score"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center_vertical"
                     android:text="@{post.data.score}"
                     tools:text="10009" />
 
                 <ImageView
-                    android:clickable="true"
-                    android:focusable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="-2dp"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center_vertical"
                     android:src="@drawable/downvote" />
 

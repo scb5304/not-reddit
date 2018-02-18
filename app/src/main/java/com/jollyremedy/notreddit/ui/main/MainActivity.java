@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     private void initDrawer() {
         mDrawerNavigationView.setNavigationItemSelectedListener(item -> {
             mNavigationController.navigateToPostList(item.getTitle().toString());
+            mDrawerLayout.closeDrawer(Gravity.START);
             return true;
         });
     }
