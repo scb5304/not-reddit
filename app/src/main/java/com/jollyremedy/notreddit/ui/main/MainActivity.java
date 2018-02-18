@@ -1,6 +1,5 @@
 package com.jollyremedy.notreddit.ui.main;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -12,14 +11,12 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.models.subreddit.Subreddit;
-import com.jollyremedy.notreddit.models.subreddit.SubredditListing;
 import com.jollyremedy.notreddit.ui.DrawerFragment;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
 
@@ -56,26 +53,17 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
+        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        mDrawerNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                //FIXME: This is ugly just to get basic functionality
-                mNavigationController.navigateToPostList(item.getTitle().toString());
-                mDrawerLayout.closeDrawer(Gravity.START);
-                return true;
-            }
-        });
-        initToolbar();
+
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MainViewModel.class);
+        initDrawer();
+        initToolbar();
         subscribeUi();
 
-        // Add post list fragment if this is first creation
         if (savedInstanceState == null) {
-            mNavigationController.navigateToPostList("leagueoflegends");
+            mNavigationController.navigateToPostList("");
         }
     }
 
@@ -93,21 +81,20 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public AndroidInjector<Fragment> supportFragmentInjector() {
-        return mFragmentDispatchingAndroidInjector;
+    private void subscribeUi() {
+        mViewModel.getObservableSubredditListing().observe(this, subredditListing -> {
+            Menu menu = mDrawerNavigationView.getMenu();
+            List<Subreddit> subreddits = subredditListing.getData().getSubreddits();
+            for (Subreddit subreddit : subreddits) {
+                menu.add(subreddit.getData().getDisplayName());
+            }
+        });
     }
 
-    private void subscribeUi() {
-        mViewModel.getObservableSubredditListing().observe(this, new Observer<SubredditListing>() {
-            @Override
-            public void onChanged(@Nullable SubredditListing subredditListing) {
-                Menu menu = mDrawerNavigationView.getMenu();
-                List<Subreddit> subreddits = subredditListing.getData().getSubreddits();
-                for (Subreddit subreddit : subreddits) {
-                    menu.add(subreddit.getData().getDisplayName());
-                }
-            }
+    private void initDrawer() {
+        mDrawerNavigationView.setNavigationItemSelectedListener(item -> {
+            mNavigationController.navigateToPostList(item.getTitle().toString());
+            return true;
         });
     }
 
@@ -125,5 +112,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             }
         }
         return false;
+    }
+
+    @Override
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return mFragmentDispatchingAndroidInjector;
     }
 }

@@ -11,8 +11,10 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface OAuthRedditApi {
-    @GET("/r/{subredditName}?&raw_json=1")
-    Single<PostListing> getPostsBySubreddit(@Path("subredditName") String subredditName,
+
+    @GET("{subredditName}/{sort}?&raw_json=1")
+    Single<PostListing> getPostsBySubreddit(@Path(value = "subredditName", encoded = true) String subredditName,
+                                            @Path("sort") String sort,
                                             @Query("after") String after);
 
     @GET("/comments/{postId}?threaded&raw_json=1")

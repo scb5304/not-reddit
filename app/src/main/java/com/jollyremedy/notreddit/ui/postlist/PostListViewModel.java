@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.jollyremedy.notreddit.models.post.PostListing;
 import com.jollyremedy.notreddit.models.post.PostListingData;
+import com.jollyremedy.notreddit.models.post.PostListingSort;
 import com.jollyremedy.notreddit.repository.PostRepository;
 
 import java.net.UnknownHostException;
@@ -46,7 +47,10 @@ public class PostListViewModel extends ViewModel {
     LiveData<PostListing> getObservableListing(String subredditName) {
         mSubredditName = subredditName;
         if (mListingLiveData.getValue() == null) {
-            mPostRepository.getHotPosts(new ListingResponseFetchObserver(FetchMode.START_FRESH), mSubredditName, getCurrentAfter());
+            mPostRepository.getPostListing(new ListingResponseFetchObserver(FetchMode.START_FRESH),
+                    mSubredditName,
+                    PostListingSort.HOT,
+                    getCurrentAfter());
         }
         return mListingLiveData;
     }
@@ -56,7 +60,10 @@ public class PostListViewModel extends ViewModel {
     }
 
     void onLoadMore() {
-        mPostRepository.getHotPosts(new ListingResponseFetchObserver(FetchMode.ADD_TO_EXISTING_POSTS), mSubredditName, getCurrentAfter());
+        mPostRepository.getPostListing(new ListingResponseFetchObserver(FetchMode.ADD_TO_EXISTING_POSTS),
+                mSubredditName,
+                PostListingSort.HOT,
+                getCurrentAfter());
     }
 
     @Nullable
@@ -73,7 +80,10 @@ public class PostListViewModel extends ViewModel {
     // --------------------------------------
 
     public void onRefresh() {
-        mPostRepository.getHotPosts(new ListingResponseFetchObserver(FetchMode.START_FRESH), mSubredditName, null);
+        mPostRepository.getPostListing(new ListingResponseFetchObserver(FetchMode.START_FRESH),
+                mSubredditName,
+                PostListingSort.HOT,
+                null);
     }
 
     public ObservableBoolean isRefreshing() {

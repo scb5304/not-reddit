@@ -58,7 +58,7 @@ public class PostListViewModelTest {
     public void constructingViewModel_callsRepoToGetsNewPosts() {
         mPostListViewModel = new PostListViewModel(mPostRepository);
         mPostListViewModel.getObservableListing("all").observeForever(mock(Observer.class));
-        verify(mPostRepository).getHotPosts(any(SingleObserver.class), any(), any());
+        verify(mPostRepository).getPostListing(any(SingleObserver.class), any(), any(), any());
     }
 
     @Test
@@ -82,7 +82,7 @@ public class PostListViewModelTest {
         ArgumentCaptor<ListingResponseFetchObserver> captor = ArgumentCaptor.forClass(ListingResponseFetchObserver.class);
 
         mPostListViewModel.onRefresh();
-        verify(mPostRepository).getHotPosts(captor.capture(), any(), any());
+        verify(mPostRepository).getPostListing(captor.capture(), any(), any(), any());
         assertThat(captor.getValue().mFetchMode, is(PostListViewModel.FetchMode.START_FRESH));
     }
 
@@ -93,7 +93,7 @@ public class PostListViewModelTest {
         ArgumentCaptor<ListingResponseFetchObserver> captor = ArgumentCaptor.forClass(ListingResponseFetchObserver.class);
 
         mPostListViewModel.onLoadMore();
-        verify(mPostRepository).getHotPosts(captor.capture(), any(), any());
+        verify(mPostRepository).getPostListing(captor.capture(), any(), any(), any());
         assertThat(captor.getValue().mFetchMode, is(PostListViewModel.FetchMode.ADD_TO_EXISTING_POSTS));
     }
 }
