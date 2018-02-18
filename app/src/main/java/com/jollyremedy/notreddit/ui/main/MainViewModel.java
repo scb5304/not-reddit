@@ -57,6 +57,7 @@ public class MainViewModel extends ViewModel {
 
     private void onSubredditListingReceived(SubredditListing subredditListing) {
         Log.i(TAG, "Got a subreddit listing. " + new Gson().toJson(subredditListing));
+        mListingLiveData.postValue(subredditListing);
     }
 
     private void onSubredditListingFetchError(Throwable t) {

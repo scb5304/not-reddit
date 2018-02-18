@@ -4,16 +4,21 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.jollyremedy.notreddit.R;
+import com.jollyremedy.notreddit.models.subreddit.Subreddit;
 import com.jollyremedy.notreddit.models.subreddit.SubredditListing;
 import com.jollyremedy.notreddit.ui.DrawerFragment;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
@@ -33,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @BindView(R.id.activity_main_toolbar) Toolbar mToolbar;
     @BindView(R.id.activity_main_drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.activity_main_drawer_navigation_view) NavigationView mDrawerNavigationView;
 
     @Inject
     DispatchingAndroidInjector<Fragment> mFragmentDispatchingAndroidInjector;
@@ -53,6 +59,16 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        mDrawerNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                //FIXME: This is ugly just to get basic functionality
+                mNavigationController.navigateToPostList(item.getTitle().toString());
+                mDrawerLayout.closeDrawer(Gravity.START);
+                return true;
+            }
+        });
         initToolbar();
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MainViewModel.class);
         subscribeUi();
@@ -86,7 +102,11 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         mViewModel.getObservableSubredditListing().observe(this, new Observer<SubredditListing>() {
             @Override
             public void onChanged(@Nullable SubredditListing subredditListing) {
-                Log.wtf(TAG, "It changed.");
+                Menu menu = mDrawerNavigationView.getMenu();
+                List<Subreddit> subreddits = subredditListing.getData().getSubreddits();
+                for (Subreddit subreddit : subreddits) {
+                    menu.add(subreddit.getData().getDisplayName());
+                }
             }
         });
     }

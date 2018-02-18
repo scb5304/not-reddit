@@ -12,7 +12,7 @@ public class SubredditListing extends RedditType {
     private SubredditListingData data;
 
     @Override
-    public Object getData() {
+    public SubredditListingData getData() {
         return data;
     }
 
