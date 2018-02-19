@@ -4,12 +4,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.jollyremedy.notreddit.databinding.ItemCommentBinding;
 import com.jollyremedy.notreddit.databinding.ItemPostBinding;
 import com.jollyremedy.notreddit.models.comment.Comment;
 import com.jollyremedy.notreddit.models.comment.CommentListing;
+import com.jollyremedy.notreddit.models.parent.RedditType;
 import com.jollyremedy.notreddit.models.post.Post;
+import com.jollyremedy.notreddit.util.NotRedditViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +57,18 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
         public void bind(Comment comment) {
             binding.setComment(comment);
+            ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) binding.itemCommentParent.getLayoutParams();
+            float marginLeft = NotRedditViewUtils.convertDpToPixel(comment.getData().getDepth() * 12);
+            layoutParams.setMargins((int) marginLeft, layoutParams.topMargin, layoutParams.rightMargin, layoutParams.bottomMargin);
+
+            if (comment.getKind() == RedditType.Kind.MORE) {
+                binding.itemCommentCard.setVisibility(View.GONE);
+                binding.itemCommentMoreTextView.setVisibility(View.VISIBLE);
+            } else {
+                binding.itemCommentCard.setVisibility(View.VISIBLE);
+                binding.itemCommentMoreTextView.setVisibility(View.GONE);
+
+            }
             binding.executePendingBindings();
         }
     }

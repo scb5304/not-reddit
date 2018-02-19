@@ -15,6 +15,7 @@ public abstract class RedditType implements Parcelable {
     @SuppressWarnings("unused")
     public enum Kind {
         @SerializedName("Listing") LISTING,
+        @SerializedName("more") MORE,
         @SerializedName("t1") COMMENT,
         @SerializedName("t2") ACCOUNT,
         @SerializedName("t3") LINK,

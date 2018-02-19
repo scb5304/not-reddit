@@ -17,7 +17,7 @@ public interface OAuthRedditApi {
                                             @Path("sort") String sort,
                                             @Query("after") String after);
 
-    @GET("/comments/{postId}?threaded&raw_json=1")
+    @GET("/comments/{postId}?threaded=false&raw_json=1")
     Single<PostWithCommentListing> getCommentListing(@Path("postId") String postId);
 
     @GET("/subreddits/{where}")
