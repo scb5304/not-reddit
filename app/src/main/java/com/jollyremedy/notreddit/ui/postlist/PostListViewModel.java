@@ -109,6 +109,7 @@ public class PostListViewModel extends ViewModel {
             } else {
                 priorListingData.setPosts(newListingData.getPosts());
             }
+            priorListing.getData().setAfter(newListingData.getAfter());
             mListingLiveData.postValue(priorListing);
             mEndlessScrollResetLiveData.postValue(false);
         }

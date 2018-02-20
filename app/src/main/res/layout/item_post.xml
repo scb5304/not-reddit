@@ -41,13 +41,14 @@
 
                 <!-- Thumbnail -->
                 <ImageView
+                    app:imageUrl="@{post.data.thumbnail}"
                     android:id="@+id/item_post_image"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
-                    android:maxWidth="65dp"
+                    android:maxWidth="69dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/test_reddit_image" />
+                    tools:src="@drawable/test_reddit_image" />
 
                 <!-- Title -->
                 <TextView
@@ -85,10 +86,10 @@
 
                     <!-- Comment bubble -->
                     <ImageView
+                        android:layout_centerInParent="true"
                         android:id="@+id/item_post_comment_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:layout_marginBottom="@dimen/default_gap"
                         android:paddingBottom="2dp"
                         android:src="@drawable/comment_multiple_outline" />

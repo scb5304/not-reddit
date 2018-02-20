@@ -31,6 +31,9 @@ public class PostData implements Parcelable {
     @SerializedName("score")
     private String score;
 
+    @SerializedName("thumbnail")
+    private String thumbnail;
+
     public String getId() {
         return id;
     }
@@ -63,6 +66,10 @@ public class PostData implements Parcelable {
         return score;
     }
 
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
     private PostData(Parcel in) {
         id = in.readString();
         title = in.readString();
@@ -72,6 +79,7 @@ public class PostData implements Parcelable {
         subreddit = in.readString();
         commentCount = in.readByte() == 0x00 ? null : in.readInt();
         score = in.readString();
+        thumbnail = in.readString();
     }
 
     @Override
@@ -94,6 +102,7 @@ public class PostData implements Parcelable {
             dest.writeInt(commentCount);
         }
         dest.writeString(score);
+        dest.writeString(thumbnail);
     }
 
     @SuppressWarnings("unused")
