@@ -32,22 +32,23 @@
             android:orientation="vertical">
 
             <!-- Top row -->
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:minHeight="70dp"
                 android:orientation="horizontal">
 
                 <!-- Thumbnail -->
                 <ImageView
-                    app:imageUrl="@{post.data.thumbnail}"
                     android:id="@+id/item_post_image"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
                     android:adjustViewBounds="true"
                     android:maxWidth="69dp"
                     android:scaleType="fitCenter"
+                    app:imageUrl="@{post.data.thumbnail}"
                     tools:src="@drawable/test_reddit_image" />
 
                 <!-- Title -->
@@ -55,8 +56,10 @@
                     android:id="@+id/item_post_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:layout_marginStart="12dp"
-                    android:maxWidth="220dp"
+                    android:layout_toEndOf="@id/item_post_image"
+                    android:layout_toStartOf="@+id/item_post_comment_views_wrapper"
                     android:paddingBottom="@dimen/default_gap"
                     android:paddingTop="@dimen/default_gap"
                     android:text="@{post.data.title}"
@@ -65,18 +68,19 @@
                     android:textSize="15sp"
                     android:textStyle="bold"
                     tools:ignore="RtlSymmetry"
-                    tools:text="My test post title test post title test post title test post title test post title" />
-
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+                    tools:text="My test post title" />
 
                 <!-- Comment bubble/count wrapper -->
                 <RelativeLayout
+                    android:layout_marginTop="-16dp"
+                    android:layout_marginBottom="-16dp"
                     android:id="@+id/item_post_comment_views_wrapper"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/item_post_title"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignTop="@id/item_post_title"
+                    android:layout_centerVertical="true"
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
@@ -86,10 +90,10 @@
 
                     <!-- Comment bubble -->
                     <ImageView
-                        android:layout_centerInParent="true"
                         android:id="@+id/item_post_comment_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
                         android:layout_marginBottom="@dimen/default_gap"
                         android:paddingBottom="2dp"
                         android:src="@drawable/comment_multiple_outline" />
@@ -108,7 +112,7 @@
                         tools:text="230" />
                 </RelativeLayout>
 
-            </LinearLayout>
+            </RelativeLayout>
 
             <!-- Bottom row -->
             <LinearLayout
