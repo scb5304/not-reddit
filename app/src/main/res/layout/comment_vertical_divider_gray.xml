@@ -2,4 +2,4 @@
     android:layout_width=".35dp"
     android:layout_height="match_parent"
     android:layout_marginStart="10dp"
-    android:background="@color/accent" />
+    android:background="@android:color/darker_gray" />

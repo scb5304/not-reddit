@@ -1,6 +1,7 @@
 package com.jollyremedy.notreddit.ui.postdetail;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,7 +61,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
         public void bind(Comment comment) {
             binding.setComment(comment);
-            fillVerticalLinesForComment(binding.itemCommentParent, comment);
+            fillVerticalLinesForComment(binding.itemCommentRoot, comment);
 
             if (comment.getKind() == RedditType.Kind.MORE) {
                 binding.itemCommentActualContent.setVisibility(View.GONE);
@@ -74,7 +75,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         }
     }
 
-    private void fillVerticalLinesForComment(LinearLayout commentLayout, Comment comment) {
+    private void fillVerticalLinesForComment(ViewGroup commentLayout, Comment comment) {
         int offset = Utility.isEven(comment.getData().getDepth()) ? 1 : 0;
 
         for (int i = 0; i < comment.getData().getDepth(); i++) {

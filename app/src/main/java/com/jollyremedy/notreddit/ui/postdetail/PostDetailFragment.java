@@ -88,9 +88,6 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
         Post post = getArguments().getParcelable(EXTRA_POST);
         mBinding.postDetailPostItem.setPost(post);
         mBinding.setPostDetailViewModel(mViewModel);
-
-        //TODO: Is this okay to do in-line?
-        mBinding.postDetailPostItem.itemPostSubreddit.setVisibility(View.GONE);
         mViewModel.getObservablePostWithComments(post.getData().getId()).observe(this, postWithCommentListing -> {
             mBinding.setPost(postWithCommentListing.getPostListing().getData().getPosts().get(0));
             mCommentAdapter.updateData(getActivity(), postWithCommentListing.getCommentListing().getData().getComments());

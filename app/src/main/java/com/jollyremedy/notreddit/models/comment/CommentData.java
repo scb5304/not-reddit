@@ -6,8 +6,10 @@ import android.os.Parcelable;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.jollyremedy.notreddit.api.adapter.EmptyStringAsNullTypeAdapter;
+import com.jollyremedy.notreddit.models.comment.CommentListing;
 import com.jollyremedy.notreddit.models.parent.RedditType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommentData implements Parcelable {
@@ -36,6 +38,9 @@ public class CommentData implements Parcelable {
 
     @SerializedName("count")
     private Integer moreCount;
+
+    @SerializedName("score")
+    private Integer points;
 
     @SerializedName("children")
     private List<String> children;
@@ -80,12 +85,25 @@ public class CommentData implements Parcelable {
         return depth;
     }
 
-    private CommentData(Parcel in) {
+    public Integer getPoints() {
+        return points;
+    }
+
+    protected CommentData(Parcel in) {
+        replies = (CommentListing) in.readValue(CommentListing.class.getClassLoader());
         author = in.readString();
         body = in.readString();
         bodyHtml = in.readString();
-        replies = (CommentListing) in.readValue(CommentListing.class.getClassLoader());
+        fullName = in.readString();
         depth = in.readByte() == 0x00 ? null : in.readInt();
+        moreCount = in.readByte() == 0x00 ? null : in.readInt();
+        points = in.readByte() == 0x00 ? null : in.readInt();
+        if (in.readByte() == 0x01) {
+            children = new ArrayList<String>();
+            in.readList(children, String.class.getClassLoader());
+        } else {
+            children = null;
+        }
     }
 
     @Override
@@ -95,15 +113,34 @@ public class CommentData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(replies);
         dest.writeString(author);
         dest.writeString(body);
         dest.writeString(bodyHtml);
-        dest.writeValue(replies);
+        dest.writeString(fullName);
         if (depth == null) {
             dest.writeByte((byte) (0x00));
         } else {
             dest.writeByte((byte) (0x01));
             dest.writeInt(depth);
+        }
+        if (moreCount == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeInt(moreCount);
+        }
+        if (points == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeInt(points);
+        }
+        if (children == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(children);
         }
     }
 
