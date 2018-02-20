@@ -15,4 +15,8 @@ public class Utility {
         Scanner s = new Scanner(ins).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
+
+    public static boolean isEven (int integer) {
+        return integer % 2 == 0;
+    }
 }

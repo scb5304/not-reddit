@@ -93,7 +93,7 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
         mBinding.postDetailPostItem.itemPostSubreddit.setVisibility(View.GONE);
         mViewModel.getObservablePostWithComments(post.getData().getId()).observe(this, postWithCommentListing -> {
             mBinding.setPost(postWithCommentListing.getPostListing().getData().getPosts().get(0));
-            mCommentAdapter.updateData(postWithCommentListing.getCommentListing().getData().getComments());
+            mCommentAdapter.updateData(getActivity(), postWithCommentListing.getCommentListing().getData().getComments());
         });
     }
 }
