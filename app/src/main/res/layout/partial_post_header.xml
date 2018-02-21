@@ -16,6 +16,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <include
+            android:id="@+id/post_detail_post_item"
+            layout="@layout/item_post" />
+
         <LinearLayout
             android:gravity="center_vertical"
             android:layout_width="match_parent"

@@ -113,6 +113,7 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
 
         public void bind(Post post) {
             binding.setPost(post);
+            binding.postDetailPostItem.setPost(post);
             binding.executePendingBindings();
         }
     }
