@@ -10,7 +10,7 @@ import com.jollyremedy.notreddit.models.post.Post;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewHolder> {
+public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.SubredditViewHolder> {
 
     private static final String TAG = "PostAdapter";
     private List<Post> mPosts;
@@ -21,7 +21,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.SubredditViewH
         notifyDataSetChanged();
     }
 
-    PostAdapter(PostClickedCallback postClickedCallback) {
+    PostListAdapter(PostClickedCallback postClickedCallback) {
         mPostClickedCallback = postClickedCallback;
         mPosts = new ArrayList<>();
     }

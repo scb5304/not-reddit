@@ -1,12 +1,10 @@
 package com.jollyremedy.notreddit.ui.postdetail;
 
 import android.content.Context;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.databinding.ItemCommentBinding;
@@ -19,12 +17,12 @@ import java.util.List;
 
 import static com.jollyremedy.notreddit.util.Utility.isEven;
 
-public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
+public class PostDetailAdapter extends RecyclerView.Adapter<PostDetailAdapter.CommentViewHolder> {
 
     private List<Comment> mComments;
     private LayoutInflater mLayoutInflater;
 
-    CommentAdapter() {
+    PostDetailAdapter() {
         mComments = new ArrayList<>();
     }
 

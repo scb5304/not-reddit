@@ -19,7 +19,6 @@ import com.jollyremedy.notreddit.databinding.FragmentPostListBinding;
 import com.jollyremedy.notreddit.di.auto.Injectable;
 import com.jollyremedy.notreddit.ui.DrawerFragment;
 import com.jollyremedy.notreddit.ui.EndlessRecyclerViewScrollListener;
-import com.jollyremedy.notreddit.ui.UpNavigationFragment;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
 
 import javax.inject.Inject;
@@ -46,7 +45,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
 
     public static final String TAG = "PostListFragment";
     private static final String EXTRA_SUBREDDIT_NAME = "extra_subreddit_name";
-    private PostAdapter mPostAdapter;
+    private PostListAdapter mPostListAdapter;
     private PostListViewModel mViewModel;
     private EndlessRecyclerViewScrollListener mEndlessScrollListener;
     private FragmentPostListBinding mBinding;
@@ -89,8 +88,8 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     }
 
     private void initRecyclerView() {
-        mPostAdapter = new PostAdapter(post -> mNavigationController.navigateToPostDetail(post));
-        mRecyclerView.setAdapter(mPostAdapter);
+        mPostListAdapter = new PostListAdapter(post -> mNavigationController.navigateToPostDetail(post));
+        mRecyclerView.setAdapter(mPostListAdapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -111,7 +110,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     private void subscribeUi() {
         mViewModel.getObservableListing(getSubredditName()).observe(this, postListing -> {
             if (postListing != null) {
-                mPostAdapter.updateData(postListing.getData().getPosts());
+                mPostListAdapter.updateData(postListing.getData().getPosts());
             }
         });
         mViewModel.observeResetEndlessScroll().observe(this, shouldReset -> {

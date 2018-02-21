@@ -11,15 +11,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.databinding.FragmentPostDetailBinding;
 import com.jollyremedy.notreddit.di.auto.Injectable;
 import com.jollyremedy.notreddit.models.post.Post;
-import com.jollyremedy.notreddit.ui.EndlessRecyclerViewScrollListener;
 import com.jollyremedy.notreddit.ui.UpNavigationFragment;
-import com.jollyremedy.notreddit.ui.postlist.PostAdapter;
 
 import javax.inject.Inject;
 
@@ -42,7 +39,7 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
 
     private PostDetailViewModel mViewModel;
     private FragmentPostDetailBinding mBinding;
-    private CommentAdapter mCommentAdapter;
+    private PostDetailAdapter mPostDetailAdapter;
 
     public static PostDetailFragment newInstance(Post post) {
         PostDetailFragment postDetailFragment = new PostDetailFragment();
@@ -83,8 +80,8 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     }
 
     private void initRecyclerView() {
-        mCommentAdapter = new CommentAdapter();
-        mCommentsRecyclerView.setAdapter(mCommentAdapter);
+        mPostDetailAdapter = new PostDetailAdapter();
+        mCommentsRecyclerView.setAdapter(mPostDetailAdapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mCommentsRecyclerView.setLayoutManager(linearLayoutManager);
@@ -95,7 +92,7 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
         mBinding.setPostDetailViewModel(mViewModel);
         mViewModel.getObservablePostWithComments(getPassedPost().getData().getId()).observe(this, postWithCommentListing -> {
             mBinding.setPost(postWithCommentListing.getPostListing().getData().getPosts().get(0));
-            mCommentAdapter.updateData(getActivity(), postWithCommentListing.getCommentListing().getData().getComments());
+            mPostDetailAdapter.updateData(getActivity(), postWithCommentListing.getCommentListing().getData().getComments());
         });
     }
 
