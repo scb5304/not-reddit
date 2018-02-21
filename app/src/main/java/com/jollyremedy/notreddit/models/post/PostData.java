@@ -3,6 +3,7 @@ package com.jollyremedy.notreddit.models.post;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.common.base.Strings;
 import com.google.gson.annotations.SerializedName;
 
 public class PostData implements Parcelable {
@@ -33,6 +34,10 @@ public class PostData implements Parcelable {
 
     @SerializedName("thumbnail")
     private String thumbnail;
+
+    public boolean hasSelfText() {
+        return !Strings.isNullOrEmpty(selfText);
+    }
 
     public String getId() {
         return id;
