@@ -76,6 +76,12 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
         subscribeUi();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setTitle(getPassedPost().getData().getTitle());
+    }
+
     private void initRecyclerView() {
         mCommentAdapter = new CommentAdapter();
         mCommentsRecyclerView.setAdapter(mCommentAdapter);
@@ -85,12 +91,15 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     }
 
     private void subscribeUi() {
-        Post post = getArguments().getParcelable(EXTRA_POST);
-        mBinding.postDetailPostItem.setPost(post);
+        mBinding.postDetailPostItem.setPost(getPassedPost());
         mBinding.setPostDetailViewModel(mViewModel);
-        mViewModel.getObservablePostWithComments(post.getData().getId()).observe(this, postWithCommentListing -> {
+        mViewModel.getObservablePostWithComments(getPassedPost().getData().getId()).observe(this, postWithCommentListing -> {
             mBinding.setPost(postWithCommentListing.getPostListing().getData().getPosts().get(0));
             mCommentAdapter.updateData(getActivity(), postWithCommentListing.getCommentListing().getData().getComments());
         });
+    }
+
+    private Post getPassedPost() {
+        return getArguments().getParcelable(EXTRA_POST);
     }
 }

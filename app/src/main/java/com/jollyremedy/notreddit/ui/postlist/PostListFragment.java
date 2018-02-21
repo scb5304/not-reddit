@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.databinding.FragmentPostListBinding;
@@ -81,6 +82,12 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         subscribeUi();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshTitle();
+    }
+
     private void initRecyclerView() {
         mPostAdapter = new PostAdapter(post -> mNavigationController.navigateToPostDetail(post));
         mRecyclerView.setAdapter(mPostAdapter);
@@ -102,13 +109,9 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     }
 
     private void subscribeUi() {
-        String subredditName = getArguments().getString(EXTRA_SUBREDDIT_NAME);
-        mViewModel.getObservableListing(subredditName).observe(this, postListing -> {
+        mViewModel.getObservableListing(getSubredditName()).observe(this, postListing -> {
             if (postListing != null) {
                 mPostAdapter.updateData(postListing.getData().getPosts());
-                if (getActivity() != null) {
-                    getActivity().setTitle(subredditName);
-                }
             }
         });
         mViewModel.observeResetEndlessScroll().observe(this, shouldReset -> {
@@ -116,5 +119,13 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
                 mEndlessScrollListener.resetState();
             }
         });
+    }
+
+    private String getSubredditName() {
+        return getArguments().getString(EXTRA_SUBREDDIT_NAME);
+    }
+
+    private void refreshTitle() {
+        getActivity().setTitle(Strings.isNullOrEmpty(getSubredditName()) ? getString(R.string.app_name) : getSubredditName());
     }
 }

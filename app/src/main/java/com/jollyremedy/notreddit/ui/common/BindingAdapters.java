@@ -2,6 +2,7 @@ package com.jollyremedy.notreddit.ui.common;
 
 import android.databinding.BindingAdapter;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.google.common.base.Strings;
@@ -21,7 +22,11 @@ public class BindingAdapters {
 
     @BindingAdapter({"imageUrl"})
     public static void loadImage(ImageView view, String url) {
-        view.setTag(view);
-        Picasso.with(view.getContext()).load(url).into(view);
+        if (!Strings.isNullOrEmpty(url) && !url.equalsIgnoreCase("self")) {
+            view.setTag(view);
+            Picasso.with(view.getContext()).load(url).into(view);
+        } else {
+            view.setVisibility(View.GONE);
+        }
     }
 }
