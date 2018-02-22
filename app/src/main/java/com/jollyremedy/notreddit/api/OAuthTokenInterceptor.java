@@ -6,61 +6,54 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.jollyremedy.notreddit.Constants;
+import com.jollyremedy.notreddit.Constants.SharedPreferenceKeys;
 import com.jollyremedy.notreddit.models.auth.Token;
+import com.jollyremedy.notreddit.repository.TokenRepository;
 
 import java.io.IOException;
 
 import javax.inject.Inject;
+import javax.net.ssl.HttpsURLConnection;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Call;
 
+import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+
 public class OAuthTokenInterceptor implements Interceptor {
     private static final String TAG = "OAuthTokenInterceptor";
     private SharedPreferences mSharedPreferences;
-    private RequestTokenApi mRequestTokenApi;
+    private TokenRepository mTokenRepository;
 
     @Inject
-    public OAuthTokenInterceptor(SharedPreferences sharedPreferences,
-                                 RequestTokenApi requestTokenApi) {
+    public OAuthTokenInterceptor(SharedPreferences sharedPreferences, TokenRepository tokenRepository) {
         mSharedPreferences = sharedPreferences;
-        mRequestTokenApi = requestTokenApi;
+        mTokenRepository = tokenRepository;
     }
 
     @Override
     public Response intercept(final @NonNull Chain chain) throws IOException {
-        Request request = chain.request();
-        String tokenInSharedPref = mSharedPreferences.getString(Constants.SharedPreferenceKeys.TOKEN, null);
+        String tokenInSharedPref = mSharedPreferences.getString(SharedPreferenceKeys.TOKEN, null);
         if (tokenInSharedPref != null) {
-            request = request.newBuilder()
-                    .addHeader("Authorization", "Bearer " + tokenInSharedPref)
-                    .build();
+            Request request = requestWithToken(chain.request(), tokenInSharedPref);
             Response response = chain.proceed(request);
-            if (!response.isSuccessful() && (response.code() == 403 || response.code() == 401)) {
-                Log.w(TAG, "This request failed due to a failed token. Going to get one and try again...");
-                return requestTokenAndAddToRequest(chain);
-            } else {
+            if (!requestRequiresNewToken(response)) {
                 return response;
             }
-        } else {
-            Log.i(TAG, "No token in SharedPreferences, fetching one first...");
-            return requestTokenAndAddToRequest(chain);
         }
+        return requestTokenAndAddToRequest(chain);
     }
 
     private Response requestTokenAndAddToRequest(Chain chain) throws IOException {
-        String newToken = getNewToken();
-
+        String newToken = getNewAccessToken();
         if (newToken != null) {
             mSharedPreferences.edit()
-                    .putString(Constants.SharedPreferenceKeys.TOKEN, newToken)
+                    .putString(SharedPreferenceKeys.TOKEN, newToken)
                     .apply();
-            Log.i(TAG, "Got a token! " + newToken);
-            Request request = chain.request().newBuilder()
-                    .addHeader("Authorization", "Bearer " + newToken)
-                    .build();
+            Request request = requestWithToken(chain.request(), newToken);
             return chain.proceed(request);
         } else {
             return chain.proceed(chain.request());
@@ -68,20 +61,31 @@ public class OAuthTokenInterceptor implements Interceptor {
     }
 
     @Nullable
-    private String getNewToken() throws IOException {
-        Call<Token> tokenCall = mRequestTokenApi.getToken(AuthConstants.AUTH_GRANT_TYPE, mSharedPreferences.getString("device_id", ""));
-        retrofit2.Response<Token> tokenResponse = tokenCall.execute();
+    private String getNewAccessToken() throws IOException {
         String accessToken = null;
+        String deviceId = mSharedPreferences.getString(SharedPreferenceKeys.DEVICE_ID, null);
+        Token token = mTokenRepository.getTokenSync(deviceId);
 
-        if (tokenResponse.isSuccessful()) {
-            Token token = tokenResponse.body();
-            if (token != null) {
-                accessToken = token.getAccessToken();
-            }
+        if (token == null) {
+            Log.e(TAG, "Failed to get a new token when intercepting a request.");
         } else {
-            Log.e(TAG, "Failed to get a token! " + tokenResponse.errorBody());
+            accessToken = token.getAccessToken();
         }
-
         return accessToken;
+    }
+
+    private Request requestWithToken(Request request, String token) {
+        return request.newBuilder()
+                .addHeader("Authorization", "Bearer " + token)
+                .build();
+    }
+
+    private boolean requestRequiresNewToken(Response responseFromInitialRequest) {
+        //noinspection SimplifiableIfStatement
+        if (responseFromInitialRequest.isSuccessful()) {
+            return false;
+        } else {
+            return responseFromInitialRequest.code() == HTTP_FORBIDDEN || responseFromInitialRequest.code() == HTTP_UNAUTHORIZED;
+        }
     }
 }

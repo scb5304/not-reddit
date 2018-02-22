@@ -29,6 +29,7 @@ import com.jollyremedy.notreddit.api.OAuthTokenInterceptor;
 import com.jollyremedy.notreddit.api.RequestTokenApi;
 import com.jollyremedy.notreddit.api.RequestTokenInterceptor;
 import com.jollyremedy.notreddit.di.viewmodel.ViewModelModule;
+import com.jollyremedy.notreddit.repository.TokenRepository;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -117,10 +118,10 @@ class AppModule {
     @Named("oauth")
     OkHttpClient provideOAuthOkHttpClient(HttpLoggingInterceptor httpLoggingInterceptor,
                                           SharedPreferences sharedPreferences,
-                                          RequestTokenApi requestTokenApi) {
+                                          TokenRepository tokenRepository) {
         return new OkHttpClient.Builder()
                 .addNetworkInterceptor(httpLoggingInterceptor)
-                .addInterceptor(new OAuthTokenInterceptor(sharedPreferences, requestTokenApi))
+                .addInterceptor(new OAuthTokenInterceptor(sharedPreferences, tokenRepository))
                 .build();
     }
 
