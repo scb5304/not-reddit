@@ -26,7 +26,7 @@ public class BindingAdapters {
             view.setTag(view);
             Picasso.with(view.getContext()).load(url).into(view);
         } else {
-            view.setVisibility(View.GONE);
+            view.setVisibility(View.INVISIBLE);
         }
     }
 }
