@@ -17,9 +17,13 @@ import com.google.gson.Gson;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.databinding.FragmentPostListBinding;
 import com.jollyremedy.notreddit.di.auto.Injectable;
+import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.ui.DrawerFragment;
 import com.jollyremedy.notreddit.ui.EndlessRecyclerViewScrollListener;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -110,7 +114,11 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     private void subscribeUi() {
         mViewModel.getObservableListing(getSubredditName()).observe(this, postListing -> {
             if (postListing != null) {
-                mPostListAdapter.updateData(postListing.getData().getPosts());
+                List<Post> posts = postListing.getData().getPosts();
+                for (Post post : posts) {
+                    Picasso.with(getActivity()).load(post.getData().getThumbnail()).fetch();
+                }
+                mPostListAdapter.updateData(posts);
             }
         });
         mViewModel.observeResetEndlessScroll().observe(this, shouldReset -> {
