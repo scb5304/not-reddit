@@ -49,10 +49,11 @@ public class OAuthTokenInterceptor implements Interceptor {
 
     private Response requestTokenAndAddToRequest(Chain chain) throws IOException {
         String newToken = getNewAccessToken();
+        mSharedPreferences.edit()
+                .putString(SharedPreferenceKeys.TOKEN, newToken)
+                .apply();
+
         if (newToken != null) {
-            mSharedPreferences.edit()
-                    .putString(SharedPreferenceKeys.TOKEN, newToken)
-                    .apply();
             Request request = requestWithToken(chain.request(), newToken);
             return chain.proceed(request);
         } else {

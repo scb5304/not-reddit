@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: "jacoco"
 
 def clientPropsFile = rootProject.file("client.properties")
 def clientProperties = new Properties()
@@ -27,9 +26,6 @@ android {
         buildConfigField "String", "CLIENT_ID", "\"" + clientProperties['CLIENT_ID'] + "\""
     }
     buildTypes {
-        debug {
-            testCoverageEnabled true
-        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
