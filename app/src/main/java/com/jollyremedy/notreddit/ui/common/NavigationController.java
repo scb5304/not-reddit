@@ -35,7 +35,6 @@ public class NavigationController {
     public void navigateToPostDetail(@NonNull Post post) {
         PostDetailFragment fragment = PostDetailFragment.newInstance(post);
         mFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
                 .replace(mContainerId, fragment, PostDetailFragment.TAG)
                 .addToBackStack(null)
                 .commit();
