@@ -71,8 +71,6 @@
 
                 <!-- Comment bubble/count wrapper -->
                 <RelativeLayout
-                    android:layout_marginTop="-16dp"
-                    android:layout_marginBottom="-16dp"
                     android:id="@+id/item_post_comment_views_wrapper"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -80,6 +78,8 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignTop="@id/item_post_title"
                     android:layout_centerVertical="true"
+                    android:layout_marginBottom="-16dp"
+                    android:layout_marginTop="-16dp"
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
@@ -179,7 +179,7 @@
                     android:paddingStart="@dimen/default_gap"
                     android:text="@{post.data.subreddit}"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@color/accent"
+                    android:textColor="@android:color/black"
                     android:textSize="12sp"
                     tools:text="leagueoflegends" />
 

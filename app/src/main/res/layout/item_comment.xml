@@ -35,13 +35,11 @@
                 android:layout_marginStart="@dimen/default_gap"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingEnd="@dimen/default_gap"
+                android:paddingTop="@dimen/default_gap"
                 android:visibility="@{dataProvider.commentTopLineVisible ? View.VISIBLE : View.GONE}">
 
                 <!-- Author -->
                 <TextView
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
                     android:id="@+id/item_comment_author"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
