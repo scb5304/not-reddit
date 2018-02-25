@@ -4,6 +4,7 @@ import android.accounts.AccountManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
@@ -56,6 +57,12 @@ class AppModule {
     @Provides
     Context provideContext(Application application) {
         return application.getApplicationContext();
+    }
+
+    @Singleton
+    @Provides
+    Resources provideResources(Application application) {
+        return application.getResources();
     }
 
     @Singleton

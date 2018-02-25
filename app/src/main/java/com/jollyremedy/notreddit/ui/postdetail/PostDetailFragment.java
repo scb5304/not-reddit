@@ -55,7 +55,6 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        initRecyclerView();
     }
 
     @Override
@@ -63,6 +62,7 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(PostDetailViewModel.class);
         subscribeUi();
+        initRecyclerView();
     }
 
     @Override
@@ -72,7 +72,7 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     }
 
     private void initRecyclerView() {
-        mPostDetailAdapter = new PostDetailAdapter(getActivity(), getPassedPost());
+        mPostDetailAdapter = new PostDetailAdapter(getActivity(), mViewModel, getPassedPost());
         mCommentsRecyclerView.setAdapter(mPostDetailAdapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -80,7 +80,6 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     }
 
     private void subscribeUi() {
-
         mViewModel.getObservablePostWithComments(getPassedPost().getData().getId()).observe(this, postWithCommentListing -> {
             mPostDetailAdapter.setPost(postWithCommentListing.getPostListing().getData().getPosts().get(0));
             mPostDetailAdapter.setComments(postWithCommentListing.getCommentListing().getData().getComments());

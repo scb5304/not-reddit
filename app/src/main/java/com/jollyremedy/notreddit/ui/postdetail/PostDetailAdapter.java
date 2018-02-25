@@ -28,14 +28,14 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
 
     private Post mPost;
     private List<Comment> mComments;
-    private PostDetailBindingDataProvider mDataBindingProvider;
+    private PostDetailViewModel mViewModel;
 
-    PostDetailAdapter(Context context, Post post) {
+    PostDetailAdapter(Context context, PostDetailViewModel viewModel, Post post) {
         mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
         mComments = new ArrayList<>();
         mPost = post;
-        mDataBindingProvider = new PostDetailBindingDataProvider(mContext);
+        mViewModel = viewModel;
     }
 
     public void setPost(Post post) {
@@ -44,7 +44,6 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
 
     public void setComments(List<Comment> comments) {
         mComments = comments;
-        mDataBindingProvider.setAllComments(mComments);
     }
 
     @Override
@@ -96,8 +95,8 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
             Comment currentComment = mComments.get(commentPosition);
             fillVerticalLinesForComment(binding.itemCommentRoot, currentComment);
 
-            mDataBindingProvider.setCurrentCommentPosition(commentPosition);
-            binding.setDataProvider(mDataBindingProvider);
+            binding.setViewModel(mViewModel);
+            binding.setComment(currentComment);
             binding.executePendingBindings();
         }
     }

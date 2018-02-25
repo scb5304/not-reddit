@@ -5,13 +5,18 @@
     <data>
 
         <variable
-            name="dataProvider"
-            type="com.jollyremedy.notreddit.ui.postdetail.PostDetailBindingDataProvider" />
+            name="comment"
+            type="com.jollyremedy.notreddit.models.comment.Comment" />
+
+        <variable
+            name="viewModel"
+            type="com.jollyremedy.notreddit.ui.postdetail.PostDetailViewModel" />
 
         <import type="android.view.View" />
     </data>
 
     <LinearLayout
+        android:onClick="@{() -> viewModel.onCommentClicked(comment)}"
         android:id="@+id/item_comment_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +41,7 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingTop="@dimen/default_gap"
-                android:visibility="@{dataProvider.commentTopLineVisible ? View.VISIBLE : View.GONE}">
+                android:visibility="@{viewModel.isCommentTopLineVisible(comment) ? View.VISIBLE : View.GONE}">
 
                 <!-- Author -->
                 <TextView
@@ -45,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
-                    android:text="@{dataProvider.commentAuthor}"
+                    android:text="@{viewModel.getCommentAuthor(comment)}"
                     android:textAlignment="center"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textColor="@color/primary_dark"
@@ -60,7 +65,7 @@
                     android:id="@+id/item_comment_score"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{dataProvider.commentPointsText}"
+                    android:text="@{viewModel.getCommentPointsText(comment)}"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textSize="12sp"
                     tools:text="250 points" />
@@ -70,7 +75,7 @@
                     android:layout_marginStart="@dimen/default_gap"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{dataProvider.commentTimeSince}"
+                    android:text="@{viewModel.getCommentTimeSince(comment)}"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textSize="12sp"
                     tools:text="5h ago" />
@@ -86,8 +91,8 @@
                 android:paddingStart="8dp"
                 android:paddingTop="4dp"
                 android:textColor="@android:color/black"
-                android:visibility="@{dataProvider.commentBodyVisible ? View.VISIBLE : View.GONE}"
-                app:html="@{dataProvider.commentBody}"
+                android:visibility="@{viewModel.isCommentBodyVisible(comment) ? View.VISIBLE : View.GONE}"
+                app:html="@{viewModel.getCommentBody(comment)}"
                 tools:text="This game is literally the Dark Souls of Monster Hunter 2D platformers." />
 
             <!-- The "MORE" section of the card, only visible in that exact situation -->
@@ -97,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="@dimen/default_gap"
-                android:visibility="@{dataProvider.commentMoreWrapperVisible ? View.VISIBLE : View.GONE}"
+                android:visibility="@{viewModel.isCommentMoreWrapperVisible(comment) ? View.VISIBLE : View.GONE}"
                 tools:visibility="visible">
 
                 <TextView
