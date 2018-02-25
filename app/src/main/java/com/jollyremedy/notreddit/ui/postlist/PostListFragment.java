@@ -115,9 +115,6 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         mViewModel.getObservableListing(getSubredditName()).observe(this, postListing -> {
             if (postListing != null) {
                 List<Post> posts = postListing.getData().getPosts();
-                for (Post post : posts) {
-                    Picasso.with(getActivity()).load(post.getData().getThumbnail()).fetch();
-                }
                 mPostListAdapter.updateData(posts);
             }
         });

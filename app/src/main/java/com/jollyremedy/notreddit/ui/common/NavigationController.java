@@ -1,7 +1,6 @@
 package com.jollyremedy.notreddit.ui.common;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
@@ -35,7 +34,9 @@ public class NavigationController {
 
     public void navigateToPostDetail(@NonNull Post post) {
         PostDetailFragment fragment = PostDetailFragment.newInstance(post);
-        mFragmentManager.beginTransaction().replace(mContainerId, fragment, PostDetailFragment.TAG)
+        mFragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
+                .replace(mContainerId, fragment, PostDetailFragment.TAG)
                 .addToBackStack(null)
                 .commit();
     }

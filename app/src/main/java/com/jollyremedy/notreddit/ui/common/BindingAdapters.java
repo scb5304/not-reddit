@@ -3,7 +3,9 @@ package com.jollyremedy.notreddit.ui.common;
 import android.databinding.BindingAdapter;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.google.common.base.Strings;
 import com.squareup.picasso.Picasso;
@@ -23,10 +25,12 @@ public class BindingAdapters {
     @BindingAdapter({"imageUrl"})
     public static void loadImage(ImageView view, String url) {
         if (!Strings.isNullOrEmpty(url) && !url.equalsIgnoreCase("self")) {
-            view.setTag(view);
             Picasso.with(view.getContext()).load(url).into(view);
+            view.setTag(view);
         } else {
-            view.setVisibility(View.INVISIBLE);
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            layoutParams.width = 0;
+            view.setLayoutParams(layoutParams);
         }
     }
 }
