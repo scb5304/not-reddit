@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
+import android.view.View;
 
 import com.jollyremedy.notreddit.models.comment.PostWithCommentListing;
 import com.jollyremedy.notreddit.models.post.Post;
@@ -15,7 +16,7 @@ import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 
 public class PostDetailViewModel extends ViewModel {
-    private static final String TAG = "PostListViewModel";
+    private static final String TAG = "PostDetailViewModel";
     private CommentRepository mCommentRepository;
     private MutableLiveData<PostWithCommentListing> mPostWithCommentsLiveData;
 
