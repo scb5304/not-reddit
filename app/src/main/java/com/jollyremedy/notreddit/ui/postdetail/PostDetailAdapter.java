@@ -2,7 +2,6 @@ package com.jollyremedy.notreddit.ui.postdetail;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +10,6 @@ import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.databinding.ItemCommentBinding;
 import com.jollyremedy.notreddit.databinding.PartialPostHeaderBinding;
 import com.jollyremedy.notreddit.models.comment.Comment;
-import com.jollyremedy.notreddit.models.comment.PostWithCommentListing;
-import com.jollyremedy.notreddit.models.parent.RedditType;
 import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.util.Utility;
 
@@ -26,11 +23,15 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
     private static final int HEADER = 1;
     private static final int COMMENTS = 2;
 
-    private Post mPost;
-    private List<Comment> mComments;
+    private Context mContext;
     private LayoutInflater mLayoutInflater;
 
+    private Post mPost;
+    private List<Comment> mComments;
+
+
     PostDetailAdapter(Context context) {
+        mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
         mComments = new ArrayList<>();
     }
@@ -70,7 +71,7 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
         } else if (holder instanceof CommentViewHolder) {
             ((CommentViewHolder) holder).bind(mComments.get(position-1));
         } else {
-            throw new RuntimeException();
+            throw new RuntimeException("Unknown view holder: " + holder.toString());
         }
     }
 
@@ -88,17 +89,8 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
         }
 
         public void bind(Comment comment) {
-            binding.setComment(comment);
             fillVerticalLinesForComment(binding.itemCommentRoot, comment);
-
-            if (comment.getKind() == RedditType.Kind.MORE) {
-                binding.itemCommentActualContent.setVisibility(View.GONE);
-                binding.itemCommentMoreWrapper.setVisibility(View.VISIBLE);
-            } else {
-                binding.itemCommentActualContent.setVisibility(View.VISIBLE);
-                binding.itemCommentMoreWrapper.setVisibility(View.GONE);
-            }
-
+            binding.setDataProvider(new PostDetailBindingDataProvider(mContext, mPost, comment));
             binding.executePendingBindings();
         }
     }

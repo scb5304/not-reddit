@@ -96,7 +96,7 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:1.0.0"
     annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
 
-    // Using Java8's time library without requiring AI 26
+    // Using Java8's time library without requiring API 26
     // https://github.com/JakeWharton/ThreeTenABP
     implementation 'com.jakewharton.threetenabp:threetenabp:1.0.5'
 

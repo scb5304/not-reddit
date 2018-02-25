@@ -8,6 +8,10 @@ import com.google.gson.annotations.SerializedName;
 import com.jollyremedy.notreddit.api.adapter.EmptyStringAsNullTypeAdapter;
 import com.jollyremedy.notreddit.models.comment.CommentListing;
 import com.jollyremedy.notreddit.models.parent.RedditType;
+import com.jollyremedy.notreddit.util.TimeDiffUtils;
+
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +48,9 @@ public class CommentData implements Parcelable {
 
     @SerializedName("children")
     private List<String> children;
+
+    @SerializedName("created_utc")
+    private LocalDateTime createdDateTime;
 
     public String getAuthor() {
         return author;
@@ -86,7 +93,11 @@ public class CommentData implements Parcelable {
     }
 
     public Integer getPoints() {
-        return points;
+        return points == null ? 0 : points;
+    }
+
+    public LocalDateTime getCreatedDateTime() {
+        return createdDateTime;
     }
 
     protected CommentData(Parcel in) {

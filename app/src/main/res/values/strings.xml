@@ -6,5 +6,15 @@
     <string name="item_post_comment_count">%1$d</string>
     <string name="item_post_domain">(%1$s)</string>
 
-    <string name="item_comment_points">%1$s points</string>
+    <plurals name="item_comment_points">
+        <item quantity="one">%1$d point</item>
+        <item quantity="other">%1$d points</item>
+    </plurals>
+
+    <string name="item_comment_more"><u>More</u></string>
+    <string name="item_comment_since_minutes">%1$dm ago</string>
+    <string name="item_comment_since_hours">%1$dh ago</string>
+    <string name="item_comment_since_weeks">%1$dw ago</string>
+    <string name="item_comment_since_months">%1$dmo ago</string>
+    <string name="item_comment_since_years">%1$dy ago</string>
 </resources>

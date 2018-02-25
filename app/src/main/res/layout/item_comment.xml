@@ -5,8 +5,10 @@
     <data>
 
         <variable
-            name="comment"
-            type="com.jollyremedy.notreddit.models.comment.Comment" />
+            name="dataProvider"
+            type="com.jollyremedy.notreddit.ui.postdetail.PostDetailBindingDataProvider" />
+
+        <import type="android.view.View" />
     </data>
 
     <LinearLayout
@@ -26,21 +28,31 @@
 
             <!-- Top line of the card -->
             <LinearLayout
+                android:id="@+id/item_comment_top_line"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/default_gap"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="@dimen/default_gap"
-                android:paddingTop="@dimen/default_gap">
+                android:paddingTop="@dimen/default_gap"
+                android:visibility="@{dataProvider.commentTopLineVisible ? View.VISIBLE : View.GONE}">
 
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginStart="-3dp"
+                    android:src="@drawable/source_commit_start"
+                    android:visibility="@{dataProvider.rootIconVisible ? View.VISIBLE : View.GONE}" />
+
+                <!-- Author -->
                 <TextView
                     android:id="@+id/item_comment_author"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
-                    android:text="@{comment.data.author}"
+                    android:text="@{dataProvider.commentAuthor}"
                     android:textAlignment="center"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textColor="@color/primary_dark"
@@ -48,6 +60,7 @@
                     android:textStyle="bold"
                     tools:text="Spitsonpuppies" />
 
+                <!-- Divider -->
                 <ImageView
                     android:layout_width="4dp"
                     android:layout_height="4dp"
@@ -55,13 +68,17 @@
                     android:layout_marginStart="6dp"
                     android:src="@drawable/circle_edge" />
 
+                <!-- Score -->
                 <TextView
+                    android:id="@+id/item_comment_score"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{@string/item_comment_points(comment.data.points)}"
+                    android:text="@{dataProvider.commentPointsText}"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    tools:text="250 points" />
 
+                <!-- Divider -->
                 <ImageView
                     android:layout_width="4dp"
                     android:layout_height="4dp"
@@ -69,30 +86,29 @@
                     android:layout_marginStart="6dp"
                     android:src="@drawable/circle_edge" />
 
+                <!-- Time ago -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="3h ago"
+                    android:text="@{dataProvider.commentTimeSince}"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    tools:text="5h ago" />
             </LinearLayout>
 
-            <!-- The comment body / author / etc for an actual content (not a MORE) -->
-            <LinearLayout
-                android:id="@+id/item_comment_actual_content"
-                android:layout_width="match_parent"
+            <!-- Comment body -->
+            <org.sufficientlysecure.htmltextview.HtmlTextView
+                android:id="@+id/item_comment_body"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <org.sufficientlysecure.htmltextview.HtmlTextView
-                    android:id="@+id/item_comment_body"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:textColor="@android:color/black"
-                    app:html="@{comment.data.bodyHtml}"
-                    tools:text="This game is literally the Dark Souls of Monster Hunter 2D platformers." />
-            </LinearLayout>
+                android:paddingBottom="8dp"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp"
+                android:paddingTop="4dp"
+                android:textColor="@android:color/black"
+                android:visibility="@{dataProvider.commentBodyVisible ? View.VISIBLE : View.GONE}"
+                app:html="@{dataProvider.commentBody}"
+                tools:text="This game is literally the Dark Souls of Monster Hunter 2D platformers." />
 
             <!-- The "MORE" section of the card, only visible in that exact situation -->
             <LinearLayout
@@ -101,14 +117,15 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="@dimen/default_gap"
-                android:visibility="gone">
+                android:visibility="@{dataProvider.commentMoreWrapperVisible ? View.VISIBLE : View.GONE}"
+                tools:visibility="visible">
 
                 <TextView
                     android:id="@+id/item_comment_more_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="More"
-                    android:textColor="@color/accent" />
+                    android:text="@string/item_comment_more"
+                    android:textColor="@color/primary" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
