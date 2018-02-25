@@ -72,8 +72,7 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     }
 
     private void initRecyclerView() {
-        mPostDetailAdapter = new PostDetailAdapter(getActivity());
-        mPostDetailAdapter.setPost(getPassedPost());
+        mPostDetailAdapter = new PostDetailAdapter(getActivity(), getPassedPost());
         mCommentsRecyclerView.setAdapter(mPostDetailAdapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());

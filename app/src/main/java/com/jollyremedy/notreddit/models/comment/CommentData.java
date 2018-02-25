@@ -52,6 +52,9 @@ public class CommentData implements Parcelable {
     @SerializedName("created_utc")
     private LocalDateTime createdDateTime;
 
+    @SerializedName("parent_id")
+    private String parentId;
+
     public String getAuthor() {
         return author;
     }
@@ -98,6 +101,10 @@ public class CommentData implements Parcelable {
 
     public LocalDateTime getCreatedDateTime() {
         return createdDateTime;
+    }
+
+    public String getParentId() {
+        return parentId;
     }
 
     protected CommentData(Parcel in) {

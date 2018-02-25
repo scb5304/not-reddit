@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 
+import com.google.common.base.Strings;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.models.comment.Comment;
 import com.jollyremedy.notreddit.models.parent.RedditType;
@@ -12,6 +13,8 @@ import com.jollyremedy.notreddit.util.TimeDiffUtils;
 
 import org.threeten.bp.LocalDateTime;
 
+import java.util.List;
+
 /**
  * An attempt to make the data binding logic testable and not crammed into the Adapter itself either.
  */
@@ -19,16 +22,23 @@ public class PostDetailBindingDataProvider {
 
     private Context mContext;
     private Resources mResources;
-    private Post mPost;
-    private Comment mComment;
 
-    public PostDetailBindingDataProvider(@NonNull Context context,
-                                         @NonNull Post post,
-                                         @NonNull Comment comment) {
+    private List<Comment> mAllComments;
+    private Comment mComment;
+    private int mCurrentCommentPosition;
+
+    PostDetailBindingDataProvider(@NonNull Context context) {
         mContext = context;
         mResources = mContext.getResources();
-        mPost = post;
-        mComment = comment;
+    }
+
+    void setAllComments(@NonNull List<Comment> allComments) {
+        mAllComments = allComments;
+    }
+
+    void setCurrentCommentPosition(int commentPosition) {
+        mCurrentCommentPosition = commentPosition;
+        mComment = mAllComments.get(commentPosition);
     }
 
     public boolean isRootIconVisible() {
@@ -45,6 +55,16 @@ public class PostDetailBindingDataProvider {
 
     public boolean isCommentMoreWrapperVisible() {
         return mComment.getKind() == RedditType.Kind.MORE;
+    }
+
+    @SuppressWarnings("unused")
+    public boolean isCommentCollapseVisible() {
+        if (mAllComments.size() > mCurrentCommentPosition + 1) {
+            Comment nextComment = mAllComments.get(mCurrentCommentPosition + 1);
+            String currentCommentName = Strings.emptyToNull(mComment.getData().getFullName());
+            return currentCommentName.equals(nextComment.getData().getParentId());
+        }
+        return false;
     }
 
     public String getCommentPointsText() {

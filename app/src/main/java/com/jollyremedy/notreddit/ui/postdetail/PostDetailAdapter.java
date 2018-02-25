@@ -28,12 +28,14 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
 
     private Post mPost;
     private List<Comment> mComments;
+    private PostDetailBindingDataProvider mDataBindingProvider;
 
-
-    PostDetailAdapter(Context context) {
+    PostDetailAdapter(Context context, Post post) {
         mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
         mComments = new ArrayList<>();
+        mPost = post;
+        mDataBindingProvider = new PostDetailBindingDataProvider(mContext);
     }
 
     public void setPost(Post post) {
@@ -42,6 +44,7 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
 
     public void setComments(List<Comment> comments) {
         mComments = comments;
+        mDataBindingProvider.setAllComments(mComments);
     }
 
     @Override
@@ -69,7 +72,7 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
         if (holder instanceof HeaderViewHolder) {
             ((HeaderViewHolder) holder).bind(mPost);
         } else if (holder instanceof CommentViewHolder) {
-            ((CommentViewHolder) holder).bind(mComments.get(position-1));
+            ((CommentViewHolder) holder).bind(position);
         } else {
             throw new RuntimeException("Unknown view holder: " + holder.toString());
         }
@@ -88,9 +91,13 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
             this.binding = itemCommentBinding;
         }
 
-        public void bind(Comment comment) {
-            fillVerticalLinesForComment(binding.itemCommentRoot, comment);
-            binding.setDataProvider(new PostDetailBindingDataProvider(mContext, mPost, comment));
+        public void bind(int adapterPosition) {
+            int commentPosition = adapterPosition - 1;
+            Comment currentComment = mComments.get(commentPosition);
+            fillVerticalLinesForComment(binding.itemCommentRoot, currentComment);
+
+            mDataBindingProvider.setCurrentCommentPosition(commentPosition);
+            binding.setDataProvider(mDataBindingProvider);
             binding.executePendingBindings();
         }
     }
@@ -116,7 +123,7 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
         //Vertical lines added by other view holders remain and should be removed.
         int viewsInLayoutCount = commentLayout.getChildCount();
         if (viewsInLayoutCount > 1) {
-            commentLayout.removeViews(0, viewsInLayoutCount-1);
+            commentLayout.removeViews(0, viewsInLayoutCount - 1);
         }
         for (int i = 0; i < comment.getData().getDepth(); i++) {
             View verticalLine;
