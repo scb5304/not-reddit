@@ -1,11 +1,10 @@
-package com.jollyremedy.notreddit.ui.api;
+package com.jollyremedy.notreddit.api;
 
 import android.support.annotation.Nullable;
 
 import com.jollyremedy.notreddit.BaseUnitTest;
 import com.jollyremedy.notreddit.StubbedOkHttpChain;
 import com.jollyremedy.notreddit.Constants.SharedPreferenceKeys;
-import com.jollyremedy.notreddit.api.OAuthTokenInterceptor;
 import com.jollyremedy.notreddit.models.auth.Token;
 import com.jollyremedy.notreddit.repository.TokenRepository;
 
