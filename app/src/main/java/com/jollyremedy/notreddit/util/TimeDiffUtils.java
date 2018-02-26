@@ -15,6 +15,8 @@ public class TimeDiffUtils {
             return context.getString(R.string.item_comment_since_minutes, since);
         } else if ((since = hoursSince(dateTime)) < 24) {
             return context.getString(R.string.item_comment_since_hours, since);
+        } else if ((since = daysSince(dateTime)) < 7) {
+            return context.getString(R.string.item_comment_since_days, since);
         } else if ((since = weeksSince(dateTime)) < 5) {
             return context.getString(R.string.item_comment_since_weeks, since);
         } else if ((since = monthsSince(dateTime)) < 12) {
@@ -30,6 +32,10 @@ public class TimeDiffUtils {
 
     private static long weeksSince(LocalDateTime dateTime) {
         return ChronoUnit.WEEKS.between(dateTime == null ? LocalDateTime.now() : dateTime, LocalDateTime.now());
+    }
+
+    private static long daysSince(LocalDateTime dateTime) {
+        return ChronoUnit.DAYS.between(dateTime == null ? LocalDateTime.now() : dateTime, LocalDateTime.now());
     }
 
     private static long hoursSince(LocalDateTime dateTime) {

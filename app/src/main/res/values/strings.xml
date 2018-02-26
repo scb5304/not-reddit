@@ -14,6 +14,7 @@
     <string name="item_comment_more"><u>More</u></string>
     <string name="item_comment_since_minutes">%1$dm ago</string>
     <string name="item_comment_since_hours">%1$dh ago</string>
+    <string name="item_comment_since_days">%1$dd ago</string>
     <string name="item_comment_since_weeks">%1$dw ago</string>
     <string name="item_comment_since_months">%1$dmo ago</string>
     <string name="item_comment_since_years">%1$dy ago</string>
