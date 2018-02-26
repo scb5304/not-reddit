@@ -3,18 +3,18 @@ package com.jollyremedy.notreddit.ui.postdetail;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.jollyremedy.notreddit.ui.postdetail.PostDetailAdapter.CommentViewHolder;
 
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.di.auto.Injectable;
-import com.jollyremedy.notreddit.models.comment.PostWithCommentListing;
 import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.ui.UpNavigationFragment;
 
@@ -84,6 +84,15 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
             mPostDetailAdapter.setPost(postWithCommentListing.getPostListing().getData().getPosts().get(0));
             mPostDetailAdapter.setComments(postWithCommentListing.getCommentListing().getData().getComments());
             mPostDetailAdapter.notifyDataSetChanged();
+        });
+        mViewModel.getObservableCommentClick().observe(this, (@NonNull CommentClick commentClick) -> {
+            int index;
+            if ((index = commentClick.getCurrentSelectedIndex()) != -1) {
+                mPostDetailAdapter.notifyItemChanged(index + 1);
+            }
+            if ((index = commentClick.getNewSelectedIndex()) != -1) {
+                mPostDetailAdapter.notifyItemChanged(index + 1);
+            }
         });
     }
 

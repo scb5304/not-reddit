@@ -19,4 +19,22 @@ public class Utility {
     public static boolean isEven (int integer) {
         return integer % 2 == 0;
     }
+
+    /**
+     * https://stackoverflow.com/a/10187511/4672234
+     */
+    public static CharSequence trimTrailingWhitespace(CharSequence source) {
+        if (source == null) {
+            return "";
+        }
+
+        int i = source.length();
+
+        //noinspection StatementWithEmptyBody
+        while (--i >= 0 && Character.isWhitespace(source.charAt(i))) {
+            // loop back to the first non-whitespace character
+        }
+
+        return source.subSequence(0, i + 1);
+    }
 }

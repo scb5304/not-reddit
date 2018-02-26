@@ -9,6 +9,10 @@
             type="com.jollyremedy.notreddit.models.comment.Comment" />
 
         <variable
+            name="commentIndex"
+            type="Integer" />
+
+        <variable
             name="viewModel"
             type="com.jollyremedy.notreddit.ui.postdetail.PostDetailViewModel" />
 
@@ -16,7 +20,6 @@
     </data>
 
     <LinearLayout
-        android:onClick="@{() -> viewModel.onCommentClicked(comment)}"
         android:id="@+id/item_comment_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,6 +31,10 @@
             android:id="@+id/item_comment_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{() -> viewModel.onCommentClicked(comment, commentIndex)}"
             android:orientation="vertical"
             tools:ignore="UselessParent">
 
@@ -38,6 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="@dimen/default_gap"
+                android:clickable="false"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingTop="@dimen/default_gap"
@@ -49,6 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:clickable="false"
                     android:gravity="center_vertical"
                     android:text="@{viewModel.getCommentAuthor(comment)}"
                     android:textAlignment="center"
@@ -58,13 +67,13 @@
                     android:textStyle="bold"
                     tools:text="Spitsonpuppies" />
 
-
                 <!-- Score -->
                 <TextView
-                    android:layout_marginStart="@dimen/default_gap"
                     android:id="@+id/item_comment_score"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/default_gap"
+                    android:clickable="false"
                     android:text="@{viewModel.getCommentPointsText(comment)}"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textSize="12sp"
@@ -72,9 +81,10 @@
 
                 <!-- Time ago -->
                 <TextView
-                    android:layout_marginStart="@dimen/default_gap"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/default_gap"
+                    android:clickable="false"
                     android:text="@{viewModel.getCommentTimeSince(comment)}"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textSize="12sp"
@@ -95,11 +105,61 @@
                 app:html="@{viewModel.getCommentBody(comment)}"
                 tools:text="This game is literally the Dark Souls of Monster Hunter 2D platformers." />
 
+            <LinearLayout
+                android:id="@+id/item_comment_options_bottom_bar"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:background="@color/secondary_background_gray"
+                android:clickable="false"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/default_gap"
+                android:visibility="@{viewModel.isCommentBottomLineVisible(commentIndex) ? View.VISIBLE : View.GONE}">
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <ImageButton
+                    android:layout_width="52dp"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/arrow_up" />
+
+                <ImageButton
+                    android:layout_width="52dp"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/arrow_down" />
+
+                <ImageButton
+                    android:layout_width="52dp"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/eye_white" />
+
+                <ImageButton
+                    android:layout_width="52dp"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/more_dots" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/item_comment_bottom_border"
+                android:layout_width="match_parent"
+                android:layout_height=".5dp"
+                android:background="@android:color/darker_gray"
+                android:clickable="false"
+                android:visibility="@{viewModel.isCommentBottomLineVisible(commentIndex) ? View.VISIBLE : View.GONE}" />
+
             <!-- The "MORE" section of the card, only visible in that exact situation -->
             <LinearLayout
                 android:id="@+id/item_comment_more_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clickable="false"
                 android:orientation="vertical"
                 android:padding="@dimen/default_gap"
                 android:visibility="@{viewModel.isCommentMoreWrapperVisible(comment) ? View.VISIBLE : View.GONE}"

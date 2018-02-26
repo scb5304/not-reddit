@@ -82,6 +82,21 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
         return mComments.size() + 1;
     }
 
+    class HeaderViewHolder extends RecyclerView.ViewHolder {
+        private final PartialPostHeaderBinding binding;
+
+        HeaderViewHolder(PartialPostHeaderBinding headerBinding) {
+            super(headerBinding.getRoot());
+            this.binding = headerBinding;
+        }
+
+        public void bind(Post post) {
+            binding.setPost(post);
+            binding.postDetailPostItem.setPost(post);
+            binding.executePendingBindings();
+        }
+    }
+
     class CommentViewHolder extends RecyclerView.ViewHolder {
         private final ItemCommentBinding binding;
 
@@ -97,22 +112,12 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
 
             binding.setViewModel(mViewModel);
             binding.setComment(currentComment);
+            binding.setCommentIndex(commentPosition);
             binding.executePendingBindings();
         }
-    }
 
-    class HeaderViewHolder extends RecyclerView.ViewHolder {
-        private final PartialPostHeaderBinding binding;
-
-        HeaderViewHolder(PartialPostHeaderBinding headerBinding) {
-            super(headerBinding.getRoot());
-            this.binding = headerBinding;
-        }
-
-        public void bind(Post post) {
-            binding.setPost(post);
-            binding.postDetailPostItem.setPost(post);
-            binding.executePendingBindings();
+        public ItemCommentBinding getBinding() {
+            return binding;
         }
     }
 

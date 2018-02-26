@@ -1,6 +1,7 @@
 package com.jollyremedy.notreddit.ui.common;
 
 import android.databinding.BindingAdapter;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,11 @@ public class BindingAdapters {
     @BindingAdapter({"html"})
     public static void displayHtml(HtmlTextView view, @Nullable String html) {
         view.setHtml(Strings.nullToEmpty(html), new HtmlResImageGetter(view));
+
+        //These lines allow the parent layout to consume the click. Doesn't seem to work unless
+        //programmatically set.
+        view.setClickable(false);
+        view.setLongClickable(false);
     }
 
     @BindingAdapter({"imageUrl"})
