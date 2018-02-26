@@ -27,22 +27,26 @@ public class TimeDiffUtils {
     }
 
     private static long monthsSince(LocalDateTime dateTime) {
-        return ChronoUnit.MONTHS.between(dateTime == null ? LocalDateTime.now() : dateTime, LocalDateTime.now());
+        return unitSince(ChronoUnit.MONTHS, dateTime);
     }
 
     private static long weeksSince(LocalDateTime dateTime) {
-        return ChronoUnit.WEEKS.between(dateTime == null ? LocalDateTime.now() : dateTime, LocalDateTime.now());
+        return unitSince(ChronoUnit.WEEKS, dateTime);
     }
 
     private static long daysSince(LocalDateTime dateTime) {
-        return ChronoUnit.DAYS.between(dateTime == null ? LocalDateTime.now() : dateTime, LocalDateTime.now());
+        return unitSince(ChronoUnit.DAYS, dateTime);
     }
 
     private static long hoursSince(LocalDateTime dateTime) {
-        return ChronoUnit.HOURS.between(dateTime == null ? LocalDateTime.now() : dateTime, LocalDateTime.now());
+        return unitSince(ChronoUnit.HOURS, dateTime);
     }
 
     private static long minutesSince(LocalDateTime dateTime) {
-        return ChronoUnit.MINUTES.between(dateTime == null ? LocalDateTime.now() : dateTime, LocalDateTime.now());
+        return unitSince(ChronoUnit.MINUTES, dateTime);
+    }
+
+    private static long unitSince(ChronoUnit chronoUnit, LocalDateTime dateTime) {
+        return chronoUnit.between(dateTime == null ? LocalDateTime.now() : dateTime, LocalDateTime.now());
     }
 }
