@@ -136,7 +136,7 @@
                     android:layout_width="52dp"
                     android:layout_height="match_parent"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/eye_white" />
+                    android:src="@drawable/eye_gray" />
 
                 <ImageButton
                     android:layout_width="52dp"
