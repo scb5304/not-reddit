@@ -1,6 +1,7 @@
 package com.jollyremedy.notreddit.api;
 
 import com.jollyremedy.notreddit.models.comment.PostWithCommentListing;
+import com.jollyremedy.notreddit.models.comment.more.MoreChildren;
 import com.jollyremedy.notreddit.models.post.PostListing;
 import com.jollyremedy.notreddit.models.subreddit.SubredditListing;
 import com.jollyremedy.notreddit.models.subreddit.SubredditWhere;
@@ -22,4 +23,8 @@ public interface OAuthRedditApi {
 
     @GET("/subreddits/{where}")
     Single<SubredditListing> getSubredditListing(@Path("where") @SubredditWhere String where);
+
+    @GET("/api/morechildren?api_type=json")
+    Single<MoreChildren> getMoreComments(@Query("link_id") String postFullName,
+                                         @Query("children") String childrenCommaDelimited);
 }

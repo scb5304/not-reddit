@@ -159,7 +159,6 @@
                 android:id="@+id/item_comment_more_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clickable="false"
                 android:orientation="vertical"
                 android:padding="@dimen/default_gap"
                 android:visibility="@{viewModel.isCommentMoreWrapperVisible(comment) ? View.VISIBLE : View.GONE}"
@@ -169,6 +168,9 @@
                     android:id="@+id/item_comment_more_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="@{() -> viewModel.onCommentMoreClicked(comment, commentIndex)}"
                     android:text="@string/item_comment_more"
                     android:textColor="@color/primary" />
             </LinearLayout>

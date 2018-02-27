@@ -5,9 +5,12 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.jollyremedy.notreddit.models.comment.Comment;
 import com.jollyremedy.notreddit.models.comment.PostWithCommentListing;
+import com.jollyremedy.notreddit.models.comment.more.MoreChildren;
 import com.jollyremedy.notreddit.models.parent.RedditType;
+import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.repository.CommentRepository;
 import com.jollyremedy.notreddit.ui.common.SingleLiveEvent;
 
@@ -44,25 +47,15 @@ public class PostDetailViewModel extends ViewModel {
         return mCommentClickLiveData;
     }
 
-    private class PostWithCommentsObserver implements SingleObserver<PostWithCommentListing> {
-        @Override
-        public void onSubscribe(Disposable d) {}
-
-        @Override
-        public void onSuccess(PostWithCommentListing postWithCommentListing) {
-            mPostWithCommentsLiveData.postValue(postWithCommentListing);
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            Log.e(TAG, "Oh no.", e);
-        }
-    }
-
     public void onCommentClicked(Comment comment, int commentPosition) {
         mCommentClickLiveData.postValue(new CommentClick(mCurrentCommentSelectedIndex, commentPosition));
         mCurrentCommentSelectedIndex = commentPosition;
         Log.i(TAG, "You clicked comment " + comment.getData().getFullName());
+    }
+
+    public void onCommentMoreClicked(Comment comment, int commentPosition) {
+        Post post = mPostWithCommentsLiveData.getValue().getPostListing().getData().getPosts().get(0);
+        mCommentRepository.getMoreComments(new MoreCommentsObserver(), post.getData().getFullName(), comment.getData().getChildren());
     }
 
     public boolean isCommentBodyVisible(Comment comment) {
@@ -96,4 +89,35 @@ public class PostDetailViewModel extends ViewModel {
     public String getCommentAuthor(Comment comment) {
         return comment.getData().getAuthor();
     }
+
+    private class PostWithCommentsObserver implements SingleObserver<PostWithCommentListing> {
+        @Override
+        public void onSubscribe(Disposable d) {}
+
+        @Override
+        public void onSuccess(PostWithCommentListing postWithCommentListing) {
+            mPostWithCommentsLiveData.postValue(postWithCommentListing);
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.e(TAG, "Failed to get post with comments.", e);
+        }
+    }
+
+    private class MoreCommentsObserver implements SingleObserver<MoreChildren> {
+        @Override
+        public void onSubscribe(Disposable d) {}
+
+        @Override
+        public void onSuccess(MoreChildren moreChildren) {
+            Log.d(TAG, new Gson().toJson(moreChildren));
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.e(TAG, "Failed to get more comments.", e);
+        }
+    }
+
 }

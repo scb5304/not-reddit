@@ -11,6 +11,9 @@ public class PostData implements Parcelable {
     @SerializedName("id")
     private String id;
 
+    @SerializedName("name")
+    private String name;
+
     @SerializedName("title")
     private String title;
 
@@ -41,6 +44,10 @@ public class PostData implements Parcelable {
 
     public String getId() {
         return id;
+    }
+
+    public String getFullName() {
+        return name;
     }
 
     public String getTitle() {
@@ -75,8 +82,9 @@ public class PostData implements Parcelable {
         return thumbnail;
     }
 
-    private PostData(Parcel in) {
+    protected PostData(Parcel in) {
         id = in.readString();
+        name = in.readString();
         title = in.readString();
         selfText = in.readString();
         selfTextHtml = in.readString();
@@ -95,6 +103,7 @@ public class PostData implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
+        dest.writeString(name);
         dest.writeString(title);
         dest.writeString(selfText);
         dest.writeString(selfTextHtml);
