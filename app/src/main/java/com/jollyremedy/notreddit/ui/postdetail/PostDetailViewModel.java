@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
+import android.util.Pair;
 
 import com.google.gson.Gson;
 import com.jollyremedy.notreddit.models.comment.Comment;
@@ -14,6 +15,7 @@ import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.repository.CommentRepository;
 import com.jollyremedy.notreddit.ui.common.SingleLiveEvent;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -24,7 +26,7 @@ import io.reactivex.disposables.Disposable;
 public class PostDetailViewModel extends ViewModel {
     private static final String TAG = "PostDetailViewModel";
     private CommentRepository mCommentRepository;
-    private MutableLiveData<PostWithCommentListing> mPostWithCommentsLiveData;
+    private MutableLiveData<PostDetailData> mPostDetailLiveData;
     private SingleLiveEvent<CommentClick> mCommentClickLiveData;
     private PostDetailViewModelHelper mHelper;
     private Integer mCurrentCommentSelectedIndex;
@@ -33,14 +35,14 @@ public class PostDetailViewModel extends ViewModel {
     PostDetailViewModel(CommentRepository commentRepository, PostDetailViewModelHelper helper) {
         mCommentRepository = commentRepository;
         mHelper = helper;
-        mPostWithCommentsLiveData = new MutableLiveData<>();
+        mPostDetailLiveData = new MutableLiveData<>();
         mCommentClickLiveData = new SingleLiveEvent<>();
         mCurrentCommentSelectedIndex = -1;
     }
 
-    LiveData<PostWithCommentListing> getObservablePostWithComments(String postId) {
+    LiveData<PostDetailData> getObservablePostDetailData(String postId) {
         mCommentRepository.getComments(new PostWithCommentsObserver(), postId);
-        return mPostWithCommentsLiveData;
+        return mPostDetailLiveData;
     }
 
     LiveData<CommentClick> getObservableCommentClick() {
@@ -50,12 +52,15 @@ public class PostDetailViewModel extends ViewModel {
     public void onCommentClicked(Comment comment, int commentPosition) {
         mCommentClickLiveData.postValue(new CommentClick(mCurrentCommentSelectedIndex, commentPosition));
         mCurrentCommentSelectedIndex = commentPosition;
-        Log.i(TAG, "You clicked comment " + comment.getData().getFullName());
     }
 
     public void onCommentMoreClicked(Comment comment, int commentPosition) {
-        Post post = mPostWithCommentsLiveData.getValue().getPostListing().getData().getPosts().get(0);
-        mCommentRepository.getMoreComments(new MoreCommentsObserver(), post.getData().getFullName(), comment.getData().getChildren());
+        Post post = mPostDetailLiveData.getValue().getPost();
+        mCommentRepository.getMoreComments(new MoreCommentsObserver(commentPosition), post.getData().getFullName(), comment.getData().getChildren());
+    }
+
+    public boolean isCommentClickable(Comment comment) {
+        return comment.getKind() != RedditType.Kind.MORE;
     }
 
     public boolean isCommentBodyVisible(Comment comment) {
@@ -96,7 +101,10 @@ public class PostDetailViewModel extends ViewModel {
 
         @Override
         public void onSuccess(PostWithCommentListing postWithCommentListing) {
-            mPostWithCommentsLiveData.postValue(postWithCommentListing);
+            PostDetailData postDetailData = new PostDetailData();
+            postDetailData.setPost(postWithCommentListing.getPostListing().getData().getPosts().get(0));
+            postDetailData.setComments(postWithCommentListing.getCommentListing().getData().getComments());
+            mPostDetailLiveData.postValue(postDetailData);
         }
 
         @Override
@@ -106,12 +114,38 @@ public class PostDetailViewModel extends ViewModel {
     }
 
     private class MoreCommentsObserver implements SingleObserver<MoreChildren> {
+        private int commentPosition;
+
+        MoreCommentsObserver(int commentPosition) {
+            this.commentPosition = commentPosition;
+        }
+
         @Override
-        public void onSubscribe(Disposable d) {}
+        public void onSubscribe(Disposable d) {
+
+        }
 
         @Override
         public void onSuccess(MoreChildren moreChildren) {
             Log.d(TAG, new Gson().toJson(moreChildren));
+
+            PostDetailData postDetailData =  mPostDetailLiveData.getValue();
+            postDetailData.clearCommentRanges();
+            postDetailData.getComments().remove(this.commentPosition);
+
+            if (moreChildren != null && moreChildren.getJsonWrapper() != null && moreChildren.getJsonWrapper().getData() != null) {
+                List<Comment> moreComments = moreChildren.getJsonWrapper().getData().getComments();
+
+                if (moreComments != null && !moreComments.isEmpty()) {
+                    postDetailData.getComments().addAll(this.commentPosition, moreComments);
+                    postDetailData.setCommentRangeChanging(new Pair<>(this.commentPosition -1, this.commentPosition + moreComments.size()));
+                    mPostDetailLiveData.postValue(postDetailData);
+                    return;
+                }
+            }
+
+            postDetailData.setCommentRangeRemoving(new Pair<>(this.commentPosition, this.commentPosition));
+            mPostDetailLiveData.postValue(postDetailData);
         }
 
         @Override

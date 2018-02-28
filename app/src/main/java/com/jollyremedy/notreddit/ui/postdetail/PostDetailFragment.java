@@ -8,10 +8,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.jollyremedy.notreddit.ui.postdetail.PostDetailAdapter.CommentViewHolder;
 
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.di.auto.Injectable;
@@ -80,10 +80,19 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     }
 
     private void subscribeUi() {
-        mViewModel.getObservablePostWithComments(getPassedPost().getData().getId()).observe(this, postWithCommentListing -> {
-            mPostDetailAdapter.setPost(postWithCommentListing.getPostListing().getData().getPosts().get(0));
-            mPostDetailAdapter.setComments(postWithCommentListing.getCommentListing().getData().getComments());
-            mPostDetailAdapter.notifyDataSetChanged();
+        mViewModel.getObservablePostDetailData(getPassedPost().getData().getId()).observe(this, postDetailData -> {
+            mPostDetailAdapter.setPost(postDetailData.getPost());
+            mPostDetailAdapter.setComments(postDetailData.getComments());
+
+            if (postDetailData.getCommentRangeRemoving() != null) {
+                Pair<Integer, Integer> commentRangeRemoving = postDetailData.getCommentRangeRemoving();
+                mPostDetailAdapter.notifyItemRangeRemoved(commentRangeRemoving.first - 1, commentRangeRemoving.second - 1);
+            } else if (postDetailData.getCommentRangeChanging() != null) {
+                Pair<Integer, Integer> commentRangeChanging = postDetailData.getCommentRangeChanging();
+                mPostDetailAdapter.notifyItemRangeChanged(commentRangeChanging.first - 1, commentRangeChanging.second - 1);
+            } else {
+                mPostDetailAdapter.notifyDataSetChanged();
+            }
         });
         mViewModel.getObservableCommentClick().observe(this, (@NonNull CommentClick commentClick) -> {
             int index;

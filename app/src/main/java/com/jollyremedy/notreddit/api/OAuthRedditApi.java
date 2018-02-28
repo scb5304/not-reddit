@@ -24,7 +24,7 @@ public interface OAuthRedditApi {
     @GET("/subreddits/{where}")
     Single<SubredditListing> getSubredditListing(@Path("where") @SubredditWhere String where);
 
-    @GET("/api/morechildren?api_type=json")
+    @GET("/api/morechildren?api_type=json&raw_json=1")
     Single<MoreChildren> getMoreComments(@Query("link_id") String postFullName,
                                          @Query("children") String childrenCommaDelimited);
 }

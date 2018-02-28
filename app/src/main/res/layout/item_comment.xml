@@ -32,8 +32,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
+            android:clickable="@{viewModel.isCommentClickable(comment)}"
+            android:focusable="@{viewModel.isCommentClickable(comment)}"
             android:onClick="@{() -> viewModel.onCommentClicked(comment, commentIndex)}"
             android:orientation="vertical"
             tools:ignore="UselessParent">
@@ -160,19 +160,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="@dimen/default_gap"
                 android:visibility="@{viewModel.isCommentMoreWrapperVisible(comment) ? View.VISIBLE : View.GONE}"
                 tools:visibility="visible">
 
-                <TextView
+                <Button
                     android:id="@+id/item_comment_more_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="100dp"
+                    android:layout_height="35dp"
+                    android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
+                    android:gravity="start|center_vertical"
                     android:onClick="@{() -> viewModel.onCommentMoreClicked(comment, commentIndex)}"
+                    android:paddingStart="16dp"
                     android:text="@string/item_comment_more"
-                    android:textColor="@color/primary" />
+                    android:textColor="@color/accent" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

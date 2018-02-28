@@ -3,8 +3,9 @@ package com.jollyremedy.notreddit.models.comment.more;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * When an emotion comes upon us suddenly, we must ask God, “Why is this happening? Is it from the
- * Spirit of God, or is it from the devil?
+ * And I heard a voice in the midst of the four beasts.
+ * And I looked, and behold a pale horse.
+ * And his name that sat on him was death, and hell followed with him.
  */
 public class MoreChildren {
     @SerializedName("json")
