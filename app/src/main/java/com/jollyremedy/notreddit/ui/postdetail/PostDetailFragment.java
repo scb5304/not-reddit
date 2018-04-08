@@ -80,29 +80,24 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     }
 
     private void subscribeUi() {
-        mViewModel.getObservablePostDetailData(getPassedPost().getData().getId()).observe(this, postDetailData -> {
-            mPostDetailAdapter.setPost(postDetailData.getPost());
-            mPostDetailAdapter.setComments(postDetailData.getComments());
+        mViewModel.getObservablePostDetailData(getPassedPost().getData().getId()).observe(this, this::onPostDetailDataChanged);
+        mViewModel.getObservableCommentClick().observe(this, this::onCommentClicked);
+    }
 
-            if (postDetailData.getCommentRangeRemoving() != null) {
-                Pair<Integer, Integer> commentRangeRemoving = postDetailData.getCommentRangeRemoving();
-                mPostDetailAdapter.notifyItemRangeRemoved(commentRangeRemoving.first - 1, commentRangeRemoving.second - 1);
-            } else if (postDetailData.getCommentRangeChanging() != null) {
-                Pair<Integer, Integer> commentRangeChanging = postDetailData.getCommentRangeChanging();
-                mPostDetailAdapter.notifyItemRangeChanged(commentRangeChanging.first - 1, commentRangeChanging.second - 1);
-            } else {
-                mPostDetailAdapter.notifyDataSetChanged();
-            }
-        });
-        mViewModel.getObservableCommentClick().observe(this, (@NonNull CommentClick commentClick) -> {
-            int index;
-            if ((index = commentClick.getCurrentSelectedIndex()) != -1) {
-                mPostDetailAdapter.notifyItemChanged(index + 1);
-            }
-            if ((index = commentClick.getNewSelectedIndex()) != -1) {
-                mPostDetailAdapter.notifyItemChanged(index + 1);
-            }
-        });
+    private void onPostDetailDataChanged(PostDetailData postDetailData) {
+        mPostDetailAdapter.setPost(postDetailData.getPost());
+        mPostDetailAdapter.setComments(postDetailData.getComments());
+        mPostDetailAdapter.notifyDataSetChanged();
+    }
+
+    private void onCommentClicked(CommentClick commentClick) {
+        int index;
+        if ((index = commentClick.getCurrentSelectedIndex()) != -1) {
+            mPostDetailAdapter.notifyItemChanged(index + 1);
+        }
+        if ((index = commentClick.getNewSelectedIndex()) != -1) {
+            mPostDetailAdapter.notifyItemChanged(index + 1);
+        }
     }
 
     private Post getPassedPost() {

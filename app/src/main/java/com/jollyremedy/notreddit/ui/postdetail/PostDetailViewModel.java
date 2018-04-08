@@ -1,12 +1,11 @@
 package com.jollyremedy.notreddit.ui.postdetail;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
-import android.util.Pair;
 
-import com.google.gson.Gson;
 import com.jollyremedy.notreddit.models.comment.Comment;
 import com.jollyremedy.notreddit.models.comment.PostWithCommentListing;
 import com.jollyremedy.notreddit.models.comment.more.MoreChildren;
@@ -20,11 +19,10 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-import io.reactivex.SingleObserver;
-import io.reactivex.disposables.Disposable;
-
+@SuppressLint("CheckResult")
 public class PostDetailViewModel extends ViewModel {
     private static final String TAG = "PostDetailViewModel";
+
     private CommentRepository mCommentRepository;
     private MutableLiveData<PostDetailData> mPostDetailLiveData;
     private SingleLiveEvent<CommentClick> mCommentClickLiveData;
@@ -41,7 +39,9 @@ public class PostDetailViewModel extends ViewModel {
     }
 
     LiveData<PostDetailData> getObservablePostDetailData(String postId) {
-        mCommentRepository.getComments(new PostWithCommentsObserver(), postId);
+        mCommentRepository.getCommentsWithPostId(postId).subscribe(
+                this::onPostWithCommentListingFetched,
+                this::onPostWithCommentListingFailure);
         return mPostDetailLiveData;
     }
 
@@ -49,14 +49,46 @@ public class PostDetailViewModel extends ViewModel {
         return mCommentClickLiveData;
     }
 
-    public void onCommentClicked(Comment comment, int commentPosition) {
+    private void onPostWithCommentListingFetched(PostWithCommentListing postWithCommentListing) {
+        PostDetailData postDetailData = new PostDetailData();
+        postDetailData.setPost(postWithCommentListing.getPostListing().getData().getPosts().get(0));
+        postDetailData.setComments(postWithCommentListing.getCommentListing().getData().getComments());
+        mPostDetailLiveData.postValue(postDetailData);
+    }
+
+    private void onPostWithCommentListingFailure(Throwable throwable) {
+        Log.e(TAG, "Failed to get post with comments.", throwable);
+    }
+
+    private void onMoreCommentsFetched(int moreCommentsPosition, MoreChildren moreChildren) {
+        PostDetailData postDetailData = mPostDetailLiveData.getValue();
+        List<Comment> moreComments = moreChildren.getJsonWrapper().getData().getComments();
+
+        if (moreComments != null && !moreComments.isEmpty()) {
+            postDetailData.getComments().remove(moreCommentsPosition);
+            postDetailData.getComments().addAll(moreCommentsPosition, moreComments);
+            mPostDetailLiveData.postValue(postDetailData);
+        }
+    }
+
+    private void onMoreCommentsFailure(Throwable throwable) {
+        Log.e(TAG, "Failed to get more comments.", throwable);
+    }
+
+    public void onCommentClicked(int commentPosition) {
         mCommentClickLiveData.postValue(new CommentClick(mCurrentCommentSelectedIndex, commentPosition));
         mCurrentCommentSelectedIndex = commentPosition;
     }
 
     public void onCommentMoreClicked(Comment comment, int commentPosition) {
         Post post = mPostDetailLiveData.getValue().getPost();
-        mCommentRepository.getMoreComments(new MoreCommentsObserver(commentPosition), post.getData().getFullName(), comment.getData().getChildren());
+
+        String postFullName = post.getData().getFullName();
+        List<String> commentIdsToGet = comment.getData().getChildren();
+
+        mCommentRepository.getMoreCommentsByIds(postFullName, commentIdsToGet).subscribe(
+                moreChildren -> onMoreCommentsFetched(commentPosition, moreChildren),
+                this::onMoreCommentsFailure);
     }
 
     public boolean isCommentClickable(Comment comment) {
@@ -94,64 +126,4 @@ public class PostDetailViewModel extends ViewModel {
     public String getCommentAuthor(Comment comment) {
         return comment.getData().getAuthor();
     }
-
-    private class PostWithCommentsObserver implements SingleObserver<PostWithCommentListing> {
-        @Override
-        public void onSubscribe(Disposable d) {}
-
-        @Override
-        public void onSuccess(PostWithCommentListing postWithCommentListing) {
-            PostDetailData postDetailData = new PostDetailData();
-            postDetailData.setPost(postWithCommentListing.getPostListing().getData().getPosts().get(0));
-            postDetailData.setComments(postWithCommentListing.getCommentListing().getData().getComments());
-            mPostDetailLiveData.postValue(postDetailData);
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            Log.e(TAG, "Failed to get post with comments.", e);
-        }
-    }
-
-    private class MoreCommentsObserver implements SingleObserver<MoreChildren> {
-        private int commentPosition;
-
-        MoreCommentsObserver(int commentPosition) {
-            this.commentPosition = commentPosition;
-        }
-
-        @Override
-        public void onSubscribe(Disposable d) {
-
-        }
-
-        @Override
-        public void onSuccess(MoreChildren moreChildren) {
-            Log.d(TAG, new Gson().toJson(moreChildren));
-
-            PostDetailData postDetailData =  mPostDetailLiveData.getValue();
-            postDetailData.clearCommentRanges();
-            postDetailData.getComments().remove(this.commentPosition);
-
-            if (moreChildren != null && moreChildren.getJsonWrapper() != null && moreChildren.getJsonWrapper().getData() != null) {
-                List<Comment> moreComments = moreChildren.getJsonWrapper().getData().getComments();
-
-                if (moreComments != null && !moreComments.isEmpty()) {
-                    postDetailData.getComments().addAll(this.commentPosition, moreComments);
-                    postDetailData.setCommentRangeChanging(new Pair<>(this.commentPosition -1, this.commentPosition + moreComments.size()));
-                    mPostDetailLiveData.postValue(postDetailData);
-                    return;
-                }
-            }
-
-            postDetailData.setCommentRangeRemoving(new Pair<>(this.commentPosition, this.commentPosition));
-            mPostDetailLiveData.postValue(postDetailData);
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            Log.e(TAG, "Failed to get more comments.", e);
-        }
-    }
-
 }
