@@ -73,16 +73,17 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        initRecyclerView();
-        initSwipeRefreshLayout();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(PostListViewModel.class);
+        mViewModel.setNavigationController(mNavigationController);
         mBinding.setPostListViewModel(mViewModel);
         subscribeUi();
+        initRecyclerView();
+        initSwipeRefreshLayout();
     }
 
     @Override
@@ -92,7 +93,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     }
 
     private void initRecyclerView() {
-        mPostListAdapter = new PostListAdapter(post -> mNavigationController.navigateToPostDetail(post));
+        mPostListAdapter = new PostListAdapter(mViewModel);
         mRecyclerView.setAdapter(mPostListAdapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());

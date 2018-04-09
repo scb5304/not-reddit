@@ -62,9 +62,12 @@ public class PostDetailViewModel extends ViewModel {
 
     private void onMoreCommentsFetched(int moreCommentsPosition, MoreChildren moreChildren) {
         PostDetailData postDetailData = mPostDetailLiveData.getValue();
-        List<Comment> moreComments = moreChildren.getJsonWrapper().getData().getComments();
-
-        if (moreComments != null && !moreComments.isEmpty()) {
+        if (moreChildren != null &&
+                moreChildren.getJsonWrapper() != null &&
+                moreChildren.getJsonWrapper().getData() != null &&
+                moreChildren.getJsonWrapper().getData().getComments() != null &&
+                !moreChildren.getJsonWrapper().getData().getComments().isEmpty()) {
+            List<Comment> moreComments = moreChildren.getJsonWrapper().getData().getComments();
             postDetailData.getComments().remove(moreCommentsPosition);
             postDetailData.getComments().addAll(moreCommentsPosition, moreComments);
             mPostDetailLiveData.postValue(postDetailData);

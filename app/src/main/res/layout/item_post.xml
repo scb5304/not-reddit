@@ -10,8 +10,8 @@
             type="com.jollyremedy.notreddit.models.post.Post" />
 
         <variable
-            name="postClickedCallback"
-            type="com.jollyremedy.notreddit.ui.postlist.PostListAdapter.PostClickedCallback" />
+            name="postListViewModel"
+            type="com.jollyremedy.notreddit.ui.postlist.PostListViewModel" />
     </data>
 
     <android.support.v7.widget.CardView
@@ -28,7 +28,7 @@
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
-            android:onClick="@{(v) -> postClickedCallback.onPostClicked(post)}"
+            android:onClick="@{(v) -> postListViewModel.onPostClicked(post)}"
             android:orientation="vertical">
 
             <!-- Top row -->
@@ -72,6 +72,7 @@
                 <!-- Comment bubble/count wrapper -->
                 <RelativeLayout
                     android:id="@+id/item_post_comment_views_wrapper"
+                    android:onClick="@{(v) -> postListViewModel.onPostCommentsClicked(post)}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@id/item_post_title"

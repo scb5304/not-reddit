@@ -1,6 +1,8 @@
 package com.jollyremedy.notreddit.ui.common;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
@@ -12,6 +14,9 @@ import com.jollyremedy.notreddit.ui.postdetail.PostDetailFragment;
 import com.jollyremedy.notreddit.ui.postlist.PostListFragment;
 
 import javax.inject.Inject;
+
+import saschpe.android.customtabs.CustomTabsHelper;
+import saschpe.android.customtabs.WebViewFallback;
 
 public class NavigationController {
     private MainActivity mMainActivity;
@@ -32,12 +37,40 @@ public class NavigationController {
                 .commit();
     }
 
+    /**
+     * Navigates to either the post's web page, if exists, or its comments page.
+     */
+    public void navigateToPostGeneric(@NonNull Post post) {
+        if (post.getData().hasSelfText()) {
+            navigateToPostDetail(post);
+        } else {
+            openPostLink(post);
+        }
+    }
+
+    /**
+     * Navigates directly to the post's comments page.
+     */
     public void navigateToPostDetail(@NonNull Post post) {
         PostDetailFragment fragment = PostDetailFragment.newInstance(post);
         mFragmentManager.beginTransaction()
                 .replace(mContainerId, fragment, PostDetailFragment.TAG)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    private void openPostLink(@NonNull Post post) {
+        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
+                .addDefaultShareMenuItem()
+                .setToolbarColor(mMainActivity.getResources().getColor(R.color.primary))
+                .setShowTitle(true)
+                .build();
+
+        CustomTabsHelper.addKeepAliveExtra(mMainActivity, customTabsIntent.intent);
+
+        CustomTabsHelper.openCustomTab(mMainActivity, customTabsIntent,
+                Uri.parse(post.getData().getUrl()),
+                new WebViewFallback());
     }
 
     /**

@@ -23,6 +23,9 @@ public class PostData implements Parcelable {
     @SerializedName("selftext_html")
     private String selfTextHtml;
 
+    @SerializedName("url")
+    private String url;
+
     @SerializedName("domain")
     private String domain;
 
@@ -62,6 +65,10 @@ public class PostData implements Parcelable {
         return selfTextHtml;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
     public String getDomain() {
         return domain;
     }
@@ -88,6 +95,7 @@ public class PostData implements Parcelable {
         title = in.readString();
         selfText = in.readString();
         selfTextHtml = in.readString();
+        url = in.readString();
         domain = in.readString();
         subreddit = in.readString();
         commentCount = in.readByte() == 0x00 ? null : in.readInt();
@@ -107,6 +115,7 @@ public class PostData implements Parcelable {
         dest.writeString(title);
         dest.writeString(selfText);
         dest.writeString(selfTextHtml);
+        dest.writeString(url);
         dest.writeString(domain);
         dest.writeString(subreddit);
         if (commentCount == null) {

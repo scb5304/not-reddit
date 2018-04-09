@@ -14,20 +14,16 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.Subred
 
     private static final String TAG = "PostAdapter";
     private List<Post> mPosts;
-    private PostClickedCallback mPostClickedCallback;
+    private PostListViewModel mPostListViewModel;
 
     void updateData(List<Post> posts) {
         mPosts = posts;
         notifyDataSetChanged();
     }
 
-    PostListAdapter(PostClickedCallback postClickedCallback) {
-        mPostClickedCallback = postClickedCallback;
+    PostListAdapter(PostListViewModel postListViewMode) {
+        mPostListViewModel = postListViewMode;
         mPosts = new ArrayList<>();
-    }
-
-    public interface PostClickedCallback {
-        void onPostClicked(Post post);
     }
 
     @Override
@@ -57,7 +53,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.Subred
 
         public void bind(Post post) {
             binding.setPost(post);
-            binding.setPostClickedCallback(mPostClickedCallback);
+            binding.setPostListViewModel(mPostListViewModel);
             binding.executePendingBindings();
         }
     }

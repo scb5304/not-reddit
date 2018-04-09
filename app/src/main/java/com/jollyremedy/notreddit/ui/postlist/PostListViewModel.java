@@ -9,10 +9,12 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
+import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.models.post.PostListing;
 import com.jollyremedy.notreddit.models.post.PostListingData;
 import com.jollyremedy.notreddit.models.post.PostListingSort;
 import com.jollyremedy.notreddit.repository.PostRepository;
+import com.jollyremedy.notreddit.ui.common.NavigationController;
 
 import java.net.UnknownHostException;
 
@@ -25,6 +27,7 @@ public class PostListViewModel extends ViewModel {
 
     private static final String TAG = "PostListViewModel";
     private PostRepository mPostRepository;
+    private NavigationController mNavigationController;
     private MutableLiveData<PostListing> mListingLiveData;
     private MutableLiveData<Boolean> mEndlessScrollResetLiveData;
     private ObservableBoolean mDataBindIsRefreshing;
@@ -42,6 +45,10 @@ public class PostListViewModel extends ViewModel {
         mListingLiveData = new MutableLiveData<>();
         mEndlessScrollResetLiveData = new MutableLiveData<>();
         mDataBindIsRefreshing = new ObservableBoolean();
+    }
+
+    public void setNavigationController(NavigationController navigationController) {
+        mNavigationController = navigationController;
     }
 
     LiveData<PostListing> getObservableListing(String subredditName) {
@@ -88,6 +95,14 @@ public class PostListViewModel extends ViewModel {
 
     public ObservableBoolean isRefreshing() {
         return mDataBindIsRefreshing;
+    }
+
+    public void onPostClicked(Post post) {
+        mNavigationController.navigateToPostGeneric(post);
+    }
+
+    public void onPostCommentsClicked(Post post) {
+        mNavigationController.navigateToPostDetail(post);
     }
 
     /// --------------------------------------
