@@ -21,7 +21,6 @@ import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.ui.DrawerFragment;
 import com.jollyremedy.notreddit.ui.EndlessRecyclerViewScrollListener;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 

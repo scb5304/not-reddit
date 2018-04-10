@@ -1,15 +1,12 @@
 package com.jollyremedy.notreddit.ui.common;
 
 import android.databinding.BindingAdapter;
-import android.os.Build;
 import android.support.annotation.Nullable;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.google.common.base.Strings;
-import com.squareup.picasso.Picasso;
+import com.jollyremedy.notreddit.di.GlideApp;
 
 import org.sufficientlysecure.htmltextview.HtmlResImageGetter;
 import org.sufficientlysecure.htmltextview.HtmlTextView;
@@ -31,8 +28,7 @@ public class BindingAdapters {
     @BindingAdapter({"imageUrl"})
     public static void loadImage(ImageView view, String url) {
         if (!Strings.isNullOrEmpty(url) && !url.equalsIgnoreCase("self")) {
-            Picasso.with(view.getContext()).load(url).into(view);
-            view.setTag(view);
+            GlideApp.with(view).load(url).into(view);
         } else {
             ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
             layoutParams.width = 0;
