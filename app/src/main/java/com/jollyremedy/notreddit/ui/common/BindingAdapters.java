@@ -2,11 +2,16 @@ package com.jollyremedy.notreddit.ui.common;
 
 import android.databinding.BindingAdapter;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.ViewUtils;
+import android.util.Log;
+import android.util.Patterns;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.ImageView;
 
 import com.google.common.base.Strings;
 import com.jollyremedy.notreddit.di.GlideApp;
+import com.jollyremedy.notreddit.util.NotRedditViewUtils;
 
 import org.sufficientlysecure.htmltextview.HtmlResImageGetter;
 import org.sufficientlysecure.htmltextview.HtmlTextView;
@@ -27,8 +32,11 @@ public class BindingAdapters {
 
     @BindingAdapter({"imageUrl"})
     public static void loadImage(ImageView view, String url) {
-        if (!Strings.isNullOrEmpty(url) && !url.equalsIgnoreCase("self")) {
+        if (!Strings.isNullOrEmpty(url) && Patterns.WEB_URL.matcher(url).matches()) {
             GlideApp.with(view).load(url).into(view);
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            layoutParams.width = (int) NotRedditViewUtils.convertDpToPixel(65);
+            view.setLayoutParams(layoutParams);
         } else {
             ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
             layoutParams.width = 0;
