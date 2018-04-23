@@ -31,7 +31,7 @@
             android:id="@+id/item_comment_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
+            android:background="?android:attr/selectableItemBackground"
             android:clickable="@{viewModel.isCommentClickable(comment)}"
             android:focusable="@{viewModel.isCommentClickable(comment)}"
             android:onClick="@{() -> viewModel.onCommentClicked(commentIndex)}"
@@ -123,25 +123,25 @@
                 <ImageButton
                     android:layout_width="52dp"
                     android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/arrow_up" />
 
                 <ImageButton
                     android:layout_width="52dp"
                     android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/arrow_down" />
 
                 <ImageButton
                     android:layout_width="52dp"
                     android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/eye_gray" />
 
                 <ImageButton
                     android:layout_width="52dp"
                     android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/more_dots" />
 
             </LinearLayout>

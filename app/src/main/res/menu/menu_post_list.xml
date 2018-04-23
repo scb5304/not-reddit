@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_post_list_log_in"
+        android:title="Log In"
+        app:showAsAction="never" />
+    <item
+        android:title="This one thing"
+        app:showAsAction="never" />
+    <item
+        android:title="This other thing"
+        app:showAsAction="never" />
+    <item
+        android:title="Why"
+        app:showAsAction="never" />
+    <item
+        android:title="I don't know"
+        app:showAsAction="never" />
+    <item
+        android:title="Ouchie"
+        app:showAsAction="never" />
+</menu>

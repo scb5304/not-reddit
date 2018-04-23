@@ -1,5 +1,6 @@
 package com.jollyremedy.notreddit.ui.common;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
@@ -60,16 +61,20 @@ public class NavigationController {
     }
 
     private void openPostLink(@NonNull Post post) {
+        navigateToWebPage(post.getData().getUrl());
+    }
+
+    public void navigateToWebPage(@NonNull String url) {
         CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
                 .addDefaultShareMenuItem()
                 .setToolbarColor(mMainActivity.getResources().getColor(R.color.primary))
                 .setShowTitle(true)
                 .build();
-
+        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         CustomTabsHelper.addKeepAliveExtra(mMainActivity, customTabsIntent.intent);
-
         CustomTabsHelper.openCustomTab(mMainActivity, customTabsIntent,
-                Uri.parse(post.getData().getUrl()),
+                Uri.parse(url),
                 new WebViewFallback());
     }
 

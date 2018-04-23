@@ -45,7 +45,7 @@ public class PostDetailViewModel extends ViewModel {
         return mPostDetailLiveData;
     }
 
-    LiveData<CommentClick> getObservableCommentClick() {
+    SingleLiveEvent<CommentClick> getObservableCommentClick() {
         return mCommentClickLiveData;
     }
 
