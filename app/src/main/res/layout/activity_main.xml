@@ -29,8 +29,7 @@
                     android:id="@+id/activity_main_toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?android:attr/actionBarSize"
-                    android:background="?android:attr/colorPrimary"
-                    app:titleTextColor="@android:color/white" />
+                    app:titleTextColor="@android:color/white"/>
             </android.support.design.widget.AppBarLayout>
 
             <FrameLayout
