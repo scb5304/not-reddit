@@ -4,19 +4,23 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
+import com.jollyremedy.notreddit.BuildConfig;
 import com.jollyremedy.notreddit.Constants;
 import com.jollyremedy.notreddit.models.subreddit.Subreddit;
 import com.jollyremedy.notreddit.models.subreddit.SubredditListing;
 import com.jollyremedy.notreddit.models.subreddit.SubredditWhere;
 import com.jollyremedy.notreddit.repository.SubredditRepository;
 import com.jollyremedy.notreddit.ui.common.SingleLiveEvent;
+import com.jollyremedy.notreddit.util.LoginResultParser;
 
 import javax.inject.Inject;
 
@@ -32,7 +36,8 @@ public class MainViewModel extends ViewModel {
     private SingleLiveEvent<String> mLoginUrlLiveData;
 
     @Inject
-    MainViewModel(SubredditRepository subredditRepository, SharedPreferences sharedPreferences) {
+    MainViewModel(SubredditRepository subredditRepository,
+                  SharedPreferences sharedPreferences) {
         mSubredditRepository = subredditRepository;
         mSharedPreferences = sharedPreferences;
         mListingLiveData = new MutableLiveData<>();
@@ -60,10 +65,41 @@ public class MainViewModel extends ViewModel {
     }
 
     public void onLoginPressed() {
-        String authString = mSharedPreferences.getString(Constants.SharedPreferenceKeys.DEVICE_ID, "");
-        String url = "https://www.reddit.com/api/v1/authorize.compact?client_id=Fy9zcX04SkqIhw&response_type=code&state=" + authString + "&duration=permanent&redirect_uri=notreddit://callback&scope=vote mysubreddits";
+        String deviceId = mSharedPreferences.getString(Constants.SharedPreferenceKeys.DEVICE_ID, "");
+        String url = buildRedditLoginUrl(deviceId);
         Log.d(TAG, "url: " + url);
-        mLoginUrlLiveData.setValue(authString);
+        mLoginUrlLiveData.setValue(url);
+    }
+
+    private String buildRedditLoginUrl(String state) {
+        return "https://www.reddit.com/api/v1/authorize.compact" +
+                "?client_id=" + BuildConfig.CLIENT_ID +
+                "&response_type=" + "code" +
+                "&state=" + state +
+                "&duration=" + "permanent" +
+                "&redirect_uri=" + BuildConfig.REDIRECT_URI +
+                "&scope=" + "vote mysubreddits";
+    }
+
+    public void onLoginCallback(String uriString) {
+        String deviceId = mSharedPreferences.getString(Constants.SharedPreferenceKeys.DEVICE_ID, "");
+        LoginResultParser loginResultParser = new LoginResultParser();
+
+        if (uriString == null) {
+            Log.e(TAG, "Uh oh!! Redirect URI string is null.");
+            return;
+        }
+
+        if (!deviceId.equals(loginResultParser.getState(uriString))) {
+            Log.e(TAG, "Uh oh! They didn't pass back the device ID we sent up as 'state'.");
+            return;
+        }
+
+        if (loginResultParser.isAccessDenied(uriString)) {
+            Log.e(TAG, "They turned us down!");
+        } else {
+            Log.e(TAG, "Okay, everything seems fine: " + uriString);
+        }
     }
 
     private class SubredditListingObserver implements SingleObserver<SubredditListing> {

@@ -84,17 +84,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         String uriString = intent.getDataString();
-
-        Uri uri = Uri.parse(uriString);
-
-        String error = uri.getQueryParameter("error");
-        String code = uri.getQueryParameter("code");
-        String state = uri.getQueryParameter("state");
-
-        Log.wtf(TAG, "New intent: " + intent.getDataString());
-        Log.d(TAG, "Result error: " + error);
-        Log.d(TAG, "Result code: " + code);
-        Log.d(TAG, "Result state: " + state);
+        mViewModel.onLoginCallback(uriString);
     }
 
     @Override

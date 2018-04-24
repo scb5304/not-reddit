@@ -24,6 +24,7 @@ android {
         }
 
         buildConfigField "String", "CLIENT_ID", "\"" + clientProperties['CLIENT_ID'] + "\""
+        buildConfigField "String", "REDIRECT_URI", "\"" + clientProperties['REDIRECT_URI'] + "\""
     }
     buildTypes {
         release {

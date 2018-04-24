@@ -10,6 +10,6 @@ before_install:
   - chmod +x gradlew
 
   # The properties file containing the Reddit client ID is gitignored and must be created on the build box.
-  - sudo echo "CLIENT_ID=1234567890" > /home/travis/build/scb5304/not-reddit/client.properties
+  - sudo echo "CLIENT_ID=1234567890\nREDIRECT_URI=myredirecturi:hello" > /home/travis/build/scb5304/not-reddit/client.properties
 script:
   - ./gradlew clean build --stacktrace
