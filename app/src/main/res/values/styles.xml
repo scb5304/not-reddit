@@ -6,6 +6,12 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
-        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="actionOverflowButtonStyle">@style/DotsWhiteTheme</item>
+    </style>
+
+    <!--textColorSecondary not a desirable solution: was also changing scrollbar color.
+    https://stackoverflow.com/a/45713707/4672234 -->
+    <style name="DotsWhiteTheme" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@android:color/white</item>
     </style>
 </resources>
