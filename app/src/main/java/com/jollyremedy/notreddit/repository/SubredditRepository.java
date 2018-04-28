@@ -1,6 +1,7 @@
 package com.jollyremedy.notreddit.repository;
 
 import com.jollyremedy.notreddit.api.OAuthRedditApi;
+import com.jollyremedy.notreddit.models.subreddit.SubredditForUserWhere;
 import com.jollyremedy.notreddit.models.subreddit.SubredditListing;
 import com.jollyremedy.notreddit.models.subreddit.SubredditWhere;
 
@@ -23,7 +24,14 @@ public class SubredditRepository {
     }
 
     public void getSubredditsWhere(@SubredditWhere String where, SingleObserver<SubredditListing> observer) {
-        mRedditApi.getSubredditListing(where)
+        mRedditApi.getSubredditListingWhere(where)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(observer);
+    }
+
+    public void getSubredditsForUserWhere(@SubredditForUserWhere String where, SingleObserver<SubredditListing> observer) {
+        mRedditApi.getSubredditListingForUserWhere(where)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(observer);

@@ -7,6 +7,9 @@ public class Token {
     @SerializedName("access_token")
     private String accessToken;
 
+    @SerializedName("refresh_token")
+    private String refreshToken;
+
     @SerializedName("token_type")
     private String tokenType;
 
@@ -21,6 +24,10 @@ public class Token {
 
     public String getAccessToken() {
         return accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
     }
 
     public String getTokenType() {
