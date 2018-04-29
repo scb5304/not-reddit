@@ -17,7 +17,7 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="1.5dp"
+        android:layout_marginBottom="1dp"
         android:orientation="vertical"
         app:cardCornerRadius="0dp"
         app:cardElevation="2dp">
@@ -71,7 +71,6 @@
                 <!-- Comment bubble/count wrapper -->
                 <RelativeLayout
                     android:id="@+id/item_post_comment_views_wrapper"
-                    android:onClick="@{(v) -> postListViewModel.onPostCommentsClicked(post)}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@id/item_post_title"
@@ -84,6 +83,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
+                    android:onClick="@{(v) -> postListViewModel.onPostCommentsClicked(post)}"
                     android:paddingEnd="16dp"
                     android:paddingStart="16dp">
 
@@ -116,20 +116,10 @@
             <!-- Bottom row -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="34dp"
+                android:layout_height="30dp"
                 android:background="@color/secondary_background_gray"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingEnd="@dimen/default_gap">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="-2dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center_vertical"
-                    android:src="@drawable/upvote" />
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/item_post_score"
@@ -138,38 +128,31 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
+                    android:paddingStart="@dimen/default_gap"
                     android:text="@{post.data.score}"
+                    android:textColor="@color/primary_dark"
                     tools:text="10009" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="-2dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center_vertical"
-                    android:src="@drawable/downvote" />
-
-                <!-- Domain (i.reddit.com, imgur.com, etc.) -->
+                <!-- Subreddit TODO: Hide me if i'm browsing a particular subreddit -->
                 <TextView
                     android:id="@+id/item_post_domain"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:paddingEnd="@dimen/default_gap"
-                    android:paddingStart="@dimen/default_gap"
-                    android:text="@{post.data.domain}"
+                    android:paddingEnd="16dp"
+                    android:paddingStart="16dp"
+                    android:text="@{post.data.subreddit}"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textSize="12sp"
                     android:textStyle="italic"
-                    tools:text="i.reddit.com" />
+                    tools:text="leagueoflegends" />
 
                 <android.support.v4.widget.Space
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
-                <!-- Subreddit TODO: Hide me if i'm browsing a particular subreddit -->
+                <!-- Domain (i.reddit.com, imgur.com, etc.) -->
                 <TextView
                     android:id="@+id/item_post_subreddit"
                     android:layout_width="wrap_content"
@@ -177,11 +160,11 @@
                     android:gravity="center_vertical"
                     android:paddingEnd="@dimen/default_gap"
                     android:paddingStart="@dimen/default_gap"
-                    android:text="@{post.data.subreddit}"
+                    android:text="@{post.data.domain}"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textColor="@android:color/black"
                     android:textSize="12sp"
-                    tools:text="leagueoflegends" />
+                    tools:text="i.reddit.com" />
 
             </LinearLayout>
 
