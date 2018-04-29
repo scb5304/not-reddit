@@ -1,9 +1,13 @@
 package com.jollyremedy.notreddit.ui.postlist;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.google.common.collect.Range;
 import com.jollyremedy.notreddit.databinding.ItemPostBinding;
 import com.jollyremedy.notreddit.models.post.Post;
 
@@ -16,9 +20,18 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.Subred
     private List<Post> mPosts;
     private PostListViewModel mPostListViewModel;
 
-    void updateData(List<Post> posts) {
+    void updateData(@NonNull List<Post> posts, @Nullable Range<Integer> changeRange) {
         mPosts = posts;
-        notifyDataSetChanged();
+
+        Log.wtf(TAG, "Change range: " + changeRange);
+        if (changeRange != null) {
+            Integer lowerEndpoint = changeRange.lowerEndpoint();
+            Integer numberOfItemsChanging = changeRange.upperEndpoint() - changeRange.lowerEndpoint() + 1;
+            notifyItemRangeChanged(lowerEndpoint, numberOfItemsChanging);
+        } else {
+            Log.w(TAG, "No change range!");
+            notifyDataSetChanged();
+        }
     }
 
     PostListAdapter(PostListViewModel postListViewMode) {
