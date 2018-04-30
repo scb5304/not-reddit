@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,7 +105,16 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
                 mViewModel.onLoadMore();
             }
         };
+
         mRecyclerView.addOnScrollListener(mEndlessScrollListener);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    mViewModel.onPostListIdle(((LinearLayoutManager)mRecyclerView.getLayoutManager()).findFirstVisibleItemPosition());
+                }
+            }
+        });
     }
 
     private void initSwipeRefreshLayout() {
@@ -115,8 +125,8 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         mViewModel.getObservableListing(getSubredditName()).observe(this, postListing -> {
             if (postListing != null) {
                 List<Post> posts = postListing.getPostListing().getData().getPosts();
-                mPostListAdapter.updateData(posts, postListing.getPostsChangingRange());
-                postListing.setPostsChangingRange(null);
+                mPostListAdapter.updateData(posts, postListing.getPostsChangingRange(), postListing.getPostsDeletingRange());
+                postListing.clearRanges();
             }
         });
         mViewModel.observeResetEndlessScroll().observe(this, shouldReset -> {

@@ -2,6 +2,7 @@ package com.jollyremedy.notreddit.ui.postlist;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,16 +21,17 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.Subred
     private List<Post> mPosts;
     private PostListViewModel mPostListViewModel;
 
-    void updateData(@NonNull List<Post> posts, @Nullable Range<Integer> changeRange) {
+    void updateData(@NonNull List<Post> posts, @Nullable Range<Integer> changeRange, @Nullable Range<Integer> deleteRange) {
         mPosts = posts;
 
-        Log.wtf(TAG, "Change range: " + changeRange);
         if (changeRange != null) {
-            Integer lowerEndpoint = changeRange.lowerEndpoint();
-            Integer numberOfItemsChanging = changeRange.upperEndpoint() - changeRange.lowerEndpoint() + 1;
-            notifyItemRangeChanged(lowerEndpoint, numberOfItemsChanging);
+            Integer numberOfItemsChanging = changeRange.upperEndpoint() - changeRange.lowerEndpoint();
+            notifyItemRangeChanged(changeRange.lowerEndpoint(), numberOfItemsChanging);
+        } else if (deleteRange != null) {
+            Integer numberOfItemsRemoving = deleteRange.upperEndpoint() - deleteRange.lowerEndpoint();
+            notifyItemRangeRemoved(deleteRange.lowerEndpoint(), numberOfItemsRemoving);
         } else {
-            Log.w(TAG, "No change range!");
+            Log.w(TAG, "No change or delete range!");
             notifyDataSetChanged();
         }
     }

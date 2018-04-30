@@ -7,6 +7,7 @@ import android.databinding.ObservableBoolean;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 
 import com.google.common.collect.Range;
@@ -33,6 +34,15 @@ public class PostListViewModel extends ViewModel {
     private MutableLiveData<Boolean> mEndlessScrollResetLiveData;
     private ObservableBoolean mDataBindIsRefreshing;
     private String mSubredditName = "all";
+
+    public void onPostListIdle(int firstVisibleItemPosition) {
+        if (firstVisibleItemPosition > 0) {
+            NotRedditPostListData postListData = mPostListLiveData.getValue();
+            postListData.getPostListing().getData().getPosts().subList(0, firstVisibleItemPosition).clear();
+            postListData.setPostsDeletingRange(Range.closedOpen(0, firstVisibleItemPosition));
+            mPostListLiveData.postValue(postListData);
+        }
+    }
 
     public enum FetchMode {
         START_FRESH,
