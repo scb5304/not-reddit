@@ -64,9 +64,9 @@ public class PostListViewModelTest {
     @Test
     public void sendsPostsToUi() {
         mPostListViewModel = new PostListViewModel(mPostRepository);
-        MutableLiveData<PostListing> observablePosts = (MutableLiveData<PostListing>) mPostListViewModel.getObservableListing("all");
+        MutableLiveData<NotRedditPostListData> observablePosts = (MutableLiveData<NotRedditPostListData>) mPostListViewModel.getObservableListing("all");
         List<Post> repoPosts = Collections.nCopies(5, mock(Post.class));
-        PostListing listingData = mock(PostListing.class);
+        NotRedditPostListData listingData = mock(NotRedditPostListData.class);
 
         Observer postObserver = mock(Observer.class);
         observablePosts.observeForever(postObserver);
