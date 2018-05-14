@@ -12,13 +12,23 @@ import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.jollyremedy.notreddit.BuildConfig;
 import com.jollyremedy.notreddit.Constants;
+import com.jollyremedy.notreddit.NotRedditApplication;
 import com.jollyremedy.notreddit.api.AuthConstants;
+import com.jollyremedy.notreddit.models.subreddit.SubredditForUserWhere;
+import com.jollyremedy.notreddit.models.subreddit.SubredditListing;
+import com.jollyremedy.notreddit.repository.SubredditRepository;
+import com.jollyremedy.notreddit.repository.TokenRepository;
 import com.jollyremedy.notreddit.ui.main.MainActivity;
 import com.jollyremedy.notreddit.util.LoginResultParser;
 import com.jollyremedy.notreddit.util.NotRedditViewUtils;
 
+import javax.inject.Inject;
+
+import io.reactivex.SingleObserver;
+import io.reactivex.disposables.Disposable;
 import saschpe.android.customtabs.CustomTabsHelper;
 import saschpe.android.customtabs.WebViewFallback;
 
@@ -28,22 +38,31 @@ public class Accountant {
     @SuppressLint("StaticFieldLeak")
     private static Accountant sInstance;
 
-    private Context mContext;
-    private SharedPreferences mSharedPreferences;
-    private AccountManager mAccountManager;
+    @Inject
+    Context mContext;
+
+    @Inject
+    SharedPreferences mSharedPreferences;
+
+    @Inject
+    AccountManager mAccountManager;
+
+    @Inject
+    TokenRepository mTokenRepository;
+
+    @Inject
+    SubredditRepository mSubredditRepository;
+
     private static final String TAG = "Accountant";
 
-    //TODO: Use this constructor for unit tests?
-    private Accountant(Context context, SharedPreferences sharedPreferences, AccountManager accountManager) {
-        mContext = context;
-        mSharedPreferences = sharedPreferences;
-        mAccountManager = accountManager;
+    private Accountant() {
+        NotRedditApplication.getAppComponent().inject(this);
     }
 
-    public static Accountant getInstance(@NonNull Context context) {
+
+    public static Accountant getInstance() {
         if (sInstance == null) {
-            context = context.getApplicationContext();
-            sInstance = new Accountant(context, PreferenceManager.getDefaultSharedPreferences(context), AccountManager.get(context));
+            sInstance = new Accountant();
         }
         return sInstance;
     }
@@ -111,6 +130,14 @@ public class Accountant {
         } else {
             Log.e(TAG, "Okay, everything seems fine: " + uriString);
             Log.wtf(TAG, "Get token from auth code.");
+            mTokenRepository.getToken(loginResultParser.getCode(uriString))
+                    .subscribe(token -> {
+                        Log.wtf(TAG, "Got it! " + new Gson().toJson(token));
+                        mSharedPreferences.edit().putString(Constants.SharedPreferenceKeys.TOKEN, token.getAccessToken()).apply();
+                        tryIt();
+                    }, throwable -> {
+                        Log.wtf(TAG, "Uh oh!!!", throwable);
+                    });
         }
 
         openMainActivity();
@@ -120,6 +147,25 @@ public class Accountant {
         Intent intent = new Intent(mContext, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         mContext.startActivity(intent);
+    }
+
+    private void tryIt() {
+        mSubredditRepository.getSubredditsForUserWhere(SubredditForUserWhere.SUBSCRIBER, new SingleObserver<SubredditListing>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onSuccess(SubredditListing subredditListing) {
+                Log.wtf(TAG, "Got it! " + new Gson().toJson(subredditListing));
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
     }
 
     /*
@@ -133,9 +179,7 @@ public class Accountant {
      });
 
 
-     private void tryIt() {
-     mSubredditRepository.getSubredditsForUserWhere(SubredditForUserWhere.SUBSCRIBER, new SubredditListingObserver());
-     }
+
 
      */
 }

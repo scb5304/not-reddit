@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                 }
                 return true;
             case R.id.menu_post_list_log_in:
-                Accountant.getInstance(this).login();
+                Accountant.getInstance().login();
                 return true;
         }
         return super.onOptionsItemSelected(item);

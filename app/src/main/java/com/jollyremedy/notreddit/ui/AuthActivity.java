@@ -26,7 +26,7 @@ public class AuthActivity extends AppCompatActivity {
             //This activity is being started due to the user adding an account from the settings
             //app on the device. We immediately defer to the Accountant to start logging in.
             Log.wtf(TAG, "onCreate without intent data! Calling Accountant's login() method.");
-            Accountant.getInstance(this).login();
+            Accountant.getInstance().login();
         }
     }
 
@@ -45,7 +45,7 @@ public class AuthActivity extends AppCompatActivity {
         String uriString = intent.getDataString();
 
         Log.wtf(TAG, "Invoking login callback method and finishing.");
-        Accountant.getInstance(this).onLoginCallback(uriString);
+        Accountant.getInstance().onLoginCallback(uriString);
         finish();
     }
 }

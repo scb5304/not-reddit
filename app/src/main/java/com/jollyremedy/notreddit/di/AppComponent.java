@@ -19,6 +19,7 @@ package com.jollyremedy.notreddit.di;
 import android.app.Application;
 
 import com.jollyremedy.notreddit.NotRedditApplication;
+import com.jollyremedy.notreddit.auth.accounting.Accountant;
 
 import javax.inject.Singleton;
 
@@ -42,4 +43,5 @@ public interface AppComponent {
         AppComponent build();
     }
     void inject(NotRedditApplication app);
+    void inject(Accountant accountant);
 }
