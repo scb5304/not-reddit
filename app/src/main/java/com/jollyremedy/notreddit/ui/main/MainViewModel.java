@@ -62,55 +62,6 @@ public class MainViewModel extends ViewModel {
         Log.e(TAG, "Failed to get a post listing!", t);
     }
 
-    public void onLoginPressed() {
-        String deviceId = mSharedPreferences.getString(Constants.SharedPreferenceKeys.DEVICE_ID, "");
-        String url = buildRedditLoginUrl(deviceId);
-        Log.d(TAG, "url: " + url);
-        mLoginUrlLiveData.setValue(url);
-    }
-
-    private String buildRedditLoginUrl(String state) {
-        return "https://www.reddit.com/api/v1/authorize.compact" +
-                "?client_id=" + BuildConfig.CLIENT_ID +
-                "&response_type=" + "code" +
-                "&state=" + state +
-                "&duration=" + "permanent" +
-                "&redirect_uri=" + BuildConfig.REDIRECT_URI +
-                "&scope=" + "vote mysubreddits";
-    }
-
-    public void onLoginCallback(String uriString) {
-        String deviceId = mSharedPreferences.getString(Constants.SharedPreferenceKeys.DEVICE_ID, "");
-        LoginResultParser loginResultParser = new LoginResultParser();
-
-        if (uriString == null) {
-            Log.e(TAG, "Uh oh!! Redirect URI string is null.");
-            return;
-        }
-
-        if (!deviceId.equals(loginResultParser.getState(uriString))) {
-            Log.e(TAG, "Uh oh! They didn't pass back the device ID we sent up as 'state'.");
-            return;
-        }
-
-        if (loginResultParser.isAccessDenied(uriString)) {
-            Log.e(TAG, "They turned us down!");
-        } else {
-            Log.e(TAG, "Okay, everything seems fine: " + uriString);
-            mTokenRepository.getToken(loginResultParser.getCode(uriString))
-                    .subscribe(token -> {
-                        Log.wtf(TAG, "Got it! " + new Gson().toJson(token));
-                        mSharedPreferences.edit().putString(Constants.SharedPreferenceKeys.TOKEN, token.getAccessToken()).apply();
-                        tryIt();
-                    }, throwable -> {
-                        Log.wtf(TAG, "Uh oh!!!", throwable);
-                    });
-        }
-    }
-
-    private void tryIt() {
-        mSubredditRepository.getSubredditsForUserWhere(SubredditForUserWhere.SUBSCRIBER, new SubredditListingObserver());
-    }
 
     private class SubredditListingObserver implements SingleObserver<SubredditListing> {
 

@@ -13,6 +13,7 @@ import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.ui.DrawerFragment;
 import com.jollyremedy.notreddit.ui.postdetail.PostDetailFragment;
 import com.jollyremedy.notreddit.ui.postlist.PostListFragment;
+import com.jollyremedy.notreddit.util.NotRedditViewUtils;
 
 import javax.inject.Inject;
 
@@ -65,13 +66,7 @@ public class NavigationController {
     }
 
     public void navigateToWebPage(@NonNull String url) {
-        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
-                .addDefaultShareMenuItem()
-                .setToolbarColor(mMainActivity.getResources().getColor(R.color.primary))
-                .setShowTitle(true)
-                .build();
-        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        CustomTabsIntent customTabsIntent = NotRedditViewUtils.createBaseCustomTabsIntent(mMainActivity);
         CustomTabsHelper.addKeepAliveExtra(mMainActivity, customTabsIntent.intent);
         CustomTabsHelper.openCustomTab(mMainActivity, customTabsIntent,
                 Uri.parse(url),

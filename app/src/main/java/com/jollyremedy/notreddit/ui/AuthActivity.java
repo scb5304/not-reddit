@@ -1,61 +1,51 @@
 package com.jollyremedy.notreddit.ui;
 
-import android.accounts.AccountAuthenticatorActivity;
-import android.accounts.AccountManager;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.TextView;
 
-import com.google.common.base.Strings;
-import com.jollyremedy.notreddit.R;
-import com.jollyremedy.notreddit.auth.Accountant;
+import com.jollyremedy.notreddit.auth.accounting.Accountant;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
-public class AuthActivity extends AccountAuthenticatorActivity {
-
-    @BindView(R.id.auth_login_username)
-    TextView mUsernameTextView;
-
-    @BindView(R.id.auth_login_password)
-    TextView mPasswordTextView;
+public class AuthActivity extends AppCompatActivity {
 
     private static final String TAG = "AuthActivity";
-    private Accountant mAccountant;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_auth);
-        ButterKnife.bind(this);
-        mAccountant = new Accountant(AccountManager.get(getApplicationContext()));
+
+        if (getIntent() != null && getIntent().getData() != null) {
+            //This activity is being started due to a login callback. The user may have decided to log
+            //in from inside the app, which would result in this activity starting to consume
+            //the intent.
+            Log.wtf(TAG, "onCreate with intent data!");
+            this.onLoginCallback(getIntent());
+        } else {
+            //This activity is being started due to the user adding an account from the settings
+            //app on the device. We immediately defer to the Accountant to start logging in.
+            Log.wtf(TAG, "onCreate without intent data! Calling Accountant's login() method.");
+            Accountant.getInstance(this).login();
+        }
     }
 
-    @OnClick(R.id.auth_login_button)
-    void onLoginClicked() {
-        String username = mUsernameTextView.getText().toString();
-        String password = mPasswordTextView.getText().toString();
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
 
-        boolean valid = true;
-
-        if (Strings.isNullOrEmpty(username)) {
-            mUsernameTextView.setError("Required field.");
-            valid = false;
+        Log.wtf(TAG, "NEW INTENT!");
+        if (intent.getData() != null) {
+            Log.wtf(TAG, "New intent has data, login callback!");
+            this.onLoginCallback(intent);
         }
+    }
 
-        if (Strings.isNullOrEmpty(password)) {
-            mPasswordTextView.setError("Required field.");
-            valid = false;
-        }
+    private void onLoginCallback(Intent intent) {
+        String uriString = intent.getDataString();
 
-        if (valid) {
-            Log.wtf(TAG, "Create account: TODO...");
-            mAccountant.addAccount(username, password);
-        } else {
-            Log.w(TAG, "Not creating account.");
-        }
+        Log.wtf(TAG, "Invoking login callback method and finishing.");
+        Accountant.getInstance(this).onLoginCallback(uriString);
+        finish();
     }
 }
