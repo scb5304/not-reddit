@@ -16,7 +16,7 @@ public class AccountRepository {
         mRedditApi = oAuthRedditApi;
     }
 
-    public Single<Object> getCurrentRedditAccount() {
+    public Single<RedditAccount> getCurrentRedditAccount() {
         return mRedditApi.getMe();
     }
 }

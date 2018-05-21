@@ -34,5 +34,5 @@ public interface OAuthRedditApi {
                                          @Query("children") String childrenCommaDelimited);
 
     @GET("/api/v1/me")
-    Single<Object> getMe();
+    Single<RedditAccount> getMe();
 }

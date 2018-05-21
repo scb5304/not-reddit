@@ -40,7 +40,7 @@ public class FullTokenRepository {
         })).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
-    private Single<Object> getCurrentRedditAccount(Token token) {
+    private Single<RedditAccount> getCurrentRedditAccount(Token token) {
         mSharedPreferences.edit().putString(Constants.SharedPreferenceKeys.TEMP_USER_TOKEN, token.getAccessToken()).apply();
         return mAccountRepository.getCurrentRedditAccount()
                 .subscribeOn(Schedulers.io())

@@ -2,11 +2,15 @@ package com.jollyremedy.notreddit.auth.accounting;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.support.customtabs.CustomTabsIntent;
 import android.util.Log;
 
@@ -16,9 +20,12 @@ import com.jollyremedy.notreddit.Constants;
 import com.jollyremedy.notreddit.NotRedditApplication;
 import com.jollyremedy.notreddit.api.AuthConstants;
 import com.jollyremedy.notreddit.repository.FullTokenRepository;
+import com.jollyremedy.notreddit.ui.AuthActivity;
 import com.jollyremedy.notreddit.ui.main.MainActivity;
 import com.jollyremedy.notreddit.util.LoginResultParser;
 import com.jollyremedy.notreddit.util.NotRedditViewUtils;
+
+import java.net.BindException;
 
 import javax.inject.Inject;
 
@@ -49,7 +56,6 @@ public class Accountant {
         NotRedditApplication.getAppComponent().inject(this);
     }
 
-
     public static Accountant getInstance() {
         if (sInstance == null) {
             sInstance = new Accountant();
@@ -79,28 +85,37 @@ public class Accountant {
                 "&scope=" + "vote mysubreddits identity";
     }
 
-    private boolean addAccount(String username, String password) {
-        Account[] accounts = mAccountManager.getAccountsByType(AuthConstants.AUTH_ACCOUNT_TYPE);
-        if (accounts.length == 0) {
-            try {
-                boolean added = mAccountManager.addAccountExplicitly(new Account(username, AuthConstants.AUTH_ACCOUNT_TYPE), null, null);
-                if (added) {
-                    Log.d(TAG, "Added a NotReddit account.");
+    private boolean addAccount(String username) {
+        try {
+            Account userAccount = new Account(username, AuthConstants.AUTH_ACCOUNT_TYPE);
+            boolean added = mAccountManager.addAccountExplicitly(userAccount, null, null);
+            if (added) {
+                Log.d(TAG, "Added a NotReddit account for " + username);
+                return true;
+            } else {
+                Log.e(TAG, "Unable to add a NotReddit account: already exists? Trying to remove.");
+                boolean removed = mAccountManager.removeAccountExplicitly(userAccount);
+
+                if (removed) {
+                    Log.d(TAG, "Removed old NotReddit account for " + username);
+                    boolean addedAttemptTwo = mAccountManager.addAccountExplicitly(userAccount, null, null);
+
+                    if (addedAttemptTwo) {
+                        Log.d(TAG, "Added the account after removing the original.");
+                        return true;
+                    }
                 } else {
-                    Log.e(TAG, "Unable to add a NotReddit account.");
+                    Log.e(TAG, "Failed to remove old NotReddit account for " + username);
                 }
-                return added;
-            } catch (Exception e) {
-                Log.e(TAG, "Unable to add a NotReddit account.", e);
             }
-            return false;
-        } else {
-            Log.w(TAG, "Account already exists.");
+            Log.e(TAG, "Unable to create account.");
+        } catch (Exception e) {
+            Log.e(TAG, "Fatal internal error while creating account.", e);
         }
         return false;
     }
 
-    public void onLoginCallback(String uriString) {
+    public void onLoginCallback(String uriString, AuthActivity authUi) {
         String deviceId = mSharedPreferences.getString(Constants.SharedPreferenceKeys.DEVICE_ID, "");
         LoginResultParser loginResultParser = new LoginResultParser();
 
@@ -116,26 +131,23 @@ public class Accountant {
 
         if (loginResultParser.isAccessDenied(uriString)) {
             Log.e(TAG, "They turned us down!");
-            //todo: error message?
         } else {
-            Log.e(TAG, "Okay, everything seems fine: " + uriString);
-            Log.wtf(TAG, "Get token from auth code.");
             mFullTokenRepository.getFullToken(loginResultParser.getCode(uriString))
-                    .subscribe(token -> {
-                        Log.wtf(TAG, "Got it! " + new Gson().toJson(token));
-                        mSharedPreferences.edit().putString(Constants.SharedPreferenceKeys.TEMP_USER_TOKEN, token.getAccessToken()).apply();
-                    }, throwable -> {
-                        Log.wtf(TAG, "Uh oh!!!", throwable);
-                    });
+                    .doFinally(() -> {
+                        mSharedPreferences.edit().remove(Constants.SharedPreferenceKeys.TEMP_USER_TOKEN).apply();
+                    }).subscribe(token -> {
+                Log.wtf(TAG, "Got it! " + new Gson().toJson(token));
+                boolean addSuccess = addAccount(token.getAccount().getName());
+                if (addSuccess) {
+                    authUi.completeSuccessfully();
+                } else {
+                    authUi.completeWithError();
+                }
+            }, throwable -> {
+                Log.wtf(TAG, "Error during token orchestration.", throwable);
+                authUi.completeWithError();
+            });
         }
-
-        openMainActivity();
-    }
-
-    private void openMainActivity() {
-        Intent intent = new Intent(mContext, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        mContext.startActivity(intent);
     }
 
     /*

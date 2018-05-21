@@ -5,8 +5,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.auth.accounting.Accountant;
+import com.jollyremedy.notreddit.ui.main.MainActivity;
 
 public class AuthActivity extends AppCompatActivity {
 
@@ -15,6 +18,7 @@ public class AuthActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_auth);
 
         if (getIntent() != null && getIntent().getData() != null) {
             //This activity is being started due to a login callback. The user may have decided to log
@@ -45,7 +49,22 @@ public class AuthActivity extends AppCompatActivity {
         String uriString = intent.getDataString();
 
         Log.wtf(TAG, "Invoking login callback method and finishing.");
-        Accountant.getInstance().onLoginCallback(uriString);
-        finish();
+        Accountant.getInstance().onLoginCallback(uriString, this);
+    }
+
+    private void openMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    public void completeSuccessfully() {
+        openMainActivity();
+        Toast.makeText(this, "LOGIN SUCCESS!", Toast.LENGTH_SHORT).show();
+    }
+
+    public void completeWithError() {
+        openMainActivity();
+        Toast.makeText(this, "LOGIN FAILURE!", Toast.LENGTH_SHORT).show();
     }
 }

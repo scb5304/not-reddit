@@ -22,7 +22,7 @@ public class Token {
     @SerializedName("expires_in")
     private Integer expiresIn;
 
-    private Object account;
+    private RedditAccount account;
 
     public String getAccessToken() {
         return accessToken;
@@ -48,11 +48,11 @@ public class Token {
         return expiresIn;
     }
 
-    public Object getAccount() {
+    public RedditAccount getAccount() {
         return account;
     }
 
-    public void setAccount(Object account) {
+    public void setAccount(RedditAccount account) {
         this.account = account;
     }
 }
