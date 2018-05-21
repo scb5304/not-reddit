@@ -1,5 +1,6 @@
 package com.jollyremedy.notreddit.api;
 
+import com.jollyremedy.notreddit.models.auth.RedditAccount;
 import com.jollyremedy.notreddit.models.comment.PostWithCommentListing;
 import com.jollyremedy.notreddit.models.comment.more.MoreChildren;
 import com.jollyremedy.notreddit.models.post.PostListing;
@@ -31,4 +32,7 @@ public interface OAuthRedditApi {
     @GET("/api/morechildren?api_type=json&raw_json=1")
     Single<MoreChildren> getMoreComments(@Query("link_id") String postFullName,
                                          @Query("children") String childrenCommaDelimited);
+
+    @GET("/api/v1/me")
+    Single<Object> getMe();
 }

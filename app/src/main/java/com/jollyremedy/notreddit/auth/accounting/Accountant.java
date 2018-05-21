@@ -7,8 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.util.Log;
 
@@ -17,18 +15,13 @@ import com.jollyremedy.notreddit.BuildConfig;
 import com.jollyremedy.notreddit.Constants;
 import com.jollyremedy.notreddit.NotRedditApplication;
 import com.jollyremedy.notreddit.api.AuthConstants;
-import com.jollyremedy.notreddit.models.subreddit.SubredditForUserWhere;
-import com.jollyremedy.notreddit.models.subreddit.SubredditListing;
-import com.jollyremedy.notreddit.repository.SubredditRepository;
-import com.jollyremedy.notreddit.repository.TokenRepository;
+import com.jollyremedy.notreddit.repository.FullTokenRepository;
 import com.jollyremedy.notreddit.ui.main.MainActivity;
 import com.jollyremedy.notreddit.util.LoginResultParser;
 import com.jollyremedy.notreddit.util.NotRedditViewUtils;
 
 import javax.inject.Inject;
 
-import io.reactivex.SingleObserver;
-import io.reactivex.disposables.Disposable;
 import saschpe.android.customtabs.CustomTabsHelper;
 import saschpe.android.customtabs.WebViewFallback;
 
@@ -48,10 +41,7 @@ public class Accountant {
     AccountManager mAccountManager;
 
     @Inject
-    TokenRepository mTokenRepository;
-
-    @Inject
-    SubredditRepository mSubredditRepository;
+    FullTokenRepository mFullTokenRepository;
 
     private static final String TAG = "Accountant";
 
@@ -86,7 +76,7 @@ public class Accountant {
                 "&state=" + state +
                 "&duration=" + "permanent" +
                 "&redirect_uri=" + BuildConfig.REDIRECT_URI +
-                "&scope=" + "vote mysubreddits";
+                "&scope=" + "vote mysubreddits identity";
     }
 
     private boolean addAccount(String username, String password) {
@@ -130,11 +120,10 @@ public class Accountant {
         } else {
             Log.e(TAG, "Okay, everything seems fine: " + uriString);
             Log.wtf(TAG, "Get token from auth code.");
-            mTokenRepository.getToken(loginResultParser.getCode(uriString))
+            mFullTokenRepository.getFullToken(loginResultParser.getCode(uriString))
                     .subscribe(token -> {
                         Log.wtf(TAG, "Got it! " + new Gson().toJson(token));
-                        mSharedPreferences.edit().putString(Constants.SharedPreferenceKeys.TOKEN, token.getAccessToken()).apply();
-                        tryIt();
+                        mSharedPreferences.edit().putString(Constants.SharedPreferenceKeys.TEMP_USER_TOKEN, token.getAccessToken()).apply();
                     }, throwable -> {
                         Log.wtf(TAG, "Uh oh!!!", throwable);
                     });
@@ -147,25 +136,6 @@ public class Accountant {
         Intent intent = new Intent(mContext, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         mContext.startActivity(intent);
-    }
-
-    private void tryIt() {
-        mSubredditRepository.getSubredditsForUserWhere(SubredditForUserWhere.SUBSCRIBER, new SingleObserver<SubredditListing>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onSuccess(SubredditListing subredditListing) {
-                Log.wtf(TAG, "Got it! " + new Gson().toJson(subredditListing));
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-        });
     }
 
     /*

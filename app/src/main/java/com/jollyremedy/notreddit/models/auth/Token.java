@@ -22,6 +22,8 @@ public class Token {
     @SerializedName("expires_in")
     private Integer expiresIn;
 
+    private Object account;
+
     public String getAccessToken() {
         return accessToken;
     }
@@ -44,5 +46,13 @@ public class Token {
 
     public Integer getExpiresIn() {
         return expiresIn;
+    }
+
+    public Object getAccount() {
+        return account;
+    }
+
+    public void setAccount(Object account) {
+        this.account = account;
     }
 }

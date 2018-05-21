@@ -36,15 +36,12 @@ public class OAuthTokenInterceptor implements Interceptor {
 
     @Override
     public Response intercept(final @NonNull Chain chain) throws IOException {
-        String tokenInSharedPref = mSharedPreferences.getString(SharedPreferenceKeys.TOKEN, null);
+        String tokenInSharedPref = mSharedPreferences.getString(SharedPreferenceKeys.TEMP_USER_TOKEN, null);
         if (tokenInSharedPref != null) {
             Request request = requestWithToken(chain.request(), tokenInSharedPref);
-            Response response = chain.proceed(request);
-            if (!requestRequiresNewToken(response)) {
-                return response;
-            }
+            return chain.proceed(request);
         }
-        return requestTokenAndAddToRequest(chain);
+        return chain.proceed(chain.request());
     }
 
     private Response requestTokenAndAddToRequest(Chain chain) throws IOException {

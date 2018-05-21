@@ -81,7 +81,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(PostListViewModel.class);
         mViewModel.setNavigationController(mNavigationController);
         mBinding.setPostListViewModel(mViewModel);
-        subscribeUi();
+        //subscribeUi();
         initRecyclerView();
         initSwipeRefreshLayout();
     }

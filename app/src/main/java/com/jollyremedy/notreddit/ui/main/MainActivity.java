@@ -92,14 +92,14 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     private void subscribeUi() {
-        mViewModel.getObservableSubredditListing().observe(this, subredditListing -> {
-            Menu menu = mDrawerNavigationView.getMenu();
-            menu.clear();
-            List<Subreddit> subreddits = subredditListing.getData().getSubreddits();
-            for (Subreddit subreddit : subreddits) {
-                menu.add(subreddit.getData().getDisplayName());
-            }
-        });
+//        mViewModel.getObservableSubredditListing().observe(this, subredditListing -> {
+//            Menu menu = mDrawerNavigationView.getMenu();
+//            menu.clear();
+//            List<Subreddit> subreddits = subredditListing.getData().getSubreddits();
+//            for (Subreddit subreddit : subreddits) {
+//                menu.add(subreddit.getData().getDisplayName());
+//            }
+//        });
         mViewModel.getObservableLoginUrl().observe(this, url -> {
             mNavigationController.navigateToWebPage(url);
         });
