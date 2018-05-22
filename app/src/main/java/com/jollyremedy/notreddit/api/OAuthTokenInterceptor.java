@@ -1,5 +1,6 @@
 package com.jollyremedy.notreddit.api;
 
+import android.accounts.AccountManager;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,6 +37,14 @@ public class OAuthTokenInterceptor implements Interceptor {
 
     @Override
     public Response intercept(final @NonNull Chain chain) throws IOException {
+        //TODO maybe:
+        //Is there a user currently logged in?
+        //  If so, get the current token, and use that.
+        //      If that fails due to a 403, get the current refresh token, and use that.
+        //          If that ALSO fails due to a 403, invalidate the auth token, and somehow get them to re-sign in? Or show an error and tell them to remove the account.
+        //If there is not a user currently logged in, is there currently an app-only token stored in shared preferences?
+        //  If so, use it. If that fails, request a new one. Try with the returned one, and if that fails, remove the token and show an error.
+        //  If not, request a new one, then try again. Try with the returned one, and if that fails, remove the token and show an error.
         String tokenInSharedPref = mSharedPreferences.getString(SharedPreferenceKeys.TEMP_USER_TOKEN, null);
         if (tokenInSharedPref != null) {
             Request request = requestWithToken(chain.request(), tokenInSharedPref);
