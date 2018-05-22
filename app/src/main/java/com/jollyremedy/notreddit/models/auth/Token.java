@@ -24,6 +24,8 @@ public class Token {
 
     private RedditAccount account;
 
+
+
     public String getAccessToken() {
         return accessToken;
     }

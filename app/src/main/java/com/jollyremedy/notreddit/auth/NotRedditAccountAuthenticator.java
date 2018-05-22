@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.common.base.Strings;
+import com.jollyremedy.notreddit.api.AuthConstants;
 import com.jollyremedy.notreddit.ui.AuthActivity;
 
 public class NotRedditAccountAuthenticator extends AbstractAccountAuthenticator {
@@ -47,6 +48,8 @@ public class NotRedditAccountAuthenticator extends AbstractAccountAuthenticator 
     @Override
     public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) {
         String authToken = mAccountManager.peekAuthToken(account, authTokenType);
+        String refreshToken = mAccountManager.getUserData(account, AuthConstants.USER_DATA_KEY_REFRESH_TOKEN);
+
         final Bundle result = new Bundle();
         result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
         result.putString(AccountManager.KEY_AUTH_TOKEN_LABEL, authTokenType);
@@ -54,6 +57,7 @@ public class NotRedditAccountAuthenticator extends AbstractAccountAuthenticator 
         //return an auth token if it exists
         if (!Strings.isNullOrEmpty(authToken)) {
             result.putString(AccountManager.KEY_AUTHTOKEN, authToken);
+            result.putString(AuthConstants.USER_DATA_KEY_REFRESH_TOKEN, refreshToken);
             return result;
         }
 

@@ -2,11 +2,13 @@ package com.jollyremedy.notreddit.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.jollyremedy.notreddit.Constants;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.auth.accounting.Accountant;
 import com.jollyremedy.notreddit.ui.main.MainActivity;
@@ -61,10 +63,19 @@ public class AuthActivity extends AppCompatActivity {
     public void completeSuccessfully() {
         openMainActivity();
         Toast.makeText(this, "LOGIN SUCCESS!", Toast.LENGTH_SHORT).show();
+
+        verify();
     }
 
     public void completeWithError() {
         openMainActivity();
         Toast.makeText(this, "LOGIN FAILURE!", Toast.LENGTH_SHORT).show();
+    }
+
+    private void verify() {
+        String currentUser = PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN, null);
+        Log.wtf(TAG, "Current user: " + currentUser);
+        Log.wtf(TAG, "Current access token: " + Accountant.getInstance().getCurrentAccessToken());
+        Log.wtf(TAG, "Current refresh token: " + Accountant.getInstance().getCurrentRefreshToken());
     }
 }
