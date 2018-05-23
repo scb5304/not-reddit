@@ -78,6 +78,7 @@ public class Accountant {
                 new WebViewFallback());
     }
 
+    //TODO: Reduce scope
     private String buildRedditLoginUrl(String state) {
         return "https://www.reddit.com/api/v1/authorize.compact" +
                 "?client_id=" + BuildConfig.CLIENT_ID +
@@ -85,7 +86,7 @@ public class Accountant {
                 "&state=" + state +
                 "&duration=" + "permanent" +
                 "&redirect_uri=" + BuildConfig.REDIRECT_URI +
-                "&scope=" + "vote mysubreddits identity";
+                "&scope=" + "identity edit flair history modconfig modflair modlog modposts modwiki mysubreddits privatemessages read report save submit subscribe vote wikiedit wikiread";
     }
 
     private boolean addAccount(Token token) {

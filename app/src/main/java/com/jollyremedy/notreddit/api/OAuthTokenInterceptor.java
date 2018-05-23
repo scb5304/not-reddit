@@ -1,25 +1,24 @@
 package com.jollyremedy.notreddit.api;
 
-import android.accounts.AccountManager;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.jollyremedy.notreddit.Constants;
+import com.google.common.base.Strings;
+import com.google.gson.Gson;
 import com.jollyremedy.notreddit.Constants.SharedPreferenceKeys;
+import com.jollyremedy.notreddit.auth.accounting.Accountant;
 import com.jollyremedy.notreddit.models.auth.Token;
 import com.jollyremedy.notreddit.repository.TokenRepository;
 
 import java.io.IOException;
 
 import javax.inject.Inject;
-import javax.net.ssl.HttpsURLConnection;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import retrofit2.Call;
 
 import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
@@ -37,48 +36,68 @@ public class OAuthTokenInterceptor implements Interceptor {
 
     @Override
     public Response intercept(final @NonNull Chain chain) throws IOException {
-        //TODO maybe:
-        //Is there a user currently logged in?
-        //  If so, get the current token, and use that.
-        //      If that fails due to a 403, get the current refresh token, and use that.
-        //          If that ALSO fails due to a 403, invalidate the auth token, and somehow get them to re-sign in? Or show an error and tell them to remove the account.
-        //If there is not a user currently logged in, is there currently an app-only token stored in shared preferences?
-        //  If so, use it. If that fails, request a new one. Try with the returned one, and if that fails, remove the token and show an error.
-        //  If not, request a new one, then try again. Try with the returned one, and if that fails, remove the token and show an error.
-        String tokenInSharedPref = mSharedPreferences.getString(SharedPreferenceKeys.TEMP_USER_TOKEN, null);
-        if (tokenInSharedPref != null) {
-            Request request = requestWithToken(chain.request(), tokenInSharedPref);
-            return chain.proceed(request);
+        String tempUserToken = mSharedPreferences.getString(SharedPreferenceKeys.TEMP_USER_TOKEN, null);
+        if (tempUserToken != null) {
+            Log.d(TAG, "Temporary user token exists. Immediately performing request with this token.");
+            return chain.proceed(requestWithToken(chain.request(), tempUserToken));
         }
+
+        String currentUsername = mSharedPreferences.getString(SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN, null);
+        Log.d(TAG, "Current username: " + currentUsername);
+
+        if (currentUsername != null) {
+            Response userAuthenticatedResponse = performAuthenticatedCallForCurrentUser(chain);
+            if (userAuthenticatedResponse != null) {
+                return userAuthenticatedResponse;
+            }
+        }
+
         return chain.proceed(chain.request());
     }
 
-    private Response requestTokenAndAddToRequest(Chain chain) throws IOException {
-        String newToken = getNewAccessToken();
-        mSharedPreferences.edit()
-                .putString(SharedPreferenceKeys.TOKEN, newToken)
-                .apply();
-
-        if (newToken != null) {
-            Request request = requestWithToken(chain.request(), newToken);
-            return chain.proceed(request);
-        } else {
-            return chain.proceed(chain.request());
-        }
-    }
-
     @Nullable
-    private String getNewAccessToken() throws IOException {
-        String accessToken = null;
-        String deviceId = mSharedPreferences.getString(SharedPreferenceKeys.DEVICE_ID, null);
-        Token token = mTokenRepository.getTokenSync(deviceId);
+    private Response performAuthenticatedCallForCurrentUser(Chain chain) throws IOException {
+        Log.wtf(TAG, "Performing authenticated call for current user...");
 
-        if (token == null) {
-            Log.e(TAG, "Failed to get a new token when intercepting a request.");
-        } else {
-            accessToken = token.getAccessToken();
+        String currentAccountToken = Accountant.getInstance().getCurrentAccessToken();
+        Log.wtf(TAG, "Current account token: " + currentAccountToken);
+
+        if (currentAccountToken != null) {
+            Log.wtf(TAG, "Since we have an account token, perform the request with it attached...");
+            Response initialResult = chain.proceed(requestWithToken(chain.request(), currentAccountToken));
+
+            if (!responseFailedDueToAuth(initialResult)) {
+                Log.wtf(TAG, "This initial request was a success! Or, at least didn't fail due to authorization.");
+                return initialResult;
+            }
+
+            Log.wtf(TAG, "This initial request failed due to a 401 or 403.");
+
+            String currentRefreshToken = Accountant.getInstance().getCurrentRefreshToken();
+            Log.wtf(TAG, "Current refresh token: " + currentRefreshToken);
+
+            if (currentRefreshToken != null) {
+                Log.wtf(TAG, "Since we have a refresh token, perform a request to get a new token...");
+
+                Token refreshedToken = mTokenRepository.getRefreshedToken(currentRefreshToken);
+                Log.wtf(TAG, "Refreshed token: " + new Gson().toJson(refreshedToken));
+
+                if (refreshedToken != null) {
+                    Log.wtf(TAG, "Since we now have a new token from the refresh token, perform the initial request again...");
+
+                    Response resultFromRequestWithRefreshedToken = chain.proceed(requestWithToken(chain.request(), refreshedToken.getAccessToken()));
+                    if (!responseFailedDueToAuth(resultFromRequestWithRefreshedToken)) {
+                        Log.wtf(TAG, "This request was finally a success! Or, at least didn't fail due to authorization.");
+                        return resultFromRequestWithRefreshedToken;
+                    } else {
+                        Log.wtf(TAG, "This final request with a refreshed auth-token failed due to a 401 or 403.");
+                    }
+                }
+            }
         }
-        return accessToken;
+
+        Log.wtf(TAG, "Returning null!");
+        return null;
     }
 
     private Request requestWithToken(Request request, String token) {
@@ -87,12 +106,7 @@ public class OAuthTokenInterceptor implements Interceptor {
                 .build();
     }
 
-    private boolean requestRequiresNewToken(Response responseFromInitialRequest) {
-        //noinspection SimplifiableIfStatement
-        if (responseFromInitialRequest.isSuccessful()) {
-            return false;
-        } else {
-            return responseFromInitialRequest.code() == HTTP_FORBIDDEN || responseFromInitialRequest.code() == HTTP_UNAUTHORIZED;
-        }
+    private boolean responseFailedDueToAuth(Response response) {
+        return response.code() == HTTP_FORBIDDEN || response.code() == HTTP_UNAUTHORIZED;
     }
 }

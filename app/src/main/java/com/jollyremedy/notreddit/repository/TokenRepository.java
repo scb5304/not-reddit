@@ -1,10 +1,12 @@
 package com.jollyremedy.notreddit.repository;
 
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.jollyremedy.notreddit.BuildConfig;
+import com.jollyremedy.notreddit.Constants;
 import com.jollyremedy.notreddit.api.AuthConstants;
 import com.jollyremedy.notreddit.api.RequestTokenApi;
 import com.jollyremedy.notreddit.models.auth.Token;
@@ -23,10 +25,12 @@ public class TokenRepository {
 
     private static final String TAG = "TokenRepository";
     private RequestTokenApi mRequestTokenApi;
+    private SharedPreferences mSharedPreferences;
 
     @Inject
-    TokenRepository(RequestTokenApi requestTokenApi) {
+    TokenRepository(RequestTokenApi requestTokenApi, SharedPreferences sharedPreferences) {
         mRequestTokenApi = requestTokenApi;
+        mSharedPreferences = sharedPreferences;
     }
 
     @Deprecated
@@ -43,6 +47,25 @@ public class TokenRepository {
             }
         } catch (IOException e) {
             Log.e(TAG, "IOException occurred during token fetch.", e);
+        }
+
+        return token;
+    }
+
+    @Nullable
+    public Token getRefreshedToken(String refreshToken) {
+        String deviceId = mSharedPreferences.getString(Constants.SharedPreferenceKeys.DEVICE_ID, null);
+        Token token = null;
+        Call<Token> tokenCall = mRequestTokenApi.getRefreshToken(AuthConstants.AUTH_GRANT_TYPE_INSTALLED, deviceId, refreshToken);
+        try {
+            Response<Token> tokenResponse = tokenCall.execute();
+            if (tokenResponse.isSuccessful()) {
+                token = tokenResponse.body();
+            } else {
+                Log.e(TAG, "Failed to get a refreshed token! " + tokenResponse.errorBody());
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "IOException occurred during refreshed token fetch.", e);
         }
 
         return token;

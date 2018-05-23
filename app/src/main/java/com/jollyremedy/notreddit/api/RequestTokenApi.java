@@ -13,7 +13,13 @@ public interface RequestTokenApi {
     @FormUrlEncoded
     @POST("api/v1/access_token")
     Call<Token> getTokenAppOnlyFlow(@Field("grant_type") String grantType,
-                                @Field("device_id") String deviceId);
+                                    @Field("device_id") String deviceId);
+
+    @FormUrlEncoded
+    @POST("api/v1/access_token")
+    Call<Token> getRefreshToken(@Field("grant_type") String grantType,
+                                @Field("device_id") String deviceId,
+                                @Field("refresh_token") String refreshToken);
 
     @FormUrlEncoded
     @POST("api/v1/access_token")
