@@ -6,18 +6,7 @@
         android:title="Log In"
         app:showAsAction="never" />
     <item
-        android:title="This one thing"
-        app:showAsAction="never" />
-    <item
-        android:title="This other thing"
-        app:showAsAction="never" />
-    <item
-        android:title="Why"
-        app:showAsAction="never" />
-    <item
-        android:title="I don't know"
-        app:showAsAction="never" />
-    <item
-        android:title="Ouchie"
+        android:id="@+id/menu_post_list_log_out"
+        android:title="Log Out"
         app:showAsAction="never" />
 </menu>

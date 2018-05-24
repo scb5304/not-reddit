@@ -33,9 +33,8 @@ public class TokenRepository {
         mSharedPreferences = sharedPreferences;
     }
 
-    @Deprecated
     @Nullable
-    public Token getTokenSync(String deviceId) {
+    public Token getAppToken(String deviceId) {
         Token token = null;
         Call<Token> tokenCall = mRequestTokenApi.getTokenAppOnlyFlow(AuthConstants.AUTH_GRANT_TYPE_INSTALLED, deviceId);
         try {
@@ -53,7 +52,7 @@ public class TokenRepository {
     }
 
     @Nullable
-    public Token getRefreshedToken(String refreshToken) {
+    public Token getRefreshedUserToken(String refreshToken)  {
         String deviceId = mSharedPreferences.getString(Constants.SharedPreferenceKeys.DEVICE_ID, null);
         Token token = null;
         Call<Token> tokenCall = mRequestTokenApi.getRefreshToken(AuthConstants.AUTH_GRANT_TYPE_INSTALLED, deviceId, refreshToken);
@@ -71,7 +70,7 @@ public class TokenRepository {
         return token;
     }
 
-    public Single<Token> getToken(@NonNull String authCode) {
+    public Single<Token> getUserToken(@NonNull String authCode) {
         return mRequestTokenApi.getTokenCodeFlow(AuthConstants.AUTH_GRANT_TYPE_CODE, authCode, BuildConfig.REDIRECT_URI)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

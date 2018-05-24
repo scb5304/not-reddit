@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,7 +80,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(PostListViewModel.class);
         mViewModel.setNavigationController(mNavigationController);
         mBinding.setPostListViewModel(mViewModel);
-        //subscribeUi();
+        subscribeUi();
         initRecyclerView();
         initSwipeRefreshLayout();
     }

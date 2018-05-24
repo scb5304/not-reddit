@@ -2,19 +2,15 @@ package com.jollyremedy.notreddit.auth.accounting;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsIntent;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jollyremedy.notreddit.BuildConfig;
@@ -24,11 +20,8 @@ import com.jollyremedy.notreddit.api.AuthConstants;
 import com.jollyremedy.notreddit.models.auth.Token;
 import com.jollyremedy.notreddit.repository.FullTokenRepository;
 import com.jollyremedy.notreddit.ui.AuthActivity;
-import com.jollyremedy.notreddit.ui.main.MainActivity;
 import com.jollyremedy.notreddit.util.LoginResultParser;
 import com.jollyremedy.notreddit.util.NotRedditViewUtils;
-
-import java.net.BindException;
 
 import javax.inject.Inject;
 
@@ -76,6 +69,14 @@ public class Accountant {
         CustomTabsHelper.openCustomTab(mContext, customTabsIntent,
                 Uri.parse(url),
                 new WebViewFallback());
+    }
+
+    public void logout() {
+        mSharedPreferences.edit()
+                .remove(Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN)
+                .remove(Constants.SharedPreferenceKeys.TEMP_USER_TOKEN)
+                .apply();
+        Toast.makeText(mContext, "You have been logged out.", Toast.LENGTH_SHORT).show();
     }
 
     //TODO: Reduce scope

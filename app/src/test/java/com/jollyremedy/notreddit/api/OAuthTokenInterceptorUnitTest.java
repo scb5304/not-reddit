@@ -3,8 +3,8 @@ package com.jollyremedy.notreddit.api;
 import android.support.annotation.Nullable;
 
 import com.jollyremedy.notreddit.BaseUnitTest;
-import com.jollyremedy.notreddit.StubbedOkHttpChain;
 import com.jollyremedy.notreddit.Constants.SharedPreferenceKeys;
+import com.jollyremedy.notreddit.StubbedOkHttpChain;
 import com.jollyremedy.notreddit.models.auth.Token;
 import com.jollyremedy.notreddit.repository.TokenRepository;
 
@@ -17,11 +17,9 @@ import javax.net.ssl.HttpsURLConnection;
 import okhttp3.Request;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -49,7 +47,7 @@ public class OAuthTokenInterceptorUnitTest extends BaseUnitTest {
     private void mockRepositoryToReturnToken(@Nullable String accessToken) {
         Token token = mock(Token.class);
         when(token.getAccessToken()).thenReturn(accessToken);
-        when(mTokenRepository.getTokenSync(TEST_DEVICE_ID)).thenReturn(token);
+        when(mTokenRepository.getAppToken(TEST_DEVICE_ID)).thenReturn(token);
     }
 
     @Test
@@ -65,7 +63,7 @@ public class OAuthTokenInterceptorUnitTest extends BaseUnitTest {
         mockRepositoryToReturnToken(TEST_TOKEN);
 
         mOAuthTokenInterceptor.intercept(mStubbedChain);
-        verify(mTokenRepository).getTokenSync(TEST_DEVICE_ID);
+        verify(mTokenRepository).getAppToken(TEST_DEVICE_ID);
         verify(mSharedPreferencesEditor).putString(SharedPreferenceKeys.TOKEN, TEST_TOKEN);
 
         Request capturedRequest = mStubbedChain.getCapturedRequest();
@@ -78,7 +76,7 @@ public class OAuthTokenInterceptorUnitTest extends BaseUnitTest {
         mockRepositoryToReturnToken(TEST_TOKEN);
 
         mOAuthTokenInterceptor.intercept(mStubbedChain);
-        verify(mTokenRepository).getTokenSync(TEST_DEVICE_ID);
+        verify(mTokenRepository).getAppToken(TEST_DEVICE_ID);
         verify(mSharedPreferencesEditor).putString(SharedPreferenceKeys.TOKEN, TEST_TOKEN);
 
         Request capturedRequest = mStubbedChain.getCapturedRequest();
@@ -91,7 +89,7 @@ public class OAuthTokenInterceptorUnitTest extends BaseUnitTest {
         mockRepositoryToReturnToken(null);
 
         mOAuthTokenInterceptor.intercept(mStubbedChain);
-        verify(mTokenRepository).getTokenSync(TEST_DEVICE_ID);
+        verify(mTokenRepository).getAppToken(TEST_DEVICE_ID);
         verify(mSharedPreferencesEditor).putString(SharedPreferenceKeys.TOKEN, null);
         assertEquals(mStubbedChain.getCapturedRequest(), mStubbedChain.getInitialRequest());
     }

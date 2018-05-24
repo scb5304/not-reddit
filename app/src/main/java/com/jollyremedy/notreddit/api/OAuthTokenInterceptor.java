@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.jollyremedy.notreddit.Constants.SharedPreferenceKeys;
 import com.jollyremedy.notreddit.auth.accounting.Accountant;
@@ -46,57 +45,95 @@ public class OAuthTokenInterceptor implements Interceptor {
         Log.d(TAG, "Current username: " + currentUsername);
 
         if (currentUsername != null) {
+            Log.wtf(TAG, "Performing authenticated call for current user...");
             Response userAuthenticatedResponse = performAuthenticatedCallForCurrentUser(chain);
             if (userAuthenticatedResponse != null) {
                 return userAuthenticatedResponse;
             }
+        } else {
+            Log.wtf(TAG, "Performing authenticated call app (no current user)...");
+            Response appAuthenticatedResponse = performAuthenticatedCallForApp(chain);
+            if (appAuthenticatedResponse != null) {
+                return appAuthenticatedResponse;
+            }
         }
 
-        return chain.proceed(chain.request());
+        throw new IOException("Couldn't perform OAuth token intercept.");
     }
 
     @Nullable
     private Response performAuthenticatedCallForCurrentUser(Chain chain) throws IOException {
-        Log.wtf(TAG, "Performing authenticated call for current user...");
-
         String currentAccountToken = Accountant.getInstance().getCurrentAccessToken();
         Log.wtf(TAG, "Current account token: " + currentAccountToken);
 
-        if (currentAccountToken != null) {
-            Log.wtf(TAG, "Since we have an account token, perform the request with it attached...");
-            Response initialResult = chain.proceed(requestWithToken(chain.request(), currentAccountToken));
+        String currentRefreshToken = Accountant.getInstance().getCurrentRefreshToken();
+        Log.wtf(TAG, "Current refresh token: " + currentRefreshToken);
 
-            if (!responseFailedDueToAuth(initialResult)) {
-                Log.wtf(TAG, "This initial request was a success! Or, at least didn't fail due to authorization.");
-                return initialResult;
-            }
+        if (currentAccountToken == null || currentRefreshToken == null) {
+            return null;
+        }
 
+        Log.wtf(TAG, "Since we have an account token, perform the request with it attached...");
+        Response initialResult = chain.proceed(requestWithToken(chain.request(), currentAccountToken));
+
+        if (responseIsNotAuthFailure(initialResult)) {
+            Log.wtf(TAG, "This initial request was a success! Or, at least didn't fail due to authorization.");
+            return initialResult;
+        } else {
             Log.wtf(TAG, "This initial request failed due to a 401 or 403.");
+        }
 
-            String currentRefreshToken = Accountant.getInstance().getCurrentRefreshToken();
-            Log.wtf(TAG, "Current refresh token: " + currentRefreshToken);
+        Token refreshedToken = mTokenRepository.getRefreshedUserToken(currentRefreshToken);
+        Log.wtf(TAG, "Refreshed token: " + new Gson().toJson(refreshedToken));
 
-            if (currentRefreshToken != null) {
-                Log.wtf(TAG, "Since we have a refresh token, perform a request to get a new token...");
+        if (refreshedToken != null) {
+            Log.wtf(TAG, "Since we now have a new token from the refresh token, perform the initial request again...");
 
-                Token refreshedToken = mTokenRepository.getRefreshedToken(currentRefreshToken);
-                Log.wtf(TAG, "Refreshed token: " + new Gson().toJson(refreshedToken));
-
-                if (refreshedToken != null) {
-                    Log.wtf(TAG, "Since we now have a new token from the refresh token, perform the initial request again...");
-
-                    Response resultFromRequestWithRefreshedToken = chain.proceed(requestWithToken(chain.request(), refreshedToken.getAccessToken()));
-                    if (!responseFailedDueToAuth(resultFromRequestWithRefreshedToken)) {
-                        Log.wtf(TAG, "This request was finally a success! Or, at least didn't fail due to authorization.");
-                        return resultFromRequestWithRefreshedToken;
-                    } else {
-                        Log.wtf(TAG, "This final request with a refreshed auth-token failed due to a 401 or 403.");
-                    }
-                }
+            Response resultFromRequestWithRefreshedToken = chain.proceed(requestWithToken(chain.request(), refreshedToken.getAccessToken()));
+            if (responseIsNotAuthFailure(resultFromRequestWithRefreshedToken)) {
+                Log.wtf(TAG, "This request was finally a success! Or, at least didn't fail due to authorization.");
+                return resultFromRequestWithRefreshedToken;
+            } else {
+                Log.wtf(TAG, "This final request with a refreshed auth-token failed due to a 401 or 403.");
+                throw new IOException("Unable to perform an authenticated request for the current user.");
             }
         }
 
-        Log.wtf(TAG, "Returning null!");
+        return null;
+    }
+
+    @Nullable
+    private Response performAuthenticatedCallForApp(Chain chain) throws IOException {
+        String currentAppToken = mSharedPreferences.getString(SharedPreferenceKeys.APPLICATION_TOKEN, null);
+        Log.wtf(TAG, "Current application token: " + currentAppToken);
+
+        if (currentAppToken != null) {
+            Log.wtf(TAG, "Have application token, performing request...");
+            Response appAuthenticatedResponse = chain.proceed(requestWithToken(chain.request(), currentAppToken));
+
+            if (responseIsNotAuthFailure(appAuthenticatedResponse)) {
+                return appAuthenticatedResponse;
+            }
+
+            Log.wtf(TAG, "Application-authenticated request failed, getting new app token...");
+            Token appToken = mTokenRepository.getAppToken(mSharedPreferences.getString(SharedPreferenceKeys.DEVICE_ID, null));
+
+            if (appToken != null) {
+                Log.wtf(TAG, "Got new app token, trying again: " + appToken);
+                Response appRetryAuthenticatedResponse = chain.proceed(requestWithToken(chain.request(), currentAppToken));
+
+                if (appRetryAuthenticatedResponse != null) {
+                    Log.wtf(TAG, "Second request was successful!");
+                    return appRetryAuthenticatedResponse;
+                }
+            }
+        } else {
+            Token appToken = mTokenRepository.getAppToken(mSharedPreferences.getString(SharedPreferenceKeys.DEVICE_ID, null));
+            if (appToken != null) {
+                return chain.proceed(requestWithToken(chain.request(), appToken.getAccessToken()));
+            }
+        }
+
         return null;
     }
 
@@ -106,7 +143,7 @@ public class OAuthTokenInterceptor implements Interceptor {
                 .build();
     }
 
-    private boolean responseFailedDueToAuth(Response response) {
-        return response.code() == HTTP_FORBIDDEN || response.code() == HTTP_UNAUTHORIZED;
+    private boolean responseIsNotAuthFailure(Response response) {
+        return response.code() != HTTP_FORBIDDEN && response.code() != HTTP_UNAUTHORIZED;
     }
 }

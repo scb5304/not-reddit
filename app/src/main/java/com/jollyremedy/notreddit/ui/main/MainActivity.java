@@ -2,7 +2,6 @@ package com.jollyremedy.notreddit.ui.main;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -87,19 +86,22 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             case R.id.menu_post_list_log_in:
                 Accountant.getInstance().login();
                 return true;
+            case R.id.menu_post_list_log_out:
+                Accountant.getInstance().logout();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void subscribeUi() {
-//        mViewModel.getObservableSubredditListing().observe(this, subredditListing -> {
-//            Menu menu = mDrawerNavigationView.getMenu();
-//            menu.clear();
-//            List<Subreddit> subreddits = subredditListing.getData().getSubreddits();
-//            for (Subreddit subreddit : subreddits) {
-//                menu.add(subreddit.getData().getDisplayName());
-//            }
-//        });
+        mViewModel.getObservableSubredditListing().observe(this, subredditListing -> {
+            Menu menu = mDrawerNavigationView.getMenu();
+            menu.clear();
+            List<Subreddit> subreddits = subredditListing.getData().getSubreddits();
+            for (Subreddit subreddit : subreddits) {
+                menu.add(subreddit.getData().getDisplayName());
+            }
+        });
         mViewModel.getObservableLoginUrl().observe(this, url -> {
             mNavigationController.navigateToWebPage(url);
         });

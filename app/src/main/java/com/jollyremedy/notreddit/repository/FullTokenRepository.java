@@ -8,7 +8,6 @@ import com.jollyremedy.notreddit.models.auth.Token;
 
 import javax.inject.Inject;
 
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -33,7 +32,7 @@ public class FullTokenRepository {
      * the token with that account inside of it.
      */
     public Single<Token> getFullToken(String authToken) {
-        Single<Token> tokenSingle = mTokenRepository.getToken(authToken);
+        Single<Token> tokenSingle = mTokenRepository.getUserToken(authToken);
         return tokenSingle.flatMap(token -> getCurrentRedditAccount(token).flatMap(redditAccount -> {
             token.setAccount(redditAccount);
             return Single.just(token);
