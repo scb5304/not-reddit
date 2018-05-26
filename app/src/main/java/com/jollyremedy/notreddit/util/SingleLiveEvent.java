@@ -1,4 +1,4 @@
-package com.jollyremedy.notreddit.ui.common;
+package com.jollyremedy.notreddit.util;
 
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.MutableLiveData;

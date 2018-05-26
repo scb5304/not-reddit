@@ -3,10 +3,12 @@ package com.jollyremedy.notreddit.auth.accounting;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsIntent;
 import android.util.Log;
@@ -20,7 +22,6 @@ import com.jollyremedy.notreddit.api.AuthConstants;
 import com.jollyremedy.notreddit.models.auth.Token;
 import com.jollyremedy.notreddit.repository.FullTokenRepository;
 import com.jollyremedy.notreddit.ui.AuthActivity;
-import com.jollyremedy.notreddit.util.LoginResultParser;
 import com.jollyremedy.notreddit.util.NotRedditViewUtils;
 
 import javax.inject.Inject;
@@ -29,6 +30,8 @@ import saschpe.android.customtabs.CustomTabsHelper;
 import saschpe.android.customtabs.WebViewFallback;
 
 public class Accountant {
+
+    public static final int CHOOSE_ACCOUNT_REQUEST_CODE = 5;
 
     //Using application context.
     @SuppressLint("StaticFieldLeak")
@@ -59,7 +62,7 @@ public class Accountant {
         return sInstance;
     }
 
-    public void login() {
+    public void launchRedditAuthentication() {
         CustomTabsIntent customTabsIntent = NotRedditViewUtils.createBaseCustomTabsIntent(mContext);
         CustomTabsHelper.addKeepAliveExtra(mContext, customTabsIntent.intent);
 
@@ -69,6 +72,30 @@ public class Accountant {
         CustomTabsHelper.openCustomTab(mContext, customTabsIntent,
                 Uri.parse(url),
                 new WebViewFallback());
+    }
+
+    /**
+     * Prompts the user to select the NotReddit account to log in to. If there are no accounts,
+     * the user is immediately taken to the reddit authentication page to create a new account, which
+     * is then logged in to.
+     */
+    public void login(Activity activity) {
+        Account[] accounts = mAccountManager.getAccountsByType(AuthConstants.AUTH_ACCOUNT_TYPE);
+        if (accounts.length == 0) {
+            Log.wtf(TAG, "No accounts!");
+            launchRedditAuthentication();
+        } else {
+            Intent chooseAccountIntent = AccountManager.newChooseAccountIntent(
+                    getCurrentAccount(),
+                    null,
+                    new String[]{AuthConstants.AUTH_ACCOUNT_TYPE},
+                    "NotReddit does not use or store your password.",
+                    AuthConstants.AUTH_GRANT_TYPE_CODE,
+                    null,
+                    null
+            );
+            activity.startActivityForResult(chooseAccountIntent, CHOOSE_ACCOUNT_REQUEST_CODE);
+        }
     }
 
     public void logout() {
@@ -90,15 +117,19 @@ public class Accountant {
                 "&scope=" + "identity edit flair history modconfig modflair modlog modposts modwiki mysubreddits privatemessages read report save submit subscribe vote wikiedit wikiread";
     }
 
+    private void addTokenInfoToAccount(Account account, @NonNull Token token) {
+        mAccountManager.setAuthToken(account, AuthConstants.AUTH_GRANT_TYPE_CODE, token.getAccessToken());
+        mAccountManager.setUserData(account, AuthConstants.USER_DATA_KEY_REFRESH_TOKEN, token.getRefreshToken());
+    }
+
     private boolean addAccount(Token token) {
         String username = token.getAccount().getName();
-        String accessToken = token.getAccessToken();
-        String refreshToken = token.getRefreshToken();
 
         try {
             Account userAccount = new Account(username, AuthConstants.AUTH_ACCOUNT_TYPE);
             boolean added = mAccountManager.addAccountExplicitly(userAccount, null, null);
             if (added) {
+                addTokenInfoToAccount(userAccount, token);
                 Log.d(TAG, "Added a NotReddit account for " + username);
                 return true;
             } else {
@@ -107,13 +138,10 @@ public class Accountant {
 
                 if (removed) {
                     Log.d(TAG, "Removed old NotReddit account for " + username);
-                    Bundle userData = new Bundle();
-                    userData.putString(AuthConstants.USER_DATA_KEY_REFRESH_TOKEN, refreshToken);
-
-                    boolean addedAttemptTwo = mAccountManager.addAccountExplicitly(userAccount, null, userData);
-                    mAccountManager.setAuthToken(userAccount, AuthConstants.AUTH_GRANT_TYPE_CODE, accessToken);
+                    boolean addedAttemptTwo = mAccountManager.addAccountExplicitly(userAccount, null, null);
 
                     if (addedAttemptTwo) {
+                        addTokenInfoToAccount(userAccount, token);
                         Log.d(TAG, "Added the account after removing the original.");
                         return true;
                     }

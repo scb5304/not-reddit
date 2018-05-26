@@ -1,7 +1,10 @@
 package com.jollyremedy.notreddit.ui.main;
 
+import android.accounts.AccountManager;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -13,11 +16,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
+import com.google.common.base.Strings;
+import com.jollyremedy.notreddit.Constants;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.auth.accounting.Accountant;
 import com.jollyremedy.notreddit.models.subreddit.Subreddit;
-import com.jollyremedy.notreddit.ui.DrawerFragment;
+import com.jollyremedy.notreddit.ui.common.DrawerFragment;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
 
 import java.util.List;
@@ -31,7 +38,7 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
-public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
+public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector, SharedPreferences.OnSharedPreferenceChangeListener {
 
     @BindView(R.id.activity_main_toolbar) Toolbar mToolbar;
     @BindView(R.id.activity_main_drawer_layout) DrawerLayout mDrawerLayout;
@@ -39,6 +46,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Inject
     DispatchingAndroidInjector<Fragment> mFragmentDispatchingAndroidInjector;
+
+    @Inject
+    SharedPreferences mSharedPreferences;
 
     @Inject
     NavigationController mNavigationController;
@@ -74,6 +84,18 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -84,13 +106,25 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                 }
                 return true;
             case R.id.menu_post_list_log_in:
-                Accountant.getInstance().login();
+                Accountant.getInstance().login(this);
                 return true;
             case R.id.menu_post_list_log_out:
                 Accountant.getInstance().logout();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && requestCode == Accountant.CHOOSE_ACCOUNT_REQUEST_CODE) {
+            String selectedAccountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            mSharedPreferences.edit()
+                    .putString(Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN, selectedAccountName)
+                    .apply();
+            refreshUsernameDisplayed();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void subscribeUi() {
@@ -102,9 +136,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                 menu.add(subreddit.getData().getDisplayName());
             }
         });
-        mViewModel.getObservableLoginUrl().observe(this, url -> {
-            mNavigationController.navigateToWebPage(url);
-        });
     }
 
     private void initDrawer() {
@@ -113,6 +144,20 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             mDrawerLayout.closeDrawer(Gravity.START);
             return true;
         });
+        refreshUsernameDisplayed();
+    }
+
+    private void refreshUsernameDisplayed() {
+        String currentUsername = mSharedPreferences.getString(Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN, null);
+        TextView usernameTextView = mDrawerNavigationView
+                .getHeaderView(0)
+                .findViewById(R.id.drawer_username_textview);
+        if (Strings.isNullOrEmpty(currentUsername)) {
+            usernameTextView.setVisibility(View.GONE);
+        } else {
+            usernameTextView.setVisibility(View.VISIBLE);
+            usernameTextView.setText(currentUsername);
+        }
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -134,5 +179,12 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     @Override
     public AndroidInjector<Fragment> supportFragmentInjector() {
         return mFragmentDispatchingAndroidInjector;
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN.equals(key)) {
+            refreshUsernameDisplayed();
+        }
     }
 }

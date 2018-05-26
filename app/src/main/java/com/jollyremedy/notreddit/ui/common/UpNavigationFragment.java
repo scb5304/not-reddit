@@ -1,4 +1,4 @@
-package com.jollyremedy.notreddit.ui;
+package com.jollyremedy.notreddit.ui.common;
 
 /**
  * Denotes the Fragment wants the up-navigation arrow displayed.

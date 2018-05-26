@@ -1,12 +1,8 @@
-package com.jollyremedy.notreddit.util;
+package com.jollyremedy.notreddit.auth.accounting;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.common.base.Strings;
-
-import javax.inject.Inject;
 
 public class LoginResultParser {
 

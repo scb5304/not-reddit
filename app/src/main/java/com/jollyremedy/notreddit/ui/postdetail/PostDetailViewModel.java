@@ -12,7 +12,7 @@ import com.jollyremedy.notreddit.models.comment.more.MoreChildren;
 import com.jollyremedy.notreddit.models.parent.RedditType;
 import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.repository.CommentRepository;
-import com.jollyremedy.notreddit.ui.common.SingleLiveEvent;
+import com.jollyremedy.notreddit.util.SingleLiveEvent;
 
 import java.util.List;
 import java.util.Objects;
