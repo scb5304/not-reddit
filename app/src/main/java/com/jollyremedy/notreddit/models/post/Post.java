@@ -3,6 +3,7 @@ package com.jollyremedy.notreddit.models.post;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.common.base.Strings;
 import com.google.gson.annotations.SerializedName;
 import com.jollyremedy.notreddit.models.parent.RedditType;
 
@@ -11,14 +12,57 @@ public class Post extends RedditType implements Parcelable {
     @SerializedName("data")
     private PostData data;
 
-    @Override
-    public PostData getData() {
-        return data;
-    }
-
     private Post(Parcel in) {
         super(in);
         data = (PostData) in.readValue(PostData.class.getClassLoader());
+    }
+
+    public boolean hasSelfText() {
+        return !Strings.isNullOrEmpty(data.selfText);
+    }
+
+    public String getId() {
+        return data.id;
+    }
+
+    public String getFullName() {
+        return data.name;
+    }
+
+    public String getTitle() {
+        return data.title;
+    }
+
+    public String getSelfText() {
+        return data.selfText;
+    }
+
+    public String getSelfTextHtml() {
+        return data.selfTextHtml;
+    }
+
+    public String getUrl() {
+        return data.url;
+    }
+
+    public String getDomain() {
+        return data.domain;
+    }
+
+    public String getSubreddit() {
+        return data.subreddit;
+    }
+
+    public Integer getCommentCount() {
+        return data.commentCount;
+    }
+
+    public String getScore() {
+        return data.score;
+    }
+
+    public String getThumbnail() {
+        return data.thumbnail;
     }
 
     @Override

@@ -6,106 +6,50 @@ import android.os.Parcelable;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.jollyremedy.notreddit.api.adapter.EmptyStringAsNullTypeAdapter;
-import com.jollyremedy.notreddit.models.comment.CommentListing;
-import com.jollyremedy.notreddit.models.parent.RedditType;
-import com.jollyremedy.notreddit.util.TimeDiffUtils;
 
 import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.temporal.ChronoUnit;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommentData implements Parcelable {
+class CommentData implements Parcelable {
 
     /**
      * This nested CommentListing supports the threaded model in case it's being used.
      */
     @JsonAdapter(EmptyStringAsNullTypeAdapter.class)
     @SerializedName("replies")
-    private CommentListing replies;
+    public CommentListing replies;
 
     @SerializedName("author")
-    private String author;
+    public String author;
 
     @SerializedName("body")
-    private String body;
+    public String body;
 
     @SerializedName("body_html")
-    private String bodyHtml;
+    public String bodyHtml;
 
     @SerializedName("name")
-    private String fullName;
+    public String fullName;
 
     @SerializedName("depth")
-    private Integer depth;
+    public Integer depth;
 
     @SerializedName("count")
-    private Integer moreCount;
+    public Integer moreCount;
 
     @SerializedName("score")
-    private Integer points;
+    public Integer points;
 
     @SerializedName("children")
-    private List<String> children;
+    public List<String> children;
 
     @SerializedName("created_utc")
-    private LocalDateTime createdDateTime;
+    public LocalDateTime createdDateTime;
 
     @SerializedName("parent_id")
-    private String parentId;
-
-    public String getAuthor() {
-        return author;
-    }
-
-    /**
-     * A fullname is a combination of a thing's type (e.g. Comment) and its unique ID which forms a
-     * compact encoding of a globally unique ID on reddit.
-     */
-    public String getFullName() {
-        return fullName;
-    }
-
-    /**
-     * Only applicable if this comment data is contained within a {@link RedditType.Kind#MORE} Comment.
-     * The number of comments descended from this one that can be the user can choose to fetch.
-     */
-    public Integer getMoreCount() {
-        return moreCount;
-    }
-
-    /**
-     * Only applicable if this CommentData is contained within a {@link RedditType.Kind#MORE} Comment.
-     * A comma-delimited list of comment ID36s that need to be fetched.
-     */
-    public List<String> getChildren() {
-        return children;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public String getBodyHtml() {
-        return bodyHtml;
-    }
-
-    public Integer getDepth() {
-        return depth;
-    }
-
-    public Integer getPoints() {
-        return points == null ? 0 : points;
-    }
-
-    public LocalDateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
+    public String parentId;
 
     protected CommentData(Parcel in) {
         replies = (CommentListing) in.readValue(CommentListing.class.getClassLoader());

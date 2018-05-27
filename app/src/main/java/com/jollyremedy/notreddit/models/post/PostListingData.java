@@ -12,23 +12,7 @@ import java.util.List;
 public class PostListingData extends ListingData implements Parcelable {
 
     @SerializedName("children")
-    private List<Post> posts;
-
-    public List<Post> getPosts() {
-        return posts;
-    }
-
-    public boolean hasPosts() {
-        return posts != null && !posts.isEmpty();
-    }
-
-    public void addAllPosts(List<Post> posts) {
-        this.posts.addAll(posts);
-    }
-
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
-    }
+    public List<Post> posts;
 
     private PostListingData(Parcel in) {
         super(in);

@@ -6,14 +6,15 @@ import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 import com.jollyremedy.notreddit.models.parent.RedditType;
 
+import java.util.List;
+
 public class CommentListing extends RedditType implements Parcelable {
 
     @SerializedName("data")
     private CommentListingData data;
 
-    @Override
-    public CommentListingData getData() {
-        return data;
+    public List<Comment> getComments() {
+        return data.comments;
     }
 
     private CommentListing(Parcel in) {

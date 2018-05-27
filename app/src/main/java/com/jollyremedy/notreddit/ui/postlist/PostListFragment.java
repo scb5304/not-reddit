@@ -123,7 +123,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     private void subscribeUi() {
         mViewModel.getObservableListing(getSubredditName()).observe(this, postListing -> {
             if (postListing != null) {
-                List<Post> posts = postListing.getPostListing().getData().getPosts();
+                List<Post> posts = postListing.getPostListing().getPosts();
                 mPostListAdapter.updateData(posts, postListing.getPostsChangingRange(), postListing.getPostsDeletingRange());
                 postListing.clearRanges();
             }

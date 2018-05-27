@@ -47,7 +47,7 @@
                     android:layout_centerVertical="true"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
-                    app:imageUrl="@{post.data.thumbnail}"
+                    app:imageUrl="@{post.thumbnail}"
                     tools:src="@drawable/test_reddit_image" />
 
                 <!-- Title -->
@@ -61,7 +61,7 @@
                     android:layout_toStartOf="@+id/item_post_comment_views_wrapper"
                     android:paddingBottom="@dimen/default_gap"
                     android:paddingTop="@dimen/default_gap"
-                    android:text="@{post.data.title}"
+                    android:text="@{post.title}"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/primary_dark"
                     android:textSize="15sp"
@@ -104,7 +104,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/item_post_comment_icon"
                         android:layout_centerHorizontal="true"
-                        android:text="@{@string/item_post_comment_count(post.data.commentCount)}"
+                        android:text="@{@string/item_post_comment_count(post.commentCount)}"
                         android:textAppearance="?android:textAppearanceSmall"
                         android:textColor="@android:color/black"
                         android:textSize="10sp"
@@ -129,7 +129,7 @@
                     android:focusable="true"
                     android:gravity="center_vertical"
                     android:paddingStart="@dimen/default_gap"
-                    android:text="@{post.data.score}"
+                    android:text="@{post.score}"
                     android:textColor="@color/primary_dark"
                     tools:text="10009" />
 
@@ -141,7 +141,7 @@
                     android:gravity="center_vertical"
                     android:paddingEnd="16dp"
                     android:paddingStart="16dp"
-                    android:text="@{post.data.subreddit}"
+                    android:text="@{post.subreddit}"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textSize="12sp"
                     android:textStyle="italic"
@@ -160,7 +160,7 @@
                     android:gravity="center_vertical"
                     android:paddingEnd="@dimen/default_gap"
                     android:paddingStart="@dimen/default_gap"
-                    android:text="@{post.data.domain}"
+                    android:text="@{post.domain}"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textColor="@android:color/black"
                     android:textSize="12sp"

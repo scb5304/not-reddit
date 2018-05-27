@@ -1,6 +1,5 @@
 package com.jollyremedy.notreddit.ui.postdetail;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
@@ -19,7 +18,6 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-@SuppressLint("CheckResult")
 public class PostDetailViewModel extends ViewModel {
     private static final String TAG = "PostDetailViewModel";
 
@@ -51,8 +49,8 @@ public class PostDetailViewModel extends ViewModel {
 
     private void onPostWithCommentListingFetched(PostWithCommentListing postWithCommentListing) {
         PostDetailData postDetailData = new PostDetailData();
-        postDetailData.setPost(postWithCommentListing.getPostListing().getData().getPosts().get(0));
-        postDetailData.setComments(postWithCommentListing.getCommentListing().getData().getComments());
+        postDetailData.setPost(postWithCommentListing.getPostListing().getPosts().get(0));
+        postDetailData.setComments(postWithCommentListing.getCommentListing().getComments());
         mPostDetailLiveData.postValue(postDetailData);
     }
 
@@ -62,13 +60,15 @@ public class PostDetailViewModel extends ViewModel {
 
     private void onMoreCommentsFetched(int moreCommentsPosition, MoreChildren moreChildren) {
         PostDetailData postDetailData = mPostDetailLiveData.getValue();
-        if (moreChildren != null &&
-                moreChildren.getJsonWrapper() != null &&
-                moreChildren.getJsonWrapper().getData() != null &&
-                moreChildren.getJsonWrapper().getData().getComments() != null &&
-                !moreChildren.getJsonWrapper().getData().getComments().isEmpty()) {
-            List<Comment> moreComments = moreChildren.getJsonWrapper().getData().getComments();
-            postDetailData.getComments().remove(moreCommentsPosition);
+        if (moreChildren == null || postDetailData == null) {
+            mPostDetailLiveData.postValue(postDetailData);
+            return;
+        }
+
+        List<Comment> moreComments = moreChildren.getComments();
+
+        if (moreComments != null && !moreComments.isEmpty()) {
+            postDetailData.getComments().remove(moreCommentsPosition); //Remove "MORE"
             postDetailData.getComments().addAll(moreCommentsPosition, moreComments);
             mPostDetailLiveData.postValue(postDetailData);
         }
@@ -86,8 +86,8 @@ public class PostDetailViewModel extends ViewModel {
     public void onCommentMoreClicked(Comment comment, int commentPosition) {
         Post post = mPostDetailLiveData.getValue().getPost();
 
-        String postFullName = post.getData().getFullName();
-        List<String> commentIdsToGet = comment.getData().getChildren();
+        String postFullName = post.getFullName();
+        List<String> commentIdsToGet = comment.getChildren();
 
         mCommentRepository.getMoreCommentsByIds(postFullName, commentIdsToGet).subscribe(
                 moreChildren -> onMoreCommentsFetched(commentPosition, moreChildren),
@@ -115,18 +115,18 @@ public class PostDetailViewModel extends ViewModel {
     }
 
     public String getCommentPointsText(Comment comment) {
-        return mHelper.getDisplayCommentPoints(comment.getData().getPoints());
+        return mHelper.getDisplayCommentPoints(comment.getPoints());
     }
 
     public String getCommentBody(Comment comment) {
-        return comment.getData().getBodyHtml();
+        return comment.getBodyHtml();
     }
 
     public String getCommentTimeSince(Comment comment) {
-        return mHelper.getDisplayCommentTimeSinceCreated(comment.getData().getCreatedDateTime());
+        return mHelper.getDisplayCommentTimeSinceCreated(comment.getCreatedDateTime());
     }
 
     public String getCommentAuthor(Comment comment) {
-        return comment.getData().getAuthor();
+        return comment.getAuthor();
     }
 }

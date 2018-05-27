@@ -41,7 +41,7 @@ public class NavigationController {
      * Navigates to either the post's web page, if exists, or its comments page.
      */
     public void navigateToPostGeneric(@NonNull Post post) {
-        if (post.getData().hasSelfText()) {
+        if (post.hasSelfText()) {
             navigateToPostDetail(post);
         } else {
             openPostLink(post);
@@ -60,7 +60,7 @@ public class NavigationController {
     }
 
     private void openPostLink(@NonNull Post post) {
-        navigateToWebPage(post.getData().getUrl());
+        navigateToWebPage(post.getUrl());
     }
 
     public void navigateToWebPage(@NonNull String url) {

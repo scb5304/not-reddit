@@ -66,7 +66,7 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().setTitle(getPassedPost().getData().getTitle());
+        getActivity().setTitle(getPassedPost().getTitle());
     }
 
     private void initRecyclerView() {
@@ -78,7 +78,7 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     }
 
     private void subscribeUi() {
-        mViewModel.getObservablePostDetailData(getPassedPost().getData().getId()).observe(this, this::onPostDetailDataChanged);
+        mViewModel.getObservablePostDetailData(getPassedPost().getId()).observe(this, this::onPostDetailDataChanged);
         mViewModel.getObservableCommentClick().observe(this, this::onCommentClicked);
     }
 

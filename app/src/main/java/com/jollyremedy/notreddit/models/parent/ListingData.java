@@ -7,36 +7,16 @@ import com.google.gson.annotations.SerializedName;
 
 public abstract class ListingData implements Parcelable {
     @SerializedName("after")
-    protected String after;
+    public String after;
 
     @SerializedName("dist")
-    protected int dist;
+    public int dist;
 
     @SerializedName("modhash")
-    protected String modHash;
+    public String modHash;
 
     @SerializedName("whitelist_status")
-    protected String whitelistStatus;
-
-    public String getAfter() {
-        return after;
-    }
-
-    public int getDist() {
-        return dist;
-    }
-
-    public String getModHash() {
-        return modHash;
-    }
-
-    public String getWhitelistStatus() {
-        return whitelistStatus;
-    }
-
-    public void setAfter(String after) {
-        this.after = after;
-    }
+    public String whitelistStatus;
 
     protected ListingData(Parcel in) {
         after = in.readString();

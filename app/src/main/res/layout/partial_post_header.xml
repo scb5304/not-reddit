@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
-            android:visibility="@{post.data.hasSelfText() ? View.VISIBLE : View.GONE}">
+            android:visibility="@{post.hasSelfText() ? View.VISIBLE : View.GONE}">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -38,7 +38,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
-                    app:html="@{post.data.selfTextHtml}" />
+                    app:html="@{post.selfTextHtml}" />
 
             </LinearLayout>
 

@@ -131,9 +131,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         mViewModel.getObservableSubredditListing().observe(this, subredditListing -> {
             Menu menu = mDrawerNavigationView.getMenu();
             menu.clear();
-            List<Subreddit> subreddits = subredditListing.getData().getSubreddits();
+            List<Subreddit> subreddits = subredditListing.getSubreddits();
             for (Subreddit subreddit : subreddits) {
-                menu.add(subreddit.getData().getDisplayName());
+                menu.add(subreddit.getDisplayName());
             }
         });
     }

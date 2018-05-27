@@ -122,14 +122,14 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
     }
 
     private void fillVerticalLinesForComment(ViewGroup commentLayout, Comment comment) {
-        int offset = Utility.isEven(comment.getData().getDepth()) ? 1 : 0;
+        int offset = Utility.isEven(comment.getDepth()) ? 1 : 0;
 
         //Vertical lines added by other view holders remain and should be removed.
         int viewsInLayoutCount = commentLayout.getChildCount();
         if (viewsInLayoutCount > 1) {
             commentLayout.removeViews(0, viewsInLayoutCount - 1);
         }
-        for (int i = 0; i < comment.getData().getDepth(); i++) {
+        for (int i = 0; i < comment.getDepth(); i++) {
             View verticalLine;
             if (isEven(offset + i)) {
                 verticalLine = mLayoutInflater.inflate(R.layout.comment_vertical_divider_gray, commentLayout, false);

@@ -1,6 +1,9 @@
 package com.jollyremedy.notreddit.models.comment.more;
 
 import com.google.gson.annotations.SerializedName;
+import com.jollyremedy.notreddit.models.comment.Comment;
+
+import java.util.List;
 
 /**
  * And I heard a voice in the midst of the four beasts.
@@ -11,7 +14,7 @@ public class MoreChildren {
     @SerializedName("json")
     private MoreChildrenDataWrapper jsonWrapper;
 
-    public MoreChildrenDataWrapper getJsonWrapper() {
-        return jsonWrapper;
+    public List<Comment> getComments() {
+        return this.jsonWrapper.data.comments;
     }
 }

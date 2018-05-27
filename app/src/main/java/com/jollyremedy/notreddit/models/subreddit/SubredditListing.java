@@ -6,14 +6,15 @@ import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 import com.jollyremedy.notreddit.models.parent.RedditType;
 
+import java.util.List;
+
 public class SubredditListing extends RedditType {
 
     @SerializedName("data")
     private SubredditListingData data;
 
-    @Override
-    public SubredditListingData getData() {
-        return data;
+    public List<Subreddit> getSubreddits() {
+        return data.getSubreddits();
     }
 
     private SubredditListing(Parcel in) {

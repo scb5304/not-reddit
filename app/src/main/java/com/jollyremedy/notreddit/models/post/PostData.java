@@ -3,91 +3,42 @@ package com.jollyremedy.notreddit.models.post;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.common.base.Strings;
 import com.google.gson.annotations.SerializedName;
 
 public class PostData implements Parcelable {
 
     @SerializedName("id")
-    private String id;
+    public String id;
 
     @SerializedName("name")
-    private String name;
+    public String name;
 
     @SerializedName("title")
-    private String title;
+    public String title;
 
     @SerializedName("selftext")
-    private String selfText;
+    public String selfText;
 
     @SerializedName("selftext_html")
-    private String selfTextHtml;
+    public String selfTextHtml;
 
     @SerializedName("url")
-    private String url;
+    public String url;
 
     @SerializedName("domain")
-    private String domain;
+    public String domain;
 
     @SerializedName("subreddit")
-    private String subreddit;
+    public String subreddit;
 
     @SerializedName("num_comments")
-    private Integer commentCount;
+    public Integer commentCount;
 
     @SerializedName("score")
-    private String score;
+    public String score;
 
     @SerializedName("thumbnail")
-    private String thumbnail;
-
-    public boolean hasSelfText() {
-        return !Strings.isNullOrEmpty(selfText);
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getFullName() {
-        return name;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getSelfText() {
-        return selfText;
-    }
-
-    public String getSelfTextHtml() {
-        return selfTextHtml;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getDomain() {
-        return domain;
-    }
-
-    public String getSubreddit() {
-        return subreddit;
-    }
-
-    public Integer getCommentCount() {
-        return commentCount;
-    }
-
-    public String getScore() {
-        return score;
-    }
-
-    public String getThumbnail() {
-        return thumbnail;
-    }
+    public String thumbnail;
 
     protected PostData(Parcel in) {
         id = in.readString();

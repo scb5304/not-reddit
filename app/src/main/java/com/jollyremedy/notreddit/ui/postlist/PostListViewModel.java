@@ -7,13 +7,11 @@ import android.databinding.ObservableBoolean;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 
 import com.google.common.collect.Range;
 import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.models.post.PostListing;
-import com.jollyremedy.notreddit.models.post.PostListingData;
 import com.jollyremedy.notreddit.models.post.PostListingSort;
 import com.jollyremedy.notreddit.repository.PostRepository;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
@@ -38,7 +36,7 @@ public class PostListViewModel extends ViewModel {
     public void onPostListIdle(int firstVisibleItemPosition) {
         if (firstVisibleItemPosition > 0) {
             NotRedditPostListData postListData = mPostListLiveData.getValue();
-            postListData.getPostListing().getData().getPosts().subList(0, firstVisibleItemPosition).clear();
+            postListData.getPostListing().getPosts().subList(0, firstVisibleItemPosition).clear();
             postListData.setPostsDeletingRange(Range.closedOpen(0, firstVisibleItemPosition));
             mPostListLiveData.postValue(postListData);
         }
@@ -52,7 +50,6 @@ public class PostListViewModel extends ViewModel {
     @Inject
     PostListViewModel(PostRepository postRepository) {
         mPostRepository = postRepository;
-
         mPostListLiveData = new MutableLiveData<>();
         mEndlessScrollResetLiveData = new MutableLiveData<>();
         mDataBindIsRefreshing = new ObservableBoolean();
@@ -87,7 +84,7 @@ public class PostListViewModel extends ViewModel {
     @Nullable
     private String getCurrentAfter() {
         if (mPostListLiveData.getValue() != null && mPostListLiveData.getValue().getPostListing() != null) {
-            return mPostListLiveData.getValue().getPostListing().getData().getAfter();
+            return mPostListLiveData.getValue().getPostListing().getAfter();
         } else {
             return null;
         }
@@ -120,30 +117,30 @@ public class PostListViewModel extends ViewModel {
 
     private void onNewPostListingReceived(FetchMode fetchMode, @NonNull PostListing newPostListing) {
         Log.i(TAG, "Got a post listing.");
-        NotRedditPostListData priorListing = mPostListLiveData.getValue();
-        if (priorListing == null || fetchMode == FetchMode.START_FRESH) {
+        NotRedditPostListData postListViewData = mPostListLiveData.getValue();
+        if (postListViewData == null || fetchMode == FetchMode.START_FRESH) {
             //We didn't have data, or we're starting over; post the fetched ListingResponse.
-            priorListing = new NotRedditPostListData();
-            priorListing.setPostListing(newPostListing);
-            priorListing.setPostsChangingRange(Range.closed(0, newPostListing.getData().getPosts().size()));
-            mPostListLiveData.postValue(priorListing);
+            postListViewData = new NotRedditPostListData();
+            postListViewData.setPostListing(newPostListing);
+            postListViewData.setPostsChangingRange(Range.closed(0, newPostListing.getPosts().size()));
+            mPostListLiveData.postValue(postListViewData);
             mEndlessScrollResetLiveData.postValue(true);
         } else {
             //Appropriately update the existing PostListing.
-            PostListingData priorListingData = priorListing.getPostListing().getData();
-            PostListingData newListingData = newPostListing.getData();
+            PostListing existingPostListing = postListViewData.getPostListing();
 
-            int priorListSize = priorListingData.getPosts().size();
-            priorListing.setPostsChangingRange(Range.closed(priorListSize, newPostListing.getData().getPosts().size() + priorListSize));
+            int priorListSize = existingPostListing.getPosts().size();
+            int newListSize = newPostListing.getPosts().size() + priorListSize;
+            postListViewData.setPostsChangingRange(Range.closed(priorListSize, newListSize));
 
-            if (priorListingData.hasPosts()) {
-                priorListingData.addAllPosts(newListingData.getPosts());
+            if (postListViewData.getPostListing().hasPosts()) {
+                existingPostListing.addAllPosts(newPostListing.getPosts());
             } else {
-                priorListingData.setPosts(newListingData.getPosts());
+                existingPostListing.setPosts(newPostListing.getPosts());
             }
-            priorListing.getPostListing().getData().setAfter(newListingData.getAfter());
+            postListViewData.getPostListing().setAfter(newPostListing.getAfter());
 
-            mPostListLiveData.postValue(priorListing);
+            mPostListLiveData.postValue(postListViewData);
             mEndlessScrollResetLiveData.postValue(false);
         }
         mDataBindIsRefreshing.set(false);

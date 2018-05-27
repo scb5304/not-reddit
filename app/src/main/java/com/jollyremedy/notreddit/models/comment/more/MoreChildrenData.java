@@ -7,9 +7,5 @@ import java.util.List;
 
 public class MoreChildrenData {
     @SerializedName("things")
-    private List<Comment> comments;
-
-    public List<Comment> getComments() {
-        return comments;
-    }
+    public List<Comment> comments;
 }

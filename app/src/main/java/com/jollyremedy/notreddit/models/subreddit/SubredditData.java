@@ -8,18 +8,10 @@ import com.google.gson.annotations.SerializedName;
 public class SubredditData implements Parcelable {
 
     @SerializedName("id")
-    private String id;
+    public String id;
 
     @SerializedName("display_name")
-    private String displayName;
-
-    public String getId() {
-        return id;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
+    public String displayName;
 
     private SubredditData(Parcel in) {
         id = in.readString();

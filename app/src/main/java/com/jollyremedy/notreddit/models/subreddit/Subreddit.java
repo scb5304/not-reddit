@@ -11,14 +11,17 @@ public class Subreddit extends RedditType implements Parcelable {
     @SerializedName("data")
     private SubredditData data;
 
-    @Override
-    public SubredditData getData() {
-        return data;
-    }
-
     private Subreddit(Parcel in) {
         super(in);
         data = (SubredditData) in.readValue(SubredditData.class.getClassLoader());
+    }
+
+    public String getId() {
+        return data.id;
+    }
+
+    public String getDisplayName() {
+        return data.displayName;
     }
 
     @Override
