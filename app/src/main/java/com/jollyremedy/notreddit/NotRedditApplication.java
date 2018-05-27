@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
+import saschpe.android.customtabs.CustomTabsActivityLifecycleCallbacks;
 
 public class NotRedditApplication extends Application implements HasActivityInjector {
 
@@ -43,6 +44,7 @@ public class NotRedditApplication extends Application implements HasActivityInje
         mAppComponent.inject(this);
 
         ensureHaveDeviceId();
+        registerActivityLifecycleCallbacks(new CustomTabsActivityLifecycleCallbacks());
     }
 
     private void ensureHaveDeviceId() {
