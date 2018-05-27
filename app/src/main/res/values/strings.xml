@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">NotReddit</string>
+    <string name="oauth_scheme">notreddit</string>
     <string name="sync_account_type" translatable="false">notreddit.jollyremedy.com</string>
     <string name="subreddit_with_prefix">%1$s</string>
 
@@ -18,4 +19,7 @@
     <string name="item_comment_since_weeks">%1$dw ago</string>
     <string name="item_comment_since_months">%1$dmo ago</string>
     <string name="item_comment_since_years">%1$dy ago</string>
+
+    <string name="login_success">Logged in as %1$s.</string>
+    <string name="login_failure">There was an error logging in. Check your network connectivity, and ensure this app has the Contacts permission.</string>
 </resources>

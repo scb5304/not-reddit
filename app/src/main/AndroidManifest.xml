@@ -36,7 +36,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="notreddit" />
+                <data android:scheme="@string/oauth_scheme" />
             </intent-filter>
         </activity>
 

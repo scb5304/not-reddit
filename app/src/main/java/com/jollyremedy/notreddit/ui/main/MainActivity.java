@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.common.base.Strings;
 import com.jollyremedy.notreddit.Constants;
@@ -123,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                     .putString(Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN, selectedAccountName)
                     .apply();
             refreshUsernameDisplayed();
+            Toast.makeText(this, getString(R.string.login_success, selectedAccountName), Toast.LENGTH_SHORT).show();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

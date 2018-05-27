@@ -7,27 +7,20 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.customtabs.CustomTabsIntent;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.jollyremedy.notreddit.BuildConfig;
 import com.jollyremedy.notreddit.Constants;
 import com.jollyremedy.notreddit.NotRedditApplication;
 import com.jollyremedy.notreddit.api.AuthConstants;
 import com.jollyremedy.notreddit.models.auth.Token;
 import com.jollyremedy.notreddit.repository.FullTokenRepository;
 import com.jollyremedy.notreddit.ui.AuthActivity;
-import com.jollyremedy.notreddit.util.NotRedditViewUtils;
 
 import javax.inject.Inject;
-
-import saschpe.android.customtabs.CustomTabsHelper;
-import saschpe.android.customtabs.WebViewFallback;
 
 public class Accountant {
 
@@ -62,18 +55,6 @@ public class Accountant {
         return sInstance;
     }
 
-    public void launchRedditAuthentication() {
-        CustomTabsIntent customTabsIntent = NotRedditViewUtils.createBaseCustomTabsIntent(mContext);
-        CustomTabsHelper.addKeepAliveExtra(mContext, customTabsIntent.intent);
-
-        String deviceId = mSharedPreferences.getString(Constants.SharedPreferenceKeys.DEVICE_ID, "");
-        String url = buildRedditLoginUrl(deviceId);
-
-        CustomTabsHelper.openCustomTab(mContext, customTabsIntent,
-                Uri.parse(url),
-                new WebViewFallback());
-    }
-
     /**
      * Prompts the user to select the NotReddit account to log in to. If there are no accounts,
      * the user is immediately taken to the reddit authentication page to create a new account, which
@@ -83,7 +64,7 @@ public class Accountant {
         Account[] accounts = mAccountManager.getAccountsByType(AuthConstants.AUTH_ACCOUNT_TYPE);
         if (accounts.length == 0) {
             Log.wtf(TAG, "No accounts!");
-            launchRedditAuthentication();
+            mContext.startActivity(new Intent(mContext, AuthActivity.class));
         } else {
             Intent chooseAccountIntent = AccountManager.newChooseAccountIntent(
                     getCurrentAccount(),
@@ -104,17 +85,6 @@ public class Accountant {
                 .remove(Constants.SharedPreferenceKeys.TEMP_USER_TOKEN)
                 .apply();
         Toast.makeText(mContext, "You have been logged out.", Toast.LENGTH_SHORT).show();
-    }
-
-    //TODO: Reduce scope
-    private String buildRedditLoginUrl(String state) {
-        return "https://www.reddit.com/api/v1/authorize.compact" +
-                "?client_id=" + BuildConfig.CLIENT_ID +
-                "&response_type=" + "code" +
-                "&state=" + state +
-                "&duration=" + "permanent" +
-                "&redirect_uri=" + BuildConfig.REDIRECT_URI +
-                "&scope=" + "identity edit flair history modconfig modflair modlog modposts modwiki mysubreddits privatemessages read report save submit subscribe vote wikiedit wikiread";
     }
 
     private void addTokenInfoToAccount(Account account, @NonNull Token token) {
@@ -186,7 +156,7 @@ public class Accountant {
                             mSharedPreferences.edit()
                                     .putString(Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN, token.getAccount().getName())
                                     .apply();
-                            authUi.completeSuccessfully();
+                            authUi.completeSuccessfully(token.getAccount().getName());
                         } else {
                             authUi.completeWithError();
                             mSharedPreferences.edit()
