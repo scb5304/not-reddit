@@ -87,9 +87,24 @@ public class Accountant {
         Toast.makeText(mContext, "You have been logged out.", Toast.LENGTH_SHORT).show();
     }
 
-    private void addTokenInfoToAccount(Account account, @NonNull Token token) {
-        mAccountManager.setAuthToken(account, AuthConstants.AUTH_GRANT_TYPE_CODE, token.getAccessToken());
-        mAccountManager.setUserData(account, AuthConstants.USER_DATA_KEY_REFRESH_TOKEN, token.getRefreshToken());
+    private void addAccessTokenToAccount(Account account, @NonNull String accessToken) {
+        mAccountManager.setAuthToken(account, AuthConstants.AUTH_GRANT_TYPE_CODE, accessToken);
+    }
+
+    private void addRefreshTokenToAccount(Account account, @NonNull String refreshToken) {
+        mAccountManager.setUserData(account, AuthConstants.USER_DATA_KEY_REFRESH_TOKEN, refreshToken);
+    }
+
+    private void addTokenToAccount(Account account, @NonNull Token token) {
+        addAccessTokenToAccount(account, token.getAccessToken());
+        addRefreshTokenToAccount(account, token.getRefreshToken());
+    }
+
+    public void updateCurrentAccessToken(String accessToken) {
+        Account currentAccount = getCurrentAccount();
+        if (currentAccount != null) {
+            addAccessTokenToAccount(currentAccount, accessToken);
+        }
     }
 
     private boolean addAccount(Token token) {
@@ -99,7 +114,7 @@ public class Accountant {
             Account userAccount = new Account(username, AuthConstants.AUTH_ACCOUNT_TYPE);
             boolean added = mAccountManager.addAccountExplicitly(userAccount, null, null);
             if (added) {
-                addTokenInfoToAccount(userAccount, token);
+                addTokenToAccount(userAccount, token);
                 Log.d(TAG, "Added a NotReddit account for " + username);
                 return true;
             } else {
@@ -111,7 +126,7 @@ public class Accountant {
                     boolean addedAttemptTwo = mAccountManager.addAccountExplicitly(userAccount, null, null);
 
                     if (addedAttemptTwo) {
-                        addTokenInfoToAccount(userAccount, token);
+                        addTokenToAccount(userAccount, token);
                         Log.d(TAG, "Added the account after removing the original.");
                         return true;
                     }

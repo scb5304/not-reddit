@@ -91,6 +91,7 @@ public class OAuthTokenInterceptor implements Interceptor {
 
             Response resultFromRequestWithRefreshedToken = chain.proceed(requestWithToken(chain.request(), refreshedToken.getAccessToken()));
             if (responseIsNotAuthFailure(resultFromRequestWithRefreshedToken)) {
+                Accountant.getInstance().updateCurrentAccessToken(refreshedToken.getAccessToken());
                 Log.wtf(TAG, "This request was finally a success! Or, at least didn't fail due to authorization.");
                 return resultFromRequestWithRefreshedToken;
             } else {
@@ -123,6 +124,9 @@ public class OAuthTokenInterceptor implements Interceptor {
                 Response appRetryAuthenticatedResponse = chain.proceed(requestWithToken(chain.request(), currentAppToken));
 
                 if (appRetryAuthenticatedResponse != null) {
+                    mSharedPreferences.edit()
+                            .putString(SharedPreferenceKeys.APPLICATION_TOKEN, appToken.getAccessToken())
+                            .apply();
                     Log.wtf(TAG, "Second request was successful!");
                     return appRetryAuthenticatedResponse;
                 }
