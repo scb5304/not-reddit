@@ -95,7 +95,12 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         mPostListAdapter = new PostListAdapter(mViewModel);
         mRecyclerView.setAdapter(mPostListAdapter);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity()) {
+            @Override
+            public boolean supportsPredictiveItemAnimations() {
+                return false;
+            }
+        };
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
         mEndlessScrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
