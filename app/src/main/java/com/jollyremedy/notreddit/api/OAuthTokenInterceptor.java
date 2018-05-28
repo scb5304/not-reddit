@@ -116,25 +116,30 @@ public class OAuthTokenInterceptor implements Interceptor {
                 return appAuthenticatedResponse;
             }
 
-            Log.wtf(TAG, "Application-authenticated request failed, getting new app token...");
-            Token appToken = mTokenRepository.getAppToken(mSharedPreferences.getString(SharedPreferenceKeys.DEVICE_ID, null));
+            try {
+                Log.d(TAG, "Application-authenticated request failed, getting new app token...");
+                Token appToken = mTokenRepository.getAppToken(mSharedPreferences.getString(SharedPreferenceKeys.DEVICE_ID, null));
 
-            if (appToken != null) {
-                Log.wtf(TAG, "Got new app token, trying again: " + appToken);
+                Log.d(TAG, "Got new app token, trying again: " + appToken);
                 Response appRetryAuthenticatedResponse = chain.proceed(requestWithToken(chain.request(), currentAppToken));
 
                 if (appRetryAuthenticatedResponse != null) {
                     mSharedPreferences.edit()
                             .putString(SharedPreferenceKeys.APPLICATION_TOKEN, appToken.getAccessToken())
                             .apply();
-                    Log.wtf(TAG, "Second request was successful!");
+                    Log.d(TAG, "Second request was successful!");
                     return appRetryAuthenticatedResponse;
                 }
+            } catch (RuntimeException e) {
+                Log.e(TAG, "Error fetching token.", e);
             }
+
         } else {
-            Token appToken = mTokenRepository.getAppToken(mSharedPreferences.getString(SharedPreferenceKeys.DEVICE_ID, null));
-            if (appToken != null) {
+            try {
+                Token appToken = mTokenRepository.getAppToken(mSharedPreferences.getString(SharedPreferenceKeys.DEVICE_ID, null));
                 return chain.proceed(requestWithToken(chain.request(), appToken.getAccessToken()));
+            } catch (RuntimeException e) {
+                Log.e(TAG, "Error fetching token.", e);
             }
         }
 
