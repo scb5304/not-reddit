@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
+
         <variable
             name="postListViewModel"
             type="com.jollyremedy.notreddit.ui.postlist.PostListViewModel" />
@@ -13,32 +14,90 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/post_list_swipe_refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="62.75dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:onRefreshListener="@{() -> postListViewModel.onRefresh()}"
+            app:refreshing="@{postListViewModel.isRefreshing()}">
 
-            <android.support.v4.widget.SwipeRefreshLayout
-                android:id="@+id/post_list_swipe_refresh_layout"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/post_list_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:onRefreshListener="@{() -> postListViewModel.onRefresh()}"
-                app:refreshing="@{postListViewModel.isRefreshing()}">
+                android:scrollbars="vertical"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+        </android.support.v4.widget.SwipeRefreshLayout>
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/post_list_recycler_view"
+        <View
+            android:id="@+id/shadow"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:background="@drawable/shape_gradient_top"
+            app:layout_anchor="@+id/post_list_bottom_sheet" />
+
+        <android.support.design.card.MaterialCardView
+            android:id="@+id/post_list_bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:behavior_hideable="false"
+            app:behavior_peekHeight="62.75dp"
+            app:layout_behavior="@string/bottom_sheet_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/arrow_up_top"
+                    android:layout_width="wrap_content"
+                    android:layout_marginBottom="-8dp"
+                    android:layout_height="20dp" />
+
+                <android.support.design.widget.TabLayout
+                    android:scrollbars="horizontal"
                     android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    app:tabMinWidth="95dp"
+                    app:tabTextColor="@color/accent"
+                    app:tabMode="scrollable">
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="HOT" />
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="NEW" />
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TOP" />
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="RISING" />
+
+                    <android.support.design.widget.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="COMMENTS" />
+                </android.support.design.widget.TabLayout>
+
+                <ListView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:scrollbars="vertical"
-                    app:layoutManager="LinearLayoutManager" />
-            </android.support.v4.widget.SwipeRefreshLayout>
+                    android:entries="@android:array/emailAddressTypes" />
 
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                app:fab_icon="@drawable/eye_white" />
-
-        </RelativeLayout>
+            </LinearLayout>
+        </android.support.design.card.MaterialCardView>
     </android.support.design.widget.CoordinatorLayout>
 </layout>

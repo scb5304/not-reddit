@@ -44,11 +44,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/default_gap"
+                android:layout_marginStart="8dp"
                 android:clickable="false"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingTop="@dimen/default_gap"
+                android:paddingTop="8dp"
                 android:visibility="@{viewModel.isCommentTopLineVisible(comment) ? View.VISIBLE : View.GONE}">
 
                 <!-- Author -->
@@ -72,7 +72,7 @@
                     android:id="@+id/item_comment_score"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/default_gap"
+                    android:layout_marginStart="8dp"
                     android:clickable="false"
                     android:text="@{viewModel.getCommentPointsText(comment)}"
                     android:textAppearance="?android:textAppearanceSmall"
@@ -83,7 +83,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/default_gap"
+                    android:layout_marginStart="8dp"
                     android:clickable="false"
                     android:text="@{viewModel.getCommentTimeSince(comment)}"
                     android:textAppearance="?android:textAppearanceSmall"
@@ -112,7 +112,7 @@
                 android:background="@color/secondary_background_gray"
                 android:clickable="false"
                 android:orientation="horizontal"
-                android:paddingStart="@dimen/default_gap"
+                android:paddingStart="8dp"
                 android:visibility="@{viewModel.isCommentBottomLineVisible(commentIndex) ? View.VISIBLE : View.GONE}">
 
                 <android.support.v4.widget.Space

@@ -20,7 +20,7 @@
         android:layout_marginBottom="1dp"
         android:orientation="vertical"
         app:cardCornerRadius="0dp"
-        app:cardElevation="2dp">
+        app:cardElevation="1dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,8 +59,8 @@
                     android:layout_marginStart="12dp"
                     android:layout_toEndOf="@id/item_post_image"
                     android:layout_toStartOf="@+id/item_post_comment_views_wrapper"
-                    android:paddingBottom="@dimen/default_gap"
-                    android:paddingTop="@dimen/default_gap"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
                     android:text="@{post.title}"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/primary_dark"
@@ -93,7 +93,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:layout_marginBottom="@dimen/default_gap"
+                        android:layout_marginBottom="8dp"
                         android:paddingBottom="2dp"
                         android:src="@drawable/comment_multiple_outline" />
 
@@ -128,7 +128,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:paddingStart="@dimen/default_gap"
+                    android:paddingStart="8dp"
                     android:text="@{post.score}"
                     android:textColor="@color/primary_dark"
                     tools:text="10009" />
@@ -158,8 +158,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:paddingEnd="@dimen/default_gap"
-                    android:paddingStart="@dimen/default_gap"
+                    android:paddingEnd="8dp"
+                    android:paddingStart="8dp"
                     android:text="@{post.domain}"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textColor="@android:color/black"

@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="@dimen/default_gap">
+                android:padding="8dp">
 
                 <org.sufficientlysecure.htmltextview.HtmlTextView
                     android:id="@+id/post_detail_post_body"
