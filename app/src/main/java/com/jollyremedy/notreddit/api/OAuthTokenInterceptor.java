@@ -123,7 +123,7 @@ public class OAuthTokenInterceptor implements Interceptor {
                 Log.d(TAG, "Got new app token, trying again: " + appToken);
                 Response appRetryAuthenticatedResponse = chain.proceed(requestWithToken(chain.request(), currentAppToken));
 
-                if (appRetryAuthenticatedResponse != null) {
+                if (responseIsNotAuthFailure(appRetryAuthenticatedResponse)) {
                     mSharedPreferences.edit()
                             .putString(SharedPreferenceKeys.APPLICATION_TOKEN, appToken.getAccessToken())
                             .apply();
@@ -137,12 +137,17 @@ public class OAuthTokenInterceptor implements Interceptor {
         } else {
             try {
                 Token appToken = mTokenRepository.getAppToken(mSharedPreferences.getString(SharedPreferenceKeys.DEVICE_ID, null));
-                return chain.proceed(requestWithToken(chain.request(), appToken.getAccessToken()));
+                Response response = chain.proceed(requestWithToken(chain.request(), appToken.getAccessToken()));
+                if (responseIsNotAuthFailure(response)) {
+                    mSharedPreferences.edit()
+                            .putString(SharedPreferenceKeys.APPLICATION_TOKEN, appToken.getAccessToken())
+                            .apply();
+                    return response;
+                }
             } catch (RuntimeException e) {
                 Log.e(TAG, "Error fetching token.", e);
             }
         }
-
         return null;
     }
 
