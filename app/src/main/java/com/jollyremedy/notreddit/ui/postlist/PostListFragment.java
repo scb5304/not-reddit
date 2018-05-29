@@ -1,5 +1,7 @@
 package com.jollyremedy.notreddit.ui.postlist;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -60,6 +62,17 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         fragment.setArguments(bundle);
         return fragment;
     }
+
+    private final Observer<NotRedditPostListData> mPostListDataObserver = new Observer<NotRedditPostListData>() {
+        @Override
+        public void onChanged(@Nullable NotRedditPostListData postListing) {
+            if (postListing != null) {
+                List<Post> posts = postListing.getPostListing().getPosts();
+                mPostListAdapter.updateData(posts, postListing.getPostsChangingRange(), postListing.getPostsDeletingRange());
+                postListing.clearRanges();
+            }
+        }
+    };
 
     @Nullable
     @Override
@@ -126,14 +139,11 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     }
 
     private void subscribeUi() {
-        mViewModel.getObservableListing(getSubredditName()).observe(this, postListing -> {
-            if (postListing != null) {
-                List<Post> posts = postListing.getPostListing().getPosts();
-                mPostListAdapter.updateData(posts, postListing.getPostsChangingRange(), postListing.getPostsDeletingRange());
-                postListing.clearRanges();
-                postListing.clearRanges();
-            }
-        });
+        //https://medium.com/@BladeCoder/architecture-components-pitfalls-part-1-9300dd969808
+        LiveData<NotRedditPostListData> liveData = mViewModel.getObservableListing(getSubredditName());
+        liveData.removeObserver(mPostListDataObserver);
+        liveData.observe(this, mPostListDataObserver);
+
         mViewModel.observeResetEndlessScroll().observe(this, shouldReset -> {
             if (shouldReset != null && shouldReset) {
                 mEndlessScrollListener.resetState();
