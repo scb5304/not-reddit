@@ -121,7 +121,7 @@ public class OAuthTokenInterceptor implements Interceptor {
                 Token appToken = mTokenRepository.getAppToken(mSharedPreferences.getString(SharedPreferenceKeys.DEVICE_ID, null));
 
                 Log.d(TAG, "Got new app token, trying again: " + appToken);
-                Response appRetryAuthenticatedResponse = chain.proceed(requestWithToken(chain.request(), currentAppToken));
+                Response appRetryAuthenticatedResponse = chain.proceed(requestWithToken(chain.request(), appToken.getAccessToken()));
 
                 if (responseIsNotAuthFailure(appRetryAuthenticatedResponse)) {
                     mSharedPreferences.edit()
