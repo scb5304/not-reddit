@@ -130,7 +130,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
             if (postListing != null) {
                 List<Post> posts = postListing.getPostListing().getPosts();
                 mPostListAdapter.updateData(posts, postListing.getPostsChangingRange(), postListing.getPostsDeletingRange());
-                mRecyclerView.swapAdapter(mPostListAdapter, true);
+                postListing.clearRanges();
                 postListing.clearRanges();
             }
         });
