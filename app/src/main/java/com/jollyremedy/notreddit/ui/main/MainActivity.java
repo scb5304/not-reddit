@@ -14,7 +14,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -113,8 +112,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 return true;
             }
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG, "Failed to acquire BottomSheetBehavior from bottom_sheet.", e);
+        } catch (NullPointerException | IllegalArgumentException e) {
+            //No bottom sheet available, and that's fine.
         }
         return false;
     }
