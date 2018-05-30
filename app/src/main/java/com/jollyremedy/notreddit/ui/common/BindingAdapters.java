@@ -2,11 +2,8 @@ package com.jollyremedy.notreddit.ui.common;
 
 import android.databinding.BindingAdapter;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.ViewUtils;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.ViewGroup;
-import android.webkit.URLUtil;
 import android.widget.ImageView;
 
 import com.google.common.base.Strings;

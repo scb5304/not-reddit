@@ -7,12 +7,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -94,6 +96,27 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     protected void onPause() {
         super.onPause();
         mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (closeBottomSheet()) {
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    private boolean closeBottomSheet() {
+        try {
+            BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                return true;
+            }
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Failed to acquire BottomSheetBehavior from bottom_sheet.", e);
+        }
+        return false;
     }
 
     @Override

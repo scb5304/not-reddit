@@ -5,7 +5,9 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +25,8 @@ import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.ui.EndlessRecyclerViewScrollListener;
 import com.jollyremedy.notreddit.ui.common.DrawerFragment;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
+import com.jollyremedy.notreddit.util.SimpleTabSelectedListener;
+import com.jollyremedy.notreddit.util.Utility;
 
 import java.util.List;
 
@@ -42,11 +46,9 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     @Inject
     NavigationController mNavigationController;
 
-    @BindView(R.id.post_list_recycler_view)
-    RecyclerView mRecyclerView;
-
-    @BindView(R.id.post_list_swipe_refresh_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.post_list_recycler_view) RecyclerView mRecyclerView;
+    @BindView(R.id.post_list_swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.post_list_tab_layout) TabLayout mTabLayout;
 
     public static final String TAG = "PostListFragment";
     private static final String EXTRA_SUBREDDIT_NAME = "extra_subreddit_name";
@@ -76,15 +78,22 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentPostListBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        String[] postSorts = getResources().getStringArray(R.array.post_listing_sorts);
+        for (String postSort : postSorts) {
+            TabLayout.Tab tab = mTabLayout.newTab();
+            tab.setText(postSort);
+            mTabLayout.addTab(tab);
+        }
     }
 
     @Override
@@ -96,6 +105,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         subscribeUi();
         initRecyclerView();
         initSwipeRefreshLayout();
+        initTabLayout();
     }
 
     @Override
@@ -136,6 +146,16 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
 
     private void initSwipeRefreshLayout() {
         mSwipeRefreshLayout.setDistanceToTriggerSync(300);
+    }
+
+    private void initTabLayout() {
+        mTabLayout.addOnTabSelectedListener(new SimpleTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                String postSort = Utility.getPostListingSortFromDisplayedString(getActivity(), tab.getText().toString());
+                mViewModel.onPostSortSelected(postSort);
+            }
+        });
     }
 
     private void subscribeUi() {

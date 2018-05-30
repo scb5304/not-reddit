@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="post_listing_sorts">
+        <item>@string/post_listing_sort_hot</item>
+        <item>@string/post_listing_sort_new</item>
+        <item>@string/post_listing_sort_best</item>
+        <item>@string/post_listing_sort_top</item>
+        <item>@string/post_listing_sort_rising</item>
+        <item>@string/post_listing_sort_controversial</item>
+    </string-array>
+</resources>

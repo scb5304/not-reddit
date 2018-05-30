@@ -33,6 +33,9 @@ public class PostListViewModel extends ViewModel {
     private ObservableBoolean mDataBindIsRefreshing;
     private String mSubredditName = "all";
 
+    @PostListingSort
+    private String mCurrentSort;
+
     public void onPostListIdle(int firstVisibleItemPosition) {
         if (firstVisibleItemPosition > 0) {
             NotRedditPostListData postListData = mPostListLiveData.getValue();
@@ -53,6 +56,7 @@ public class PostListViewModel extends ViewModel {
         mPostListLiveData = new MutableLiveData<>();
         mEndlessScrollResetLiveData = new MutableLiveData<>();
         mDataBindIsRefreshing = new ObservableBoolean();
+        mCurrentSort = PostListingSort.HOT; //TODO: Always assuming we start with HOT is limiting.
     }
 
     public void setNavigationController(NavigationController navigationController) {
@@ -111,6 +115,17 @@ public class PostListViewModel extends ViewModel {
 
     public void onPostCommentsClicked(Post post) {
         mNavigationController.navigateToPostDetail(post);
+    }
+
+    public void onPostSortSelected(@PostListingSort String postListingSort) {
+        if (postListingSort.equals(mCurrentSort)) {
+            return;
+        }
+        mCurrentSort = postListingSort;
+        mPostRepository.getPostListing(new ListingResponseFetchObserver(FetchMode.START_FRESH),
+                mSubredditName,
+                postListingSort,
+                null);
     }
 
     /// --------------------------------------
