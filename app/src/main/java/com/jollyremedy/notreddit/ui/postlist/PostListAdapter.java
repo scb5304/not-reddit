@@ -2,7 +2,6 @@ package com.jollyremedy.notreddit.ui.postlist;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,7 +21,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.Subred
     private PostListViewModel mPostListViewModel;
 
     void updateData(@NonNull List<Post> posts, @Nullable Range<Integer> changeRange, @Nullable Range<Integer> deleteRange) {
-        mPosts = posts;
+        mPosts = new ArrayList<>(posts);
 
         if (changeRange != null) {
             Integer numberOfItemsChanging = changeRange.upperEndpoint() - changeRange.lowerEndpoint();
@@ -41,15 +40,16 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.Subred
         mPosts = new ArrayList<>();
     }
 
+    @NonNull
     @Override
-    public SubredditViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SubredditViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         ItemPostBinding itemPostBinding = ItemPostBinding.inflate(layoutInflater, parent, false);
         return new SubredditViewHolder(itemPostBinding);
     }
 
     @Override
-    public void onBindViewHolder(SubredditViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull SubredditViewHolder holder, int position) {
         holder.bind(mPosts.get(position));
     }
 
