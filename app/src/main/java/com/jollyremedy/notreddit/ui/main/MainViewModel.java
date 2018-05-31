@@ -6,6 +6,8 @@ import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.jollyremedy.notreddit.auth.accounting.Accountant;
+import com.jollyremedy.notreddit.models.subreddit.SubredditForUserWhere;
 import com.jollyremedy.notreddit.models.subreddit.SubredditListing;
 import com.jollyremedy.notreddit.models.subreddit.SubredditWhere;
 import com.jollyremedy.notreddit.repository.SubredditRepository;
@@ -29,7 +31,11 @@ public class MainViewModel extends ViewModel {
 
     LiveData<SubredditListing> getObservableSubredditListing() {
         if (mListingLiveData.getValue() == null) {
-            mSubredditRepository.getSubredditsWhere(SubredditWhere.DEFAULT, new SubredditListingObserver());
+            if (Accountant.getInstance().getCurrentAccessToken() != null) {
+                mSubredditRepository.getSubredditsForUserWhere(SubredditForUserWhere.SUBSCRIBER, new SubredditListingObserver());
+            } else {
+                mSubredditRepository.getSubredditsWhere(SubredditWhere.DEFAULT, new SubredditListingObserver());
+            }
         }
         return mListingLiveData;
     }
