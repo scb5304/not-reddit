@@ -14,8 +14,7 @@ import com.jollyremedy.notreddit.repository.SubredditRepository;
 
 import javax.inject.Inject;
 
-import io.reactivex.SingleObserver;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.Single;
 
 public class MainViewModel extends ViewModel {
 
@@ -31,13 +30,21 @@ public class MainViewModel extends ViewModel {
 
     LiveData<SubredditListing> getObservableSubredditListing() {
         if (mListingLiveData.getValue() == null) {
-            if (Accountant.getInstance().getCurrentAccessToken() != null) {
-                mSubredditRepository.getSubredditsForUserWhere(SubredditForUserWhere.SUBSCRIBER, new SubredditListingObserver());
-            } else {
-                mSubredditRepository.getSubredditsWhere(SubredditWhere.DEFAULT, new SubredditListingObserver());
-            }
+            fetchSubreddits();
         }
         return mListingLiveData;
+    }
+
+    private void fetchSubreddits() {
+        Single<SubredditListing> fetchSingle;
+
+        if (Accountant.getInstance().getCurrentAccessToken() != null) {
+            fetchSingle = mSubredditRepository.getSubredditsForUserWhere(SubredditForUserWhere.SUBSCRIBER);
+        } else {
+            fetchSingle = mSubredditRepository.getSubredditsWhere(SubredditWhere.DEFAULT);
+        }
+
+        fetchSingle.subscribe(this::onSubredditListingReceived, this::onSubredditListingFetchError);
     }
 
     private void onSubredditListingReceived(SubredditListing subredditListing) {
@@ -48,24 +55,4 @@ public class MainViewModel extends ViewModel {
     private void onSubredditListingFetchError(Throwable t) {
         Log.e(TAG, "Failed to get a post listing!", t);
     }
-
-
-    private class SubredditListingObserver implements SingleObserver<SubredditListing> {
-
-        @Override
-        public void onSubscribe(Disposable d) {
-            Log.i(TAG, "Getting subreddits...");
-        }
-
-        @Override
-        public void onSuccess(SubredditListing subredditListing) {
-            onSubredditListingReceived(subredditListing);
-        }
-
-        @Override
-        public void onError(Throwable t) {
-            onSubredditListingFetchError(t);
-        }
-    }
-
 }

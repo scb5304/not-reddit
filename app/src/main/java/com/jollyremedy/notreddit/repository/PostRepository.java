@@ -11,7 +11,7 @@ import com.jollyremedy.notreddit.models.post.PostListingSort;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.SingleObserver;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -26,13 +26,12 @@ public class PostRepository {
         mRedditApi = redditApi;
     }
 
-    public void getPostListing(SingleObserver<PostListing> observer, String subredditName,
-                               @NonNull @PostListingSort String sort,
-                               @Nullable String after) {
+    public Single<PostListing> getPostListing(@NonNull String subredditName,
+                                              @NonNull @PostListingSort String sort,
+                                              @Nullable String after) {
         String prefixedSubredditName = Strings.isNullOrEmpty(subredditName) ? "": "/r/" + subredditName;
-        mRedditApi.getPostsBySubreddit(prefixedSubredditName, sort, after)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(observer);
+        return mRedditApi.getPostsBySubreddit(prefixedSubredditName, sort, after)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }

@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableBoolean;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import com.google.common.collect.Range;
@@ -20,9 +19,6 @@ import java.net.UnknownHostException;
 
 import javax.inject.Inject;
 
-import io.reactivex.SingleObserver;
-import io.reactivex.disposables.Disposable;
-
 public class PostListViewModel extends ViewModel {
 
     private static final String TAG = "PostListViewModel";
@@ -32,20 +28,9 @@ public class PostListViewModel extends ViewModel {
     private MutableLiveData<Boolean> mEndlessScrollResetLiveData;
     private ObservableBoolean mDataBindIsRefreshing;
     private String mSubredditName = "all";
+    private @PostListingSort String mCurrentSort;
 
-    @PostListingSort
-    private String mCurrentSort;
-
-    public void onPostListIdle(int firstVisibleItemPosition) {
-        if (firstVisibleItemPosition > 0) {
-            NotRedditPostListData postListData = mPostListLiveData.getValue();
-            postListData.getPostListing().getPosts().subList(0, firstVisibleItemPosition).clear();
-            postListData.setPostsDeletingRange(Range.closedOpen(0, firstVisibleItemPosition));
-            mPostListLiveData.postValue(postListData);
-        }
-    }
-
-    public enum FetchMode {
+    private enum FetchMode {
         START_FRESH,
         ADD_TO_EXISTING_POSTS
     }
@@ -56,33 +41,86 @@ public class PostListViewModel extends ViewModel {
         mPostListLiveData = new MutableLiveData<>();
         mEndlessScrollResetLiveData = new MutableLiveData<>();
         mDataBindIsRefreshing = new ObservableBoolean();
-        mCurrentSort = PostListingSort.HOT; //TODO: Always assuming we start with HOT is limiting.
-    }
-
-    public void setNavigationController(NavigationController navigationController) {
-        mNavigationController = navigationController;
-    }
-
-    LiveData<NotRedditPostListData> getObservableListing(String subredditName) {
-        mSubredditName = subredditName;
-        if (mPostListLiveData.getValue() == null) {
-            mPostRepository.getPostListing(new ListingResponseFetchObserver(FetchMode.START_FRESH),
-                    mSubredditName,
-                    PostListingSort.HOT,
-                    getCurrentAfter());
-        }
-        return mPostListLiveData;
+        mCurrentSort = PostListingSort.HOT;
     }
 
     LiveData<Boolean> observeResetEndlessScroll() {
         return mEndlessScrollResetLiveData;
     }
 
-    void onLoadMore() {
-        mPostRepository.getPostListing(new ListingResponseFetchObserver(FetchMode.ADD_TO_EXISTING_POSTS),
-                mSubredditName,
-                PostListingSort.HOT,
-                getCurrentAfter());
+    LiveData<NotRedditPostListData> getObservableListing(String subredditName) {
+        mSubredditName = subredditName;
+        if (mPostListLiveData.getValue() == null) {
+            fetchPosts(FetchMode.START_FRESH);
+        }
+        return mPostListLiveData;
+    }
+
+    public void onPostListIdle(int firstVisibleItemPosition) {
+        if (firstVisibleItemPosition > 0) {
+            NotRedditPostListData postListData = mPostListLiveData.getValue();
+            if (postListData == null) {
+                return;
+            }
+            postListData.getPostListing().getPosts().subList(0, firstVisibleItemPosition).clear();
+            postListData.setPostsDeletingRange(Range.closedOpen(0, firstVisibleItemPosition));
+            mPostListLiveData.postValue(postListData);
+        }
+    }
+
+    public void onLoadMore() {
+        fetchPosts(FetchMode.ADD_TO_EXISTING_POSTS);
+    }
+
+    private void fetchPosts(FetchMode fetchMode) {
+        mDataBindIsRefreshing.set(true);
+        String after = fetchMode == FetchMode.ADD_TO_EXISTING_POSTS ? getCurrentAfter() : null;
+        mPostRepository.getPostListing(mSubredditName, mCurrentSort, after)
+                .doFinally(() -> mDataBindIsRefreshing.set(false))
+                .subscribe(postListing -> this.onNewPostListingReceived(fetchMode, postListing), this::onPostListingFetchError);
+    }
+
+    private void onPostListingFetchError(Throwable t) {
+        Log.e(TAG, "Failed to get a post listing!", t);
+        if (t instanceof UnknownHostException) {
+            Log.e(TAG, Log.getStackTraceString(t));
+        }
+    }
+
+    private void onNewPostListingReceived(FetchMode fetchMode, @NonNull PostListing newPostListing) {
+        NotRedditPostListData postListViewData = mPostListLiveData.getValue();
+        if (postListViewData == null || fetchMode == FetchMode.START_FRESH) {
+            onPostListingStartingFresh(newPostListing);
+        } else {
+            onPostListingAddToExisting(postListViewData, newPostListing);
+        }
+        mDataBindIsRefreshing.set(false);
+    }
+
+    private void onPostListingStartingFresh(PostListing newPostListing) {
+        NotRedditPostListData postListViewData = new NotRedditPostListData();
+        postListViewData.setPostListing(newPostListing);
+        postListViewData.setPostsChangingRange(Range.closed(0, newPostListing.getPosts().size()));
+        mPostListLiveData.postValue(postListViewData);
+        mEndlessScrollResetLiveData.postValue(true);
+    }
+
+    private void onPostListingAddToExisting(NotRedditPostListData postListData, PostListing newPostListing) {
+        PostListing existingPostListing = postListData.getPostListing();
+
+        int priorListSize = existingPostListing.getPosts().size();
+        int newListSize = newPostListing.getPosts().size() + priorListSize;
+        postListData.setPostsChangingRange(Range.closed(priorListSize, newListSize));
+
+        if (postListData.getPostListing().hasPosts()) {
+            existingPostListing.addAllPosts(newPostListing.getPosts());
+        } else {
+            existingPostListing.setPosts(newPostListing.getPosts());
+        }
+        postListData.getPostListing().setAfter(newPostListing.getAfter());
+
+        mPostListLiveData.postValue(postListData);
+        mEndlessScrollResetLiveData.postValue(false);
     }
 
     @Nullable
@@ -94,15 +132,12 @@ public class PostListViewModel extends ViewModel {
         }
     }
 
-    // --------------------------------------
-    // Binding
-    // --------------------------------------
+    public void setNavigationController(NavigationController navigationController) {
+        mNavigationController = navigationController;
+    }
 
     public void onRefresh() {
-        mPostRepository.getPostListing(new ListingResponseFetchObserver(FetchMode.START_FRESH),
-                mSubredditName,
-                PostListingSort.HOT,
-                null);
+        fetchPosts(FetchMode.START_FRESH);
     }
 
     public ObservableBoolean isRefreshing() {
@@ -122,75 +157,6 @@ public class PostListViewModel extends ViewModel {
             return;
         }
         mCurrentSort = postListingSort;
-        mPostRepository.getPostListing(new ListingResponseFetchObserver(FetchMode.START_FRESH),
-                mSubredditName,
-                postListingSort,
-                null);
-    }
-
-    /// --------------------------------------
-
-    private void onNewPostListingReceived(FetchMode fetchMode, @NonNull PostListing newPostListing) {
-        Log.i(TAG, "Got a post listing.");
-        NotRedditPostListData postListViewData = mPostListLiveData.getValue();
-        if (postListViewData == null || fetchMode == FetchMode.START_FRESH) {
-            //We didn't have data, or we're starting over; post the fetched ListingResponse.
-            postListViewData = new NotRedditPostListData();
-            postListViewData.setPostListing(newPostListing);
-            postListViewData.setPostsChangingRange(Range.closed(0, newPostListing.getPosts().size()));
-            mPostListLiveData.postValue(postListViewData);
-            mEndlessScrollResetLiveData.postValue(true);
-        } else {
-            //Appropriately update the existing PostListing.
-            PostListing existingPostListing = postListViewData.getPostListing();
-
-            int priorListSize = existingPostListing.getPosts().size();
-            int newListSize = newPostListing.getPosts().size() + priorListSize;
-            postListViewData.setPostsChangingRange(Range.closed(priorListSize, newListSize));
-
-            if (postListViewData.getPostListing().hasPosts()) {
-                existingPostListing.addAllPosts(newPostListing.getPosts());
-            } else {
-                existingPostListing.setPosts(newPostListing.getPosts());
-            }
-            postListViewData.getPostListing().setAfter(newPostListing.getAfter());
-
-            mPostListLiveData.postValue(postListViewData);
-            mEndlessScrollResetLiveData.postValue(false);
-        }
-        mDataBindIsRefreshing.set(false);
-    }
-
-    private void onPostListingFetchError(Throwable t) {
-        Log.e(TAG, "Failed to get a post listing!", t);
-        if (t instanceof UnknownHostException) {
-            Log.e(TAG, Log.getStackTraceString(t));
-        }
-        mDataBindIsRefreshing.set(false);
-    }
-
-    protected class ListingResponseFetchObserver implements SingleObserver<PostListing> {
-        @VisibleForTesting
-        FetchMode mFetchMode;
-
-        ListingResponseFetchObserver(FetchMode fetchMode) {
-            mFetchMode = fetchMode;
-        }
-
-        @Override
-        public void onSubscribe(Disposable d) {
-            mDataBindIsRefreshing.set(true);
-            Log.i(TAG, "Getting post listing...");
-        }
-
-        @Override
-        public void onSuccess(PostListing listingResponse) {
-            onNewPostListingReceived(mFetchMode, listingResponse);
-        }
-
-        @Override
-        public void onError(Throwable t) {
-            onPostListingFetchError(t);
-        }
+        fetchPosts(FetchMode.START_FRESH);
     }
 }

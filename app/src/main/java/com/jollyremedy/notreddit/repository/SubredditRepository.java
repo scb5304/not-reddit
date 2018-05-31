@@ -8,7 +8,7 @@ import com.jollyremedy.notreddit.models.subreddit.SubredditWhere;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.SingleObserver;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -23,17 +23,15 @@ public class SubredditRepository {
         mRedditApi = redditApi;
     }
 
-    public void getSubredditsWhere(@SubredditWhere String where, SingleObserver<SubredditListing> observer) {
-        mRedditApi.getSubredditListingWhere(where)
+    public Single<SubredditListing> getSubredditsWhere(@SubredditWhere String where) {
+        return mRedditApi.getSubredditListingWhere(where)
                 .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(observer);
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public void getSubredditsForUserWhere(@SubredditForUserWhere String where, SingleObserver<SubredditListing> observer) {
-        mRedditApi.getSubredditListingForUserWhere(where)
+    public Single<SubredditListing> getSubredditsForUserWhere(@SubredditForUserWhere String where) {
+        return mRedditApi.getSubredditListingForUserWhere(where)
                 .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(observer);
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }

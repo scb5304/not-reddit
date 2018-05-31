@@ -122,19 +122,11 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (isNavigationDrawerFragmentDisplayed()) {
-                    mDrawerLayout.openDrawer(GravityCompat.START);
-                } else {
-                    onBackPressed();
-                }
-                return true;
+                return onHomePressed();
             case R.id.menu_post_list_log_in:
-                Accountant.getInstance().login(this);
-                return true;
+                return onLoginPressed();
             case R.id.menu_post_list_log_out:
-                invalidateOptionsMenu();
-                Accountant.getInstance().logout();
-                return true;
+                return onLogoutPressed();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -151,6 +143,26 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             invalidateOptionsMenu();
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private boolean onHomePressed() {
+        if (isNavigationDrawerFragmentDisplayed()) {
+            mDrawerLayout.openDrawer(GravityCompat.START);
+        } else {
+            onBackPressed();
+        }
+        return true;
+    }
+
+    private boolean onLoginPressed() {
+        Accountant.getInstance().login(this);
+        return true;
+    }
+
+    private boolean onLogoutPressed() {
+        invalidateOptionsMenu();
+        Accountant.getInstance().logout();
+        return true;
     }
 
     private boolean closeDrawer() {
