@@ -154,6 +154,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
             public void onTabSelected(TabLayout.Tab tab) {
                 String postSort = Utility.getPostListingSortFromDisplayedString(getActivity(), tab.getText().toString());
                 mViewModel.onPostSortSelected(postSort);
+                mRecyclerView.stopScroll();
             }
         });
     }
@@ -167,6 +168,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         mViewModel.observeResetEndlessScroll().observe(this, shouldReset -> {
             if (shouldReset != null && shouldReset) {
                 mEndlessScrollListener.resetState();
+                mRecyclerView.postDelayed(() -> mRecyclerView.scrollToPosition(0), 100);
             }
         });
     }

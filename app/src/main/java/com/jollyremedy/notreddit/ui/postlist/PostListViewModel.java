@@ -100,7 +100,6 @@ public class PostListViewModel extends ViewModel {
     private void onPostListingStartingFresh(PostListing newPostListing) {
         NotRedditPostListData postListViewData = new NotRedditPostListData();
         postListViewData.setPostListing(newPostListing);
-        postListViewData.setPostsChangingRange(Range.closed(0, newPostListing.getPosts().size()));
         mPostListLiveData.postValue(postListViewData);
         mEndlessScrollResetLiveData.postValue(true);
     }
