@@ -3,6 +3,8 @@ sudo: required
 android:
   components:
   # https://docs.travis-ci.com/user/languages/android/
+  # Explicitly identifying the build tools version will let Travis accept the license for us.
+    - build-tools-27.0.3
     - android-27
 before_install:
   # To prevent gradlew permission denied: https://stackoverflow.com/a/33820642
