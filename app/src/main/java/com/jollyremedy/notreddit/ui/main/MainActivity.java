@@ -62,6 +62,11 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     private MainViewModel mViewModel;
 
     @Override
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return mFragmentDispatchingAndroidInjector;
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
@@ -82,6 +87,14 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_post_list, menu);
+        boolean loggedIn = mSharedPreferences.getString(Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN, null) != null;
+
+        MenuItem loginMenuItem = menu.findItem(R.id.menu_post_list_log_in);
+        loginMenuItem.setTitle(loggedIn ? getString(R.string.switch_accounts): getString(R.string.log_in));
+
+        MenuItem logoutMenuItem = menu.findItem(R.id.menu_post_list_log_out);
+        logoutMenuItem.setVisible(loggedIn);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -105,6 +118,41 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         super.onBackPressed();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (isNavigationDrawerFragmentDisplayed()) {
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                } else {
+                    onBackPressed();
+                }
+                return true;
+            case R.id.menu_post_list_log_in:
+                Accountant.getInstance().login(this);
+                return true;
+            case R.id.menu_post_list_log_out:
+                invalidateOptionsMenu();
+                Accountant.getInstance().logout();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && requestCode == Accountant.CHOOSE_ACCOUNT_REQUEST_CODE) {
+            String selectedAccountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            mSharedPreferences.edit()
+                    .putString(Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN, selectedAccountName)
+                    .apply();
+            refreshUsernameDisplayed();
+            Toast.makeText(this, getString(R.string.login_success, selectedAccountName), Toast.LENGTH_SHORT).show();
+            invalidateOptionsMenu();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     private boolean closeDrawer() {
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -124,39 +172,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             //No bottom sheet available, and that's fine.
         }
         return false;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (isNavigationDrawerFragmentDisplayed()) {
-                    mDrawerLayout.openDrawer(GravityCompat.START);
-                } else {
-                    onBackPressed();
-                }
-                return true;
-            case R.id.menu_post_list_log_in:
-                Accountant.getInstance().login(this);
-                return true;
-            case R.id.menu_post_list_log_out:
-                Accountant.getInstance().logout();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && requestCode == Accountant.CHOOSE_ACCOUNT_REQUEST_CODE) {
-            String selectedAccountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            mSharedPreferences.edit()
-                    .putString(Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN, selectedAccountName)
-                    .apply();
-            refreshUsernameDisplayed();
-            Toast.makeText(this, getString(R.string.login_success, selectedAccountName), Toast.LENGTH_SHORT).show();
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void subscribeUi() {
@@ -206,11 +221,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             }
         }
         return false;
-    }
-
-    @Override
-    public AndroidInjector<Fragment> supportFragmentInjector() {
-        return mFragmentDispatchingAndroidInjector;
     }
 
     @Override

@@ -22,6 +22,9 @@
 
     <string name="login_success">Logged in as %1$s.</string>
     <string name="login_failure">There was an error logging in. Check your network connectivity, and ensure this app has the Contacts permission.</string>
+    <string name="log_in">Log in</string>
+    <string name="log_out">Log out</string>
+    <string name="switch_accounts">Switch accounts</string>
 
     <string name="post_listing_sort_hot">Hot</string>
     <string name="post_listing_sort_new">New</string>
@@ -29,5 +32,4 @@
     <string name="post_listing_sort_top">Top</string>
     <string name="post_listing_sort_rising">Rising</string>
     <string name="post_listing_sort_controversial">Controversial</string>
-
 </resources>
