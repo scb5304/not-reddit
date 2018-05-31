@@ -18,7 +18,7 @@
             android:id="@+id/post_list_swipe_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="62.75dp"
+            android:layout_marginBottom="63dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:onRefreshListener="@{() -> postListViewModel.onRefresh()}"
             app:refreshing="@{postListViewModel.isRefreshing()}">
@@ -38,12 +38,12 @@
             android:background="@drawable/shape_gradient_top"
             app:layout_anchor="@+id/bottom_sheet" />
 
-        <android.support.design.card.MaterialCardView
+        <android.support.v7.widget.CardView
             android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:behavior_hideable="false"
-            app:behavior_peekHeight="62.75dp"
+            app:behavior_peekHeight="63dp"
             app:layout_behavior="@string/bottom_sheet_behavior">
 
             <LinearLayout
@@ -75,6 +75,6 @@
                     android:entries="@android:array/emailAddressTypes" />
 
             </LinearLayout>
-        </android.support.design.card.MaterialCardView>
+        </android.support.v7.widget.CardView>
     </android.support.design.widget.CoordinatorLayout>
 </layout>
