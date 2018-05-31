@@ -99,10 +99,18 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     public void onBackPressed() {
-        if (closeBottomSheet()) {
+        if (closeDrawer() || closeBottomSheet()) {
             return;
         }
         super.onBackPressed();
+    }
+
+    private boolean closeDrawer() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        }
+        return false;
     }
 
     private boolean closeBottomSheet() {
