@@ -13,6 +13,9 @@ public class SubredditData implements Parcelable {
     @SerializedName("display_name")
     public String displayName;
 
+    @SerializedName("user_is_subscriber")
+    public boolean isSubscribedTo;
+
     private SubredditData(Parcel in) {
         id = in.readString();
         displayName = in.readString();

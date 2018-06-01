@@ -24,6 +24,10 @@ public class Subreddit extends RedditType implements Parcelable {
         return data.displayName;
     }
 
+    public boolean isSubscribedTo() {
+        return data.isSubscribedTo;
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(data);

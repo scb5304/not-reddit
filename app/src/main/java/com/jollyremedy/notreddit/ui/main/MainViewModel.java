@@ -12,6 +12,9 @@ import com.jollyremedy.notreddit.models.subreddit.SubredditListing;
 import com.jollyremedy.notreddit.models.subreddit.SubredditWhere;
 import com.jollyremedy.notreddit.repository.SubredditRepository;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import io.reactivex.Single;
@@ -39,7 +42,9 @@ public class MainViewModel extends ViewModel {
         Single<SubredditListing> fetchSingle;
 
         if (Accountant.getInstance().getCurrentAccessToken() != null) {
-            fetchSingle = mSubredditRepository.getSubredditsForUserWhere(SubredditForUserWhere.SUBSCRIBER);
+            List<String> subredditWheres = Collections.singletonList(SubredditWhere.DEFAULT);
+            List<String> subredditForUserWheres = Collections.singletonList(SubredditForUserWhere.SUBSCRIBER);
+            fetchSingle = mSubredditRepository.getSubredditsForParams(subredditWheres, subredditForUserWheres);
         } else {
             fetchSingle = mSubredditRepository.getSubredditsWhere(SubredditWhere.DEFAULT);
         }
@@ -54,5 +59,13 @@ public class MainViewModel extends ViewModel {
 
     private void onSubredditListingFetchError(Throwable t) {
         Log.e(TAG, "Failed to get a post listing!", t);
+    }
+
+    public void onLoggedIn() {
+        fetchSubreddits();
+    }
+
+    public void onLoggedOut() {
+        fetchSubreddits();
     }
 }

@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             refreshUsernameDisplayed();
             Toast.makeText(this, getString(R.string.login_success, selectedAccountName), Toast.LENGTH_SHORT).show();
             invalidateOptionsMenu();
+            mViewModel.onLoggedIn();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -162,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     private boolean onLogoutPressed() {
         invalidateOptionsMenu();
         Accountant.getInstance().logout();
+        mViewModel.onLoggedOut();
         return true;
     }
 

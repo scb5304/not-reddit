@@ -2,6 +2,9 @@ package com.jollyremedy.notreddit.models.subreddit;
 
 import android.support.annotation.StringDef;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static com.jollyremedy.notreddit.models.subreddit.SubredditForUserWhere.CONTRIBUTOR;
 import static com.jollyremedy.notreddit.models.subreddit.SubredditForUserWhere.MODERATOR;
 import static com.jollyremedy.notreddit.models.subreddit.SubredditForUserWhere.STREAMS;
@@ -13,4 +16,6 @@ public @interface SubredditForUserWhere {
     String CONTRIBUTOR = "contributor";
     String MODERATOR = "moderator";
     String STREAMS = "streams";
+
+    List<String> LIST = Arrays.asList(SUBSCRIBER, CONTRIBUTOR, MODERATOR, STREAMS);
 }
