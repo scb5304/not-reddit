@@ -17,7 +17,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class CommentRepository {
 
-    private static final String TAG = "CommentRepository";
     private OAuthRedditApi mRedditApi;
 
     @Inject

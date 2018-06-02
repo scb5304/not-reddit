@@ -2,7 +2,6 @@ package com.jollyremedy.notreddit.repository;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.common.base.Strings;
 import com.jollyremedy.notreddit.api.OAuthRedditApi;
@@ -21,11 +20,11 @@ import javax.inject.Singleton;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 @Singleton
 public class SubredditRepository {
 
-    private static final String TAG = "SubredditRepository";
     private OAuthRedditApi mRedditApi;
 
     @Inject
@@ -88,7 +87,7 @@ public class SubredditRepository {
         while (it.hasNext()) {
             String subredditWhere = it.next();
             if (!SubredditWhere.LIST.contains(subredditWhere)) {
-                Log.e(TAG, "Invalid SubredditWhere: " + subredditWhere);
+                Timber.e("Invalid SubredditWhere: %s", subredditWhere);
                 it.remove();
             }
         }
@@ -105,7 +104,7 @@ public class SubredditRepository {
         while (it.hasNext()) {
             String subredditForUserWhere = it.next();
             if (Strings.isNullOrEmpty(subredditForUserWhere) || !SubredditForUserWhere.LIST.contains(subredditForUserWhere)) {
-                Log.e(TAG, "Invalid SubredditForUserWhere: " + subredditForUserWhere);
+                Timber.e("Invalid SubredditForUserWhere: %s", subredditForUserWhere);
                 it.remove();
             }
         }

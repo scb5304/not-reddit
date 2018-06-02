@@ -16,7 +16,6 @@ import okhttp3.Response;
  * Basic Auth credentials to the header.
  */
 public class RequestTokenInterceptor implements Interceptor {
-    private static final String TAG = "RequestTokenInterceptor";
     private String credentials;
 
     public RequestTokenInterceptor() {

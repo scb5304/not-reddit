@@ -3,9 +3,7 @@ package com.jollyremedy.notreddit.ui.main;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.util.Log;
 
-import com.google.gson.Gson;
 import com.jollyremedy.notreddit.auth.accounting.Accountant;
 import com.jollyremedy.notreddit.models.subreddit.SubredditForUserWhere;
 import com.jollyremedy.notreddit.models.subreddit.SubredditListing;
@@ -18,10 +16,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Single;
+import timber.log.Timber;
 
 public class MainViewModel extends ViewModel {
 
-    private static final String TAG = "MainViewModel";
     private SubredditRepository mSubredditRepository;
     private MutableLiveData<SubredditListing> mListingLiveData;
 
@@ -53,12 +51,11 @@ public class MainViewModel extends ViewModel {
     }
 
     private void onSubredditListingReceived(SubredditListing subredditListing) {
-        Log.i(TAG, "Got a subreddit listing. " + new Gson().toJson(subredditListing));
         mListingLiveData.postValue(subredditListing);
     }
 
     private void onSubredditListingFetchError(Throwable t) {
-        Log.e(TAG, "Failed to get a post listing!", t);
+        Timber.e(t, "Failed to get a post listing!");
     }
 
     public void onLoggedIn() {

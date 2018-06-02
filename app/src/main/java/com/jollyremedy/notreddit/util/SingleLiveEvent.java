@@ -6,9 +6,10 @@ import android.arch.lifecycle.Observer;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import timber.log.Timber;
 
 /**
  * A lifecycle-aware observable that sends only new updates after subscription, used for events like
@@ -24,15 +25,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class SingleLiveEvent<T> extends MutableLiveData<T> {
 
-    private static final String TAG = "SingleLiveEvent";
-
     private final AtomicBoolean mPending = new AtomicBoolean(false);
 
     @MainThread
     public void observe(@NonNull LifecycleOwner owner, @NonNull final Observer<T> observer) {
 
         if (hasActiveObservers()) {
-            Log.w(TAG, "Multiple observers registered but only one will be notified of changes.");
+            Timber.w("Multiple observers registered but only one will be notified of changes.");
         }
 
         // Observe the internal MutableLiveData

@@ -6,7 +6,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
 /**
- * {@see https://gist.github.com/nesquena/d09dc68ff07e845cc622}
+ * Listener ripped from the interwebs.
+ * TODO: Replace with Paging library from Google?
+ *
+ * @see
+ * <a href="https://github.com/codepath/android_guides/wiki/Paging-Library-Guide">Paging Library Guide</a><br />
+ * <a href="https://gist.github.com/nesquena/d09dc68ff07e845cc622" >Source</a>
  */
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
     // The minimum amount of items to have below your current scroll position

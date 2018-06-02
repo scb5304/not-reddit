@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
 
-    private static final String TAG = "MainActivity";
     private MainViewModel mViewModel;
 
     @Override

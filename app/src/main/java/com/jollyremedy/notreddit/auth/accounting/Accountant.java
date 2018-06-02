@@ -9,10 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.jollyremedy.notreddit.Constants;
 import com.jollyremedy.notreddit.NotRedditApplication;
 import com.jollyremedy.notreddit.api.AuthConstants;
@@ -21,6 +19,8 @@ import com.jollyremedy.notreddit.repository.FullTokenRepository;
 import com.jollyremedy.notreddit.ui.AuthActivity;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 public class Accountant {
 
@@ -42,8 +42,6 @@ public class Accountant {
     @Inject
     FullTokenRepository mFullTokenRepository;
 
-    private static final String TAG = "Accountant";
-
     private Accountant() {
         NotRedditApplication.getAppComponent().inject(this);
     }
@@ -63,7 +61,7 @@ public class Accountant {
     public void login(Activity activity) {
         Account[] accounts = mAccountManager.getAccountsByType(AuthConstants.AUTH_ACCOUNT_TYPE);
         if (accounts.length == 0) {
-            Log.wtf(TAG, "No accounts!");
+            Timber.w("No accounts!");
             mContext.startActivity(new Intent(mContext, AuthActivity.class));
         } else {
             Intent chooseAccountIntent = AccountManager.newChooseAccountIntent(
@@ -115,28 +113,28 @@ public class Accountant {
             boolean added = mAccountManager.addAccountExplicitly(userAccount, null, null);
             if (added) {
                 addTokenToAccount(userAccount, token);
-                Log.d(TAG, "Added a NotReddit account for " + username);
+                Timber.d("Added a NotReddit account for %s", username);
                 return true;
             } else {
-                Log.e(TAG, "Unable to add a NotReddit account: already exists? Trying to remove.");
+                Timber.e("Unable to add a NotReddit account: already exists? Trying to remove.");
                 boolean removed = mAccountManager.removeAccountExplicitly(userAccount);
 
                 if (removed) {
-                    Log.d(TAG, "Removed old NotReddit account for " + username);
+                    Timber.d("Removed old NotReddit account for %s", username);
                     boolean addedAttemptTwo = mAccountManager.addAccountExplicitly(userAccount, null, null);
 
                     if (addedAttemptTwo) {
                         addTokenToAccount(userAccount, token);
-                        Log.d(TAG, "Added the account after removing the original.");
+                        Timber.d("Added the account after removing the original.");
                         return true;
                     }
                 } else {
-                    Log.e(TAG, "Failed to remove old NotReddit account for " + username);
+                    Timber.e("Failed to remove old NotReddit account for %s", username);
                 }
             }
-            Log.e(TAG, "Unable to create account.");
+            Timber.e("Unable to create account.");
         } catch (Exception e) {
-            Log.e(TAG, "Fatal internal error while creating account.", e);
+            Timber.e(e, "Fatal internal error while creating account.");
         }
         return false;
     }
@@ -146,28 +144,24 @@ public class Accountant {
         LoginResultParser loginResultParser = new LoginResultParser();
 
         if (uriString == null) {
-            Log.e(TAG, "Uh oh!! Redirect URI string is null.");
+            Timber.e("Uh oh!! Redirect URI string is null.");
             return;
         }
 
         if (!deviceId.equals(loginResultParser.getState(uriString))) {
-            Log.e(TAG, "Uh oh! They didn't pass back the device ID we sent up as 'state'.");
+            Timber.e("Uh oh! They didn't pass back the device ID we sent up as 'state'.");
             return;
         }
 
         if (loginResultParser.isAccessDenied(uriString)) {
-            Log.e(TAG, "They turned us down!");
+            Timber.e("They turned us down!");
         } else {
             mFullTokenRepository.getFullToken(loginResultParser.getCode(uriString))
                     .doFinally(() -> mSharedPreferences.edit()
                             .remove(Constants.SharedPreferenceKeys.TEMP_USER_TOKEN)
                             .apply())
                     .subscribe(token -> {
-
-                        Log.wtf(TAG, "Got it!! " + new Gson().toJson(token));
-
-                        boolean addSuccess = addAccount(token);
-                        if (addSuccess) {
+                        if (addAccount(token)) {
                             mSharedPreferences.edit()
                                     .putString(Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN, token.getAccount().getName())
                                     .apply();
@@ -179,7 +173,7 @@ public class Accountant {
                                     .apply();
                         }
                     }, throwable -> {
-                        Log.wtf(TAG, "Error during token orchestration.", throwable);
+                        Timber.e(throwable, "Error during token orchestration.");
                         authUi.completeWithError();
                     });
         }
@@ -190,17 +184,16 @@ public class Accountant {
         String currentUsername = mSharedPreferences.getString(Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN, null);
         Account[] accounts = mAccountManager.getAccountsByType(AuthConstants.AUTH_ACCOUNT_TYPE);
         if (accounts.length == 0) {
-            Log.wtf(TAG, "No accounts!");
+            Timber.w("No accounts!");
             return null;
         }
 
         if (currentUsername == null) {
-            Log.wtf(TAG, "No current user!");
+            Timber.w("No current user!");
             return null;
         }
 
         for (Account account : accounts) {
-            Log.d(TAG, "Looking at account: " + account.name);
             if (account.name.equalsIgnoreCase(currentUsername)) {
                 return account;
             }
@@ -213,7 +206,7 @@ public class Accountant {
     public String getCurrentAccessToken() {
         Account currentAccount = getCurrentAccount();
         if (currentAccount == null) {
-            Log.wtf(TAG, "No current account to get access token with!");
+            Timber.w("No current account to get access token with!");
             return null;
         }
 
@@ -224,7 +217,7 @@ public class Accountant {
     public String getCurrentRefreshToken() {
         Account currentAccount = getCurrentAccount();
         if (currentAccount == null) {
-            Log.wtf(TAG, "No current account to get refresh token with!");
+            Timber.w("No current account to get refresh token with!");
             return null;
         }
 

@@ -3,7 +3,6 @@ package com.jollyremedy.notreddit.ui.postdetail;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.util.Log;
 
 import com.jollyremedy.notreddit.models.comment.Comment;
 import com.jollyremedy.notreddit.models.comment.PostWithCommentListing;
@@ -18,8 +17,9 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 public class PostDetailViewModel extends ViewModel {
-    private static final String TAG = "PostDetailViewModel";
 
     private CommentRepository mCommentRepository;
     private MutableLiveData<PostDetailData> mPostDetailLiveData;
@@ -55,7 +55,7 @@ public class PostDetailViewModel extends ViewModel {
     }
 
     private void onPostWithCommentListingFailure(Throwable throwable) {
-        Log.e(TAG, "Failed to get post with comments.", throwable);
+        Timber.e(throwable, "Failed to get post with comments.");
     }
 
     private void onMoreCommentsFetched(int moreCommentsPosition, MoreChildren moreChildren) {
@@ -75,7 +75,7 @@ public class PostDetailViewModel extends ViewModel {
     }
 
     private void onMoreCommentsFailure(Throwable throwable) {
-        Log.e(TAG, "Failed to get more comments.", throwable);
+        Timber.e(throwable, "Failed to get more comments.");
     }
 
     public void onCommentClicked(int commentPosition) {

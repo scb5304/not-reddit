@@ -18,7 +18,6 @@ import io.reactivex.schedulers.Schedulers;
 @Singleton
 public class PostRepository {
 
-    private static final String TAG = "PostRepository";
     private OAuthRedditApi mRedditApi;
 
     @Inject

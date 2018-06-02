@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 
 /**
  * We create our own ViewModel factory to support Dagger.
- * {@see https://stackoverflow.com/a/44506312}
+ * @see <a href="https://stackoverflow.com/a/44506312">StackOverflow</a>.
  */
 @Singleton
 public class NotRedditViewModelFactory implements ViewModelProvider.Factory {

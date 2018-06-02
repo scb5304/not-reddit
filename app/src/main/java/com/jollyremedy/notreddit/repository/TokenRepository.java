@@ -18,7 +18,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class TokenRepository {
 
-    private static final String TAG = "TokenRepository";
     private RequestTokenApi mRequestTokenApi;
     private SharedPreferences mSharedPreferences;
 

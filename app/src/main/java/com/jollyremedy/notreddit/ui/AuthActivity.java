@@ -25,7 +25,6 @@ public class AuthActivity extends AppCompatActivity {
 
     @BindView(R.id.auth_webview) WebView mWebView;
 
-    private static final String TAG = "AuthActivity";
     private SharedPreferences mSharedPreferences;
 
     private WebViewClient mWebViewClient = new WebViewClient() {

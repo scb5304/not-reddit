@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableBoolean;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.common.collect.Range;
 import com.jollyremedy.notreddit.models.post.Post;
@@ -15,13 +14,12 @@ import com.jollyremedy.notreddit.models.post.PostListingSort;
 import com.jollyremedy.notreddit.repository.PostRepository;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
 
-import java.net.UnknownHostException;
-
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 public class PostListViewModel extends ViewModel {
 
-    private static final String TAG = "PostListViewModel";
     private PostRepository mPostRepository;
     private NavigationController mNavigationController;
     private MutableLiveData<NotRedditPostListData> mPostListLiveData;
@@ -81,10 +79,7 @@ public class PostListViewModel extends ViewModel {
     }
 
     private void onPostListingFetchError(Throwable t) {
-        Log.e(TAG, "Failed to get a post listing!", t);
-        if (t instanceof UnknownHostException) {
-            Log.e(TAG, Log.getStackTraceString(t));
-        }
+        Timber.e(t, "Failed to get a post listing!");
     }
 
     private void onNewPostListingReceived(FetchMode fetchMode, @NonNull PostListing newPostListing) {

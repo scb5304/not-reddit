@@ -3,7 +3,6 @@ package com.jollyremedy.notreddit.ui.postlist;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -14,9 +13,10 @@ import com.jollyremedy.notreddit.models.post.Post;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.SubredditViewHolder> {
 
-    private static final String TAG = "PostAdapter";
     private List<Post> mPosts;
     private PostListViewModel mPostListViewModel;
 
@@ -30,7 +30,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.Subred
             Integer numberOfItemsRemoving = deleteRange.upperEndpoint() - deleteRange.lowerEndpoint();
             notifyItemRangeRemoved(deleteRange.lowerEndpoint(), numberOfItemsRemoving);
         } else {
-            Log.w(TAG, "No change or delete range!");
+            Timber.w("No change or delete range!");
             notifyDataSetChanged();
         }
     }
