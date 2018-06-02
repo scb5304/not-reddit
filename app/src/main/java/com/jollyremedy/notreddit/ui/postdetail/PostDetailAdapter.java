@@ -23,15 +23,12 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
     private static final int HEADER = 1;
     private static final int COMMENTS = 2;
 
-    private Context mContext;
     private LayoutInflater mLayoutInflater;
-
     private Post mPost;
     private List<Comment> mComments;
     private PostDetailViewModel mViewModel;
 
     PostDetailAdapter(Context context, PostDetailViewModel viewModel, Post post) {
-        mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
         mComments = new ArrayList<>();
         mPost = post;
@@ -114,10 +111,6 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
             binding.setComment(currentComment);
             binding.setCommentIndex(commentPosition);
             binding.executePendingBindings();
-        }
-
-        public ItemCommentBinding getBinding() {
-            return binding;
         }
     }
 

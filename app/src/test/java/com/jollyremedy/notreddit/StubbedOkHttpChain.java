@@ -2,8 +2,6 @@ package com.jollyremedy.notreddit;
 
 import android.support.annotation.NonNull;
 
-import java.io.IOException;
-
 import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
 
@@ -41,7 +39,7 @@ public class StubbedOkHttpChain implements Interceptor.Chain {
     }
 
     @Override
-    public Response proceed(@NonNull Request request) throws IOException {
+    public Response proceed(@NonNull Request request) {
         mCapturedRequest = request;
         return new Response.Builder()
                 .request(request)

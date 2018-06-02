@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.common.base.Strings;
-import com.google.gson.Gson;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.databinding.FragmentPostListBinding;
 import com.jollyremedy.notreddit.di.auto.Injectable;
@@ -29,6 +28,7 @@ import com.jollyremedy.notreddit.util.SimpleTabSelectedListener;
 import com.jollyremedy.notreddit.util.Utility;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -39,9 +39,6 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
-
-    @Inject
-    Gson mGson;
 
     @Inject
     NavigationController mNavigationController;
@@ -152,7 +149,9 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         mTabLayout.addOnTabSelectedListener(new SimpleTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                String postSort = Utility.getPostListingSortFromDisplayedString(getActivity(), tab.getText().toString());
+                String postSort = Utility.getPostListingSortFromDisplayedString(
+                        Objects.requireNonNull(getActivity()),
+                        Objects.requireNonNull(tab.getText()).toString());
                 mViewModel.onPostSortSelected(postSort);
                 mRecyclerView.stopScroll();
             }
@@ -174,10 +173,11 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     }
 
     private String getSubredditName() {
-        return getArguments().getString(EXTRA_SUBREDDIT_NAME);
+        return Objects.requireNonNull(getArguments()).getString(EXTRA_SUBREDDIT_NAME);
     }
 
     private void refreshTitle() {
-        getActivity().setTitle(Strings.isNullOrEmpty(getSubredditName()) ? getString(R.string.app_name) : getSubredditName());
+        String title = Strings.isNullOrEmpty(getSubredditName()) ? getString(R.string.app_name) : getSubredditName();
+        Objects.requireNonNull(getActivity()).setTitle(title);
     }
 }

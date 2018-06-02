@@ -70,7 +70,7 @@ public class Accountant {
                     getCurrentAccount(),
                     null,
                     new String[]{AuthConstants.AUTH_ACCOUNT_TYPE},
-                    "NotReddit does not use or store your password.",
+                    null,
                     AuthConstants.AUTH_GRANT_TYPE_CODE,
                     null,
                     null

@@ -3,6 +3,7 @@ package com.jollyremedy.notreddit.ui.postdetail;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,8 @@ import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.di.auto.Injectable;
 import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.ui.common.UpNavigationFragment;
+
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -45,12 +48,12 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_post_detail, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
     }
@@ -66,7 +69,7 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().setTitle(getPassedPost().getTitle());
+        Objects.requireNonNull(getActivity()).setTitle(getPassedPost().getTitle());
     }
 
     private void initRecyclerView() {
@@ -99,6 +102,6 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     }
 
     private Post getPassedPost() {
-        return getArguments().getParcelable(EXTRA_POST);
+        return Objects.requireNonNull(getArguments()).getParcelable(EXTRA_POST);
     }
 }

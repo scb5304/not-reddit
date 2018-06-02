@@ -84,7 +84,7 @@ public class PostDetailViewModel extends ViewModel {
     }
 
     public void onCommentMoreClicked(Comment comment, int commentPosition) {
-        Post post = mPostDetailLiveData.getValue().getPost();
+        Post post = Objects.requireNonNull(mPostDetailLiveData.getValue()).getPost();
 
         String postFullName = post.getFullName();
         List<String> commentIdsToGet = comment.getChildren();

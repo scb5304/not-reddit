@@ -34,36 +34,31 @@ import dagger.android.support.AndroidSupportInjection;
 public class AppInjector {
     private AppInjector() {}
 
-    public static void init(NotRedditApplication githubApp) {
+    public static void init(NotRedditApplication app) {
         DaggerAppComponent.builder()
-                .application(githubApp)
+                .application(app)
                 .build()
-                .inject(githubApp);
-        githubApp.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+                .inject(app);
+        app.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
                 injectIntoActivity(activity);
             }
 
             @Override
-            public void onActivityStarted(Activity activity) {
-            }
+            public void onActivityStarted(Activity activity) { }
 
             @Override
-            public void onActivityResumed(Activity activity) {
-            }
+            public void onActivityResumed(Activity activity) { }
 
             @Override
-            public void onActivityPaused(Activity activity) {
-            }
+            public void onActivityPaused(Activity activity) { }
 
             @Override
-            public void onActivityStopped(Activity activity) {
-            }
+            public void onActivityStopped(Activity activity) { }
 
             @Override
-            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-            }
+            public void onActivitySaveInstanceState(Activity activity, Bundle outState) { }
 
             @Override
             public void onActivityDestroyed(Activity activity) {

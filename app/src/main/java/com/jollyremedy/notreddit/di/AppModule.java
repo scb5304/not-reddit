@@ -9,10 +9,6 @@ import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 import com.jollyremedy.notreddit.api.OAuthRedditApi;
 import com.jollyremedy.notreddit.api.OAuthTokenInterceptor;
 import com.jollyremedy.notreddit.api.RequestTokenApi;
@@ -21,11 +17,7 @@ import com.jollyremedy.notreddit.api.adapter.LocalDateTimeAdapter;
 import com.jollyremedy.notreddit.di.viewmodel.ViewModelModule;
 import com.jollyremedy.notreddit.repository.TokenRepository;
 
-import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.ZoneId;
-
-import java.lang.reflect.Type;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

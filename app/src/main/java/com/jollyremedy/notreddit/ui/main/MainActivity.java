@@ -30,6 +30,7 @@ import com.jollyremedy.notreddit.ui.common.DrawerFragment;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -192,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         mViewModel.getObservableSubredditListing().observe(this, subredditListing -> {
             Menu menu = mDrawerNavigationView.getMenu();
             menu.clear();
-            List<Subreddit> subreddits = subredditListing.getSubreddits();
+            List<Subreddit> subreddits = Objects.requireNonNull(subredditListing).getSubreddits();
             for (Subreddit subreddit : subreddits) {
                 menu.add(subreddit.getDisplayName());
             }

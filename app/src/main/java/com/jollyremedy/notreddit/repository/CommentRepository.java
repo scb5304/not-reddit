@@ -10,14 +10,11 @@ import com.jollyremedy.notreddit.models.comment.more.MoreChildren;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import io.reactivex.Single;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-@Singleton
 public class CommentRepository {
 
     private static final String TAG = "CommentRepository";

@@ -21,7 +21,7 @@ public class NotRedditPostListData {
         this.postsChangingRange = range;
     }
 
-    public Range getPostsChangingRange() {
+    public Range<Integer> getPostsChangingRange() {
         return this.postsChangingRange;
     }
 
