@@ -1,6 +1,7 @@
 package com.jollyremedy.notreddit.ui.main;
 
 import android.accounts.AccountManager;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import com.jollyremedy.notreddit.Constants;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.auth.accounting.Accountant;
 import com.jollyremedy.notreddit.models.subreddit.Subreddit;
+import com.jollyremedy.notreddit.models.subreddit.SubredditListing;
 import com.jollyremedy.notreddit.ui.common.DrawerFragment;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
 
@@ -242,5 +244,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         if (Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN.equals(key)) {
             refreshUsernameDisplayed();
         }
+    }
+
+    public LiveData<SubredditListing> getObservableSubredditListing() {
+        return mViewModel.getObservableSubredditListing();
     }
 }

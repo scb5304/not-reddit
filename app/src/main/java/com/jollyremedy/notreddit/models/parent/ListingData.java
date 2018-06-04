@@ -18,6 +18,10 @@ public abstract class ListingData implements Parcelable {
     @SerializedName("whitelist_status")
     public String whitelistStatus;
 
+    public ListingData() {
+
+    }
+
     protected ListingData(Parcel in) {
         after = in.readString();
         dist = in.readInt();

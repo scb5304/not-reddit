@@ -12,10 +12,10 @@ import java.util.List;
 public class SubredditListingData extends ListingData implements Parcelable {
 
     @SerializedName("children")
-    private List<Subreddit> subreddits;
+    public List<Subreddit> subreddits;
 
-    public List<Subreddit> getSubreddits() {
-        return subreddits;
+    public SubredditListingData() {
+
     }
 
     private SubredditListingData(Parcel in) {

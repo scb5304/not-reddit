@@ -26,11 +26,11 @@ public class MainViewModel extends ViewModel {
     @Inject
     MainViewModel(SubredditRepository subredditRepository) {
         mSubredditRepository = subredditRepository;
-        mListingLiveData = new MutableLiveData<>();
     }
 
     LiveData<SubredditListing> getObservableSubredditListing() {
-        if (mListingLiveData.getValue() == null) {
+        if (mListingLiveData == null) {
+            mListingLiveData = new MutableLiveData<>();
             fetchSubreddits();
         }
         return mListingLiveData;
@@ -55,7 +55,7 @@ public class MainViewModel extends ViewModel {
     }
 
     private void onSubredditListingFetchError(Throwable t) {
-        Timber.e(t, "Failed to get a post listing!");
+        Timber.e(t, "Failed to get a subreddit listing!");
     }
 
     public void onLoggedIn() {

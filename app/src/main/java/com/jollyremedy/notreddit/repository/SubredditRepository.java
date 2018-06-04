@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 
 import com.google.common.base.Strings;
 import com.jollyremedy.notreddit.api.OAuthRedditApi;
-import com.jollyremedy.notreddit.models.subreddit.Subreddit;
 import com.jollyremedy.notreddit.models.subreddit.SubredditForUserWhere;
 import com.jollyremedy.notreddit.models.subreddit.SubredditListing;
 import com.jollyremedy.notreddit.models.subreddit.SubredditWhere;
@@ -15,14 +14,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
-@Singleton
 public class SubredditRepository {
 
     private OAuthRedditApi mRedditApi;
@@ -34,14 +31,21 @@ public class SubredditRepository {
 
     public Single<SubredditListing> getSubredditsWhere(@SubredditWhere String where) {
         return mRedditApi.getSubredditListingWhere(where)
+                .onErrorResumeNext(this::onErrorSubredditListing)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Single<SubredditListing> getSubredditsForUserWhere(@SubredditForUserWhere String where) {
         return mRedditApi.getSubredditListingForUserWhere(where)
+                .onErrorResumeNext(this::onErrorSubredditListing)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    private Single<SubredditListing> onErrorSubredditListing(Throwable t) {
+        Timber.e(t);
+        return Single.just(new SubredditListing());
     }
 
     public Single<SubredditListing> getSubredditsForParams(@Nullable List<String> subredditWheres,
@@ -64,13 +68,12 @@ public class SubredditRepository {
         if (listingObjects == null || listingObjects.length == 0) {
             throw new IllegalArgumentException("Must have at least one SubredditListing result to combine them.");
         }
-        SubredditListing firstListing = (SubredditListing) listingObjects[0];
-        List<Subreddit> subreddits = firstListing.getSubreddits();
 
+        SubredditListing firstListing = (SubredditListing) listingObjects[0];
         if (listingObjects.length > 1) {
             for (Object obj : listingObjects) {
                 SubredditListing listing = (SubredditListing) obj;
-                subreddits.addAll(listing.getSubreddits());
+                firstListing.addListing(listing);
             }
         }
 

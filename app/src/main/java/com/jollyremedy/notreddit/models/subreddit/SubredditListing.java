@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 import com.jollyremedy.notreddit.models.parent.RedditType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SubredditListing extends RedditType {
@@ -14,12 +15,17 @@ public class SubredditListing extends RedditType {
     private SubredditListingData data;
 
     public List<Subreddit> getSubreddits() {
-        return data.getSubreddits();
+        return data.subreddits;
     }
 
     private SubredditListing(Parcel in) {
         super(in);
         data = (SubredditListingData) in.readValue(SubredditListingData.class.getClassLoader());
+    }
+
+    public SubredditListing() {
+        this.data = new SubredditListingData();
+        this.data.subreddits = new ArrayList<>();
     }
 
     @Override
@@ -39,4 +45,23 @@ public class SubredditListing extends RedditType {
             return new SubredditListing[size];
         }
     };
+
+    public boolean hasSubreddit(Subreddit subreddit) {
+        for (Subreddit aSubreddit : getSubreddits()) {
+            if (aSubreddit.getDisplayName().equals(subreddit.getDisplayName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addListing(SubredditListing listing) {
+        List<Subreddit> subredditsToAdd = listing.getSubreddits();
+        for (Subreddit subreddit : subredditsToAdd) {
+            if (!SubredditListing.this.hasSubreddit(subreddit)) {
+                this.data.subreddits.add(subreddit);
+            }
+        }
+
+    }
 }

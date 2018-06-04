@@ -24,6 +24,7 @@ import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.ui.EndlessRecyclerViewScrollListener;
 import com.jollyremedy.notreddit.ui.common.DrawerFragment;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
+import com.jollyremedy.notreddit.ui.main.MainActivity;
 import com.jollyremedy.notreddit.util.SimpleTabSelectedListener;
 import com.jollyremedy.notreddit.util.Utility;
 
@@ -31,9 +32,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class PostListFragment extends Fragment implements Injectable, DrawerFragment {
 
@@ -43,16 +41,18 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     @Inject
     NavigationController mNavigationController;
 
-    @BindView(R.id.post_list_recycler_view) RecyclerView mRecyclerView;
-    @BindView(R.id.post_list_swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.post_list_tab_layout) TabLayout mTabLayout;
-
     public static final String TAG = "PostListFragment";
     private static final String EXTRA_SUBREDDIT_NAME = "extra_subreddit_name";
+    private BottomSheetSubredditAdapter mSubredditAdapter;
     private PostListAdapter mPostListAdapter;
     private PostListViewModel mViewModel;
     private EndlessRecyclerViewScrollListener mEndlessScrollListener;
     private FragmentPostListBinding mBinding;
+
+    private RecyclerView mPostRecyclerView;
+    private RecyclerView mSubredditRecyclerView;
+    private TabLayout mTabLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static PostListFragment newInstance(String subredditName) {
         PostListFragment fragment = new PostListFragment();
@@ -83,7 +83,10 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
+        mPostRecyclerView = mBinding.postListPostRecyclerView;
+        mSubredditRecyclerView = mBinding.postListSubredditRecyclerView;
+        mTabLayout = mBinding.postListTabLayout;
+        mSwipeRefreshLayout = mBinding.postListSwipeRefreshLayout;
 
         String[] postSorts = getResources().getStringArray(R.array.post_listing_sorts);
         for (String postSort : postSorts) {
@@ -99,8 +102,10 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(PostListViewModel.class);
         mViewModel.setNavigationController(mNavigationController);
         mBinding.setPostListViewModel(mViewModel);
+
         subscribeUi();
-        initRecyclerView();
+        initPostRecyclerView();
+        initSubredditRecyclerView();
         initSwipeRefreshLayout();
         initTabLayout();
     }
@@ -111,17 +116,12 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         refreshTitle();
     }
 
-    private void initRecyclerView() {
+    private void initPostRecyclerView() {
         mPostListAdapter = new PostListAdapter(mViewModel);
-        mRecyclerView.setAdapter(mPostListAdapter);
+        mPostRecyclerView.setAdapter(mPostListAdapter);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity()) {
-            @Override
-            public boolean supportsPredictiveItemAnimations() {
-                return false;
-            }
-        };
-        mRecyclerView.setLayoutManager(linearLayoutManager);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        mPostRecyclerView.setLayoutManager(linearLayoutManager);
 
         mEndlessScrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
@@ -130,15 +130,23 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
             }
         };
 
-        mRecyclerView.addOnScrollListener(mEndlessScrollListener);
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mPostRecyclerView.addOnScrollListener(mEndlessScrollListener);
+        mPostRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    mViewModel.onPostListIdle(((LinearLayoutManager)mRecyclerView.getLayoutManager()).findFirstVisibleItemPosition());
+                    mViewModel.onPostListIdle(linearLayoutManager.findFirstVisibleItemPosition());
                 }
             }
         });
+    }
+
+    private void initSubredditRecyclerView() {
+        mSubredditAdapter = new BottomSheetSubredditAdapter();
+        mSubredditRecyclerView.setAdapter(mSubredditAdapter);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        mSubredditRecyclerView.setLayoutManager(linearLayoutManager);
     }
 
     private void initSwipeRefreshLayout() {
@@ -149,11 +157,9 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         mTabLayout.addOnTabSelectedListener(new SimpleTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                String postSort = Utility.getPostListingSortFromDisplayedString(
-                        Objects.requireNonNull(getActivity()),
-                        Objects.requireNonNull(tab.getText()).toString());
+                String postSort = Utility.getPostListingSortFromDisplayedString(getParent(), Objects.requireNonNull(tab.getText()).toString());
                 mViewModel.onPostSortSelected(postSort);
-                mRecyclerView.stopScroll();
+                mPostRecyclerView.stopScroll();
             }
         });
     }
@@ -167,8 +173,11 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         mViewModel.observeResetEndlessScroll().observe(this, shouldReset -> {
             if (shouldReset != null && shouldReset) {
                 mEndlessScrollListener.resetState();
-                mRecyclerView.postDelayed(() -> mRecyclerView.scrollToPosition(0), 100);
+                mPostRecyclerView.postDelayed(() -> mPostRecyclerView.scrollToPosition(0), 100);
             }
+        });
+        getParent().getObservableSubredditListing().observe(this, subredditListing -> {
+            mSubredditAdapter.updateData(subredditListing.getSubreddits());
         });
     }
 
@@ -178,6 +187,10 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
 
     private void refreshTitle() {
         String title = Strings.isNullOrEmpty(getSubredditName()) ? getString(R.string.app_name) : getSubredditName();
-        Objects.requireNonNull(getActivity()).setTitle(title);
+        getParent().setTitle(title);
+    }
+
+    private MainActivity getParent() {
+        return (MainActivity) Objects.requireNonNull(getActivity());
     }
 }

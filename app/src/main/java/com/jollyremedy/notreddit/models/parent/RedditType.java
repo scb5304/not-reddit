@@ -24,6 +24,10 @@ public abstract class RedditType implements Parcelable {
         @SerializedName("t6") AWARD,
     }
 
+    public RedditType() {
+
+    }
+
     protected RedditType(Parcel in) {
         kind = (Kind) in.readValue(Kind.class.getClassLoader());
     }
