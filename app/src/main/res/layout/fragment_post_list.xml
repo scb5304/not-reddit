@@ -18,7 +18,7 @@
             android:id="@+id/post_list_swipe_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="63dp"
+            android:layout_marginBottom="@dimen/bottom_sheet_height"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:onRefreshListener="@{() -> postListViewModel.onRefresh()}"
             app:refreshing="@{postListViewModel.isRefreshing()}">
@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:behavior_hideable="false"
-            app:behavior_peekHeight="63dp"
+            app:behavior_peekHeight="@dimen/bottom_sheet_height"
             app:layout_behavior="@string/bottom_sheet_behavior">
 
             <LinearLayout
@@ -51,31 +51,25 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/arrow_up_top"
-                    android:layout_width="wrap_content"
-                    android:layout_marginBottom="-8dp"
-                    android:layout_height="20dp" />
+                <include layout="@layout/grippy_dots" />
 
                 <android.support.design.widget.TabLayout
                     android:id="@+id/post_list_tab_layout"
-                    android:scrollbars="horizontal"
                     android:layout_width="match_parent"
+                    android:layout_marginTop="-4dp"
                     android:layout_height="50dp"
+                    android:scrollbars="horizontal"
                     app:tabMinWidth="95dp"
-                    app:tabTextColor="@color/accent"
-                    app:tabMode="scrollable">
+                    app:tabMode="scrollable"
+                    app:tabTextColor="@color/accent">
 
                 </android.support.design.widget.TabLayout>
-
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/post_list_subreddit_recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                </android.support.v7.widget.RecyclerView>
+                    android:layout_height="wrap_content"
+                    android:scrollbars="vertical" />
 
             </LinearLayout>
         </android.support.v7.widget.CardView>

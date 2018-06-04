@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="subreddit"
             type="com.jollyremedy.notreddit.models.subreddit.Subreddit" />
@@ -9,11 +12,27 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{subreddit.displayName}" />
+            android:clickable="false"
+            android:padding="16dp"
+            android:text="@{subreddit.displayName}"
+            android:textColor="@color/primary_dark"
+            android:textStyle="bold"
+            tools:text="Hello world!" />
+
+        <View
+            android:id="@+id/item_comment_bottom_border"
+            android:layout_width="match_parent"
+            android:layout_height=".5dp"
+            android:background="@android:color/darker_gray"
+            android:clickable="false" />
+
     </LinearLayout>
 </layout>

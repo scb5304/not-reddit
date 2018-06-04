@@ -14,4 +14,12 @@
     <style name="DotsWhiteTheme" parent="@style/Widget.AppCompat.ActionButton.Overflow">
         <item name="android:tint">@android:color/white</item>
     </style>
+
+    <style name="subredditMenu" parent="@style/Widget.AppCompat.ListView.Menu">
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="subredditMenuItem" parent="@style/Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:padding">16dp</item>
+    </style>
 </resources>
