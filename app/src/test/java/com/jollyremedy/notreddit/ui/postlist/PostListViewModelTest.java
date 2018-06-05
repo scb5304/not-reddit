@@ -7,6 +7,7 @@ import android.arch.lifecycle.Observer;
 import com.jollyremedy.notreddit.BaseUnitTest;
 import com.jollyremedy.notreddit.models.post.PostListing;
 import com.jollyremedy.notreddit.repository.PostRepository;
+import com.jollyremedy.notreddit.repository.SubredditRepository;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -34,6 +35,9 @@ public class PostListViewModelTest extends BaseUnitTest {
     private PostListViewModel mPostListViewModel;
 
     @Mock
+    private SubredditRepository mSubredditRepository;
+
+    @Mock
     private PostRepository mPostRepository;
 
     @Before
@@ -43,20 +47,20 @@ public class PostListViewModelTest extends BaseUnitTest {
 
     @Test
     public void observablePosts_areNotNull() {
-        mPostListViewModel = new PostListViewModel(mPostRepository);
+        mPostListViewModel = new PostListViewModel(mSubredditRepository, mPostRepository);
         assertThat(mPostListViewModel.getObservableListing("all"), notNullValue());
     }
 
     @Test
     public void constructingViewModel_callsRepoToGetsNewPosts() {
-        mPostListViewModel = new PostListViewModel(mPostRepository);
+        mPostListViewModel = new PostListViewModel(mSubredditRepository, mPostRepository);
         mPostListViewModel.getObservableListing("all").observeForever(mock(Observer.class));
         verify(mPostRepository).getPostListing(any(), any(), any());
     }
 
     @Test
     public void sendsPostsToUi() {
-        mPostListViewModel = new PostListViewModel(mPostRepository);
+        mPostListViewModel = new PostListViewModel(mSubredditRepository, mPostRepository);
         MutableLiveData<NotRedditPostListData> observablePosts = (MutableLiveData<NotRedditPostListData>) mPostListViewModel.getObservableListing("all");
         NotRedditPostListData listingData = mock(NotRedditPostListData.class);
 
