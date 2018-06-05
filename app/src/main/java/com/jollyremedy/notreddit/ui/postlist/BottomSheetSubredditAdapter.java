@@ -13,6 +13,7 @@ import java.util.List;
 
 public class BottomSheetSubredditAdapter extends RecyclerView.Adapter<BottomSheetSubredditAdapter.SubredditViewHolder> {
 
+    private PostListViewModel mViewModel;
     private List<Subreddit> mSubreddits;
 
     void updateData(@NonNull List<Subreddit> subreddits) {
@@ -20,7 +21,8 @@ public class BottomSheetSubredditAdapter extends RecyclerView.Adapter<BottomShee
         notifyDataSetChanged();
     }
 
-    BottomSheetSubredditAdapter() {
+    BottomSheetSubredditAdapter(PostListViewModel postListViewModel) {
+        mViewModel = postListViewModel;
         mSubreddits = new ArrayList<>();
     }
 
@@ -52,6 +54,7 @@ public class BottomSheetSubredditAdapter extends RecyclerView.Adapter<BottomShee
 
         public void bind(Subreddit subreddit) {
             binding.setSubreddit(subreddit);
+            binding.setPostListViewModel(mViewModel);
             binding.executePendingBindings();
         }
     }

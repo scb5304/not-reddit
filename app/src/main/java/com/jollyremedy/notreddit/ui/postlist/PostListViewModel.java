@@ -8,22 +8,38 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.common.collect.Range;
+import com.jollyremedy.notreddit.auth.accounting.Accountant;
 import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.models.post.PostListing;
 import com.jollyremedy.notreddit.models.post.PostListingSort;
+import com.jollyremedy.notreddit.models.subreddit.Subreddit;
+import com.jollyremedy.notreddit.models.subreddit.SubredditForUserWhere;
+import com.jollyremedy.notreddit.models.subreddit.SubredditListing;
+import com.jollyremedy.notreddit.models.subreddit.SubredditWhere;
 import com.jollyremedy.notreddit.repository.PostRepository;
+import com.jollyremedy.notreddit.repository.SubredditRepository;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
+import com.jollyremedy.notreddit.util.SingleLiveEvent;
+
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Single;
 import timber.log.Timber;
 
 public class PostListViewModel extends ViewModel {
 
+    private SubredditRepository mSubredditRepository;
     private PostRepository mPostRepository;
     private NavigationController mNavigationController;
+
     private MutableLiveData<NotRedditPostListData> mPostListLiveData;
-    private MutableLiveData<Boolean> mEndlessScrollResetLiveData;
+    private MutableLiveData<List<Subreddit>> mSubredditLiveData;
+    private SingleLiveEvent<Object> mEndlessScrollResetLiveData;
+    private SingleLiveEvent<Object> mCloseBottomSheetLiveData;
+
     private ObservableBoolean mDataBindIsRefreshing;
     private String mSubredditName = "all";
     private @PostListingSort String mCurrentSort;
@@ -34,18 +50,54 @@ public class PostListViewModel extends ViewModel {
     }
 
     @Inject
-    PostListViewModel(PostRepository postRepository) {
+    PostListViewModel(SubredditRepository subredditRepository, PostRepository postRepository) {
+        mSubredditRepository = subredditRepository;
         mPostRepository = postRepository;
+        mCloseBottomSheetLiveData = new SingleLiveEvent<>();
         mPostListLiveData = new MutableLiveData<>();
-        mEndlessScrollResetLiveData = new MutableLiveData<>();
+        mEndlessScrollResetLiveData = new SingleLiveEvent<>();
         mDataBindIsRefreshing = new ObservableBoolean();
         mCurrentSort = PostListingSort.HOT;
     }
 
-    LiveData<Boolean> observeResetEndlessScroll() {
+    SingleLiveEvent<Object> observeCloseBottomSheet() {
+        return mCloseBottomSheetLiveData;
+    }
+
+    LiveData<Object> observeResetEndlessScroll() {
         return mEndlessScrollResetLiveData;
     }
 
+    @Nullable
+    private String getCurrentAfter() {
+        if (mPostListLiveData.getValue() != null && mPostListLiveData.getValue().getPostListing() != null) {
+            return mPostListLiveData.getValue().getPostListing().getAfter();
+        } else {
+            return null;
+        }
+    }
+
+    public void setNavigationController(NavigationController navigationController) {
+        mNavigationController = navigationController;
+    }
+
+    public void onRefresh() {
+        fetchPosts(FetchMode.START_FRESH);
+    }
+
+    public ObservableBoolean isRefreshing() {
+        return mDataBindIsRefreshing;
+    }
+
+    public void onLoggedIn() {
+        fetchSubreddits();
+    }
+
+    public void onLoggedOut() {
+        fetchSubreddits();
+    }
+
+    //region Posts
     LiveData<NotRedditPostListData> getObservableListing(String subredditName) {
         mSubredditName = subredditName;
         if (mPostListLiveData.getValue() == null) {
@@ -96,7 +148,7 @@ public class PostListViewModel extends ViewModel {
         NotRedditPostListData postListViewData = new NotRedditPostListData();
         postListViewData.setPostListing(newPostListing);
         mPostListLiveData.postValue(postListViewData);
-        mEndlessScrollResetLiveData.postValue(true);
+        mEndlessScrollResetLiveData.call();
     }
 
     private void onPostListingAddToExisting(NotRedditPostListData postListData, PostListing newPostListing) {
@@ -114,28 +166,7 @@ public class PostListViewModel extends ViewModel {
         postListData.getPostListing().setAfter(newPostListing.getAfter());
 
         mPostListLiveData.postValue(postListData);
-        mEndlessScrollResetLiveData.postValue(false);
-    }
-
-    @Nullable
-    private String getCurrentAfter() {
-        if (mPostListLiveData.getValue() != null && mPostListLiveData.getValue().getPostListing() != null) {
-            return mPostListLiveData.getValue().getPostListing().getAfter();
-        } else {
-            return null;
-        }
-    }
-
-    public void setNavigationController(NavigationController navigationController) {
-        mNavigationController = navigationController;
-    }
-
-    public void onRefresh() {
-        fetchPosts(FetchMode.START_FRESH);
-    }
-
-    public ObservableBoolean isRefreshing() {
-        return mDataBindIsRefreshing;
+        mEndlessScrollResetLiveData.call();
     }
 
     public void onPostClicked(Post post) {
@@ -153,4 +184,43 @@ public class PostListViewModel extends ViewModel {
         mCurrentSort = postListingSort;
         fetchPosts(FetchMode.START_FRESH);
     }
+    //endregion
+
+    //region Subreddits
+    LiveData<List<Subreddit>> getObservableSubredditListing() {
+        if (mSubredditLiveData == null) {
+            mSubredditLiveData = new MutableLiveData<>();
+            fetchSubreddits();
+        }
+        return mSubredditLiveData;
+    }
+
+    private void fetchSubreddits() {
+        Single<SubredditListing> fetchSingle;
+
+        if (Accountant.getInstance().getCurrentAccessToken() != null) {
+            List<String> subredditWheres = Collections.singletonList(SubredditWhere.DEFAULT);
+            List<String> subredditForUserWheres = Collections.singletonList(SubredditForUserWhere.SUBSCRIBER);
+            fetchSingle = mSubredditRepository.getSubredditsForParams(subredditWheres, subredditForUserWheres);
+        } else {
+            fetchSingle = mSubredditRepository.getSubredditsWhere(SubredditWhere.DEFAULT);
+        }
+
+        fetchSingle.subscribe(this::onSubredditListingReceived, this::onSubredditListingFetchError);
+    }
+
+    public void onSubredditClicked(Subreddit subreddit) {
+        mSubredditName = subreddit.getDisplayName();
+        fetchPosts(FetchMode.START_FRESH);
+        mCloseBottomSheetLiveData.call();
+    }
+
+    private void onSubredditListingReceived(SubredditListing subredditListing) {
+        mSubredditLiveData.postValue(subredditListing.getSubreddits());
+    }
+
+    private void onSubredditListingFetchError(Throwable t) {
+        Timber.e(t, "Failed to get a subreddit listing!");
+    }
+    //endregion
 }

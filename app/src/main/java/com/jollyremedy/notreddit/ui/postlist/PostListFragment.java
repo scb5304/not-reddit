@@ -4,9 +4,11 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.common.base.Strings;
+import com.jollyremedy.notreddit.Constants;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.databinding.FragmentPostListBinding;
 import com.jollyremedy.notreddit.di.auto.Injectable;
@@ -33,7 +36,7 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class PostListFragment extends Fragment implements Injectable, DrawerFragment {
+public class PostListFragment extends Fragment implements Injectable, DrawerFragment, SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
@@ -142,7 +145,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     }
 
     private void initSubredditRecyclerView() {
-        mSubredditAdapter = new BottomSheetSubredditAdapter();
+        mSubredditAdapter = new BottomSheetSubredditAdapter(mViewModel);
         mSubredditRecyclerView.setAdapter(mSubredditAdapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -170,17 +173,22 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         liveData.removeObserver(mPostListDataObserver);
         liveData.observe(this, mPostListDataObserver);
 
-        mViewModel.observeResetEndlessScroll().observe(this, shouldReset -> {
-            if (shouldReset != null && shouldReset) {
-                mEndlessScrollListener.resetState();
-                mPostRecyclerView.postDelayed(() -> mPostRecyclerView.scrollToPosition(0), 100);
-            }
+        mViewModel.observeResetEndlessScroll().observe(this, __ -> {
+            mEndlessScrollListener.resetState();
+            mPostRecyclerView.postDelayed(() -> mPostRecyclerView.scrollToPosition(0), 100);
         });
-        getParent().getObservableSubredditListing().observe(this, subredditListing -> {
-            mSubredditAdapter.updateData(subredditListing.getSubreddits());
+
+        mViewModel.observeCloseBottomSheet().observe(this, __ -> {
+            refreshTitle();
+            BottomSheetBehavior.from(mBinding.bottomSheet).setState(BottomSheetBehavior.STATE_COLLAPSED);
+        });
+
+        mViewModel.getObservableSubredditListing().observe(this, subreddits -> {
+            mSubredditAdapter.updateData(subreddits);
         });
     }
 
+    //FIXME: Not accurate after changing subreddit....
     private String getSubredditName() {
         return Objects.requireNonNull(getArguments()).getString(EXTRA_SUBREDDIT_NAME);
     }
@@ -192,5 +200,16 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
 
     private MainActivity getParent() {
         return (MainActivity) Objects.requireNonNull(getActivity());
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN.equals(key)) {
+            if (sharedPreferences.getBoolean(key, false)) {
+                mViewModel.onLoggedIn();
+            } else {
+                mViewModel.onLoggedOut();
+            }
+        }
     }
 }

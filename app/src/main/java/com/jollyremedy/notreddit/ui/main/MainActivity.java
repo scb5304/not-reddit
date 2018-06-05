@@ -1,7 +1,6 @@
 package com.jollyremedy.notreddit.ui.main;
 
 import android.accounts.AccountManager;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -26,13 +25,10 @@ import com.google.common.base.Strings;
 import com.jollyremedy.notreddit.Constants;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.auth.accounting.Accountant;
-import com.jollyremedy.notreddit.models.subreddit.Subreddit;
-import com.jollyremedy.notreddit.models.subreddit.SubredditListing;
 import com.jollyremedy.notreddit.ui.common.DrawerFragment;
 import com.jollyremedy.notreddit.ui.common.NavigationController;
 
 import java.util.List;
-import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -79,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MainViewModel.class);
         initDrawer();
         initToolbar();
-        subscribeUi();
 
         if (savedInstanceState == null) {
             mNavigationController.navigateToPostList("");
@@ -143,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             refreshUsernameDisplayed();
             Toast.makeText(this, getString(R.string.login_success, selectedAccountName), Toast.LENGTH_SHORT).show();
             invalidateOptionsMenu();
-            mViewModel.onLoggedIn();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -165,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     private boolean onLogoutPressed() {
         invalidateOptionsMenu();
         Accountant.getInstance().logout();
-        mViewModel.onLoggedOut();
         return true;
     }
 
@@ -188,17 +181,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             //No bottom sheet available, and that's fine.
         }
         return false;
-    }
-
-    private void subscribeUi() {
-        mViewModel.getObservableSubredditListing().observe(this, subredditListing -> {
-            Menu menu = mDrawerNavigationView.getMenu();
-            menu.clear();
-            List<Subreddit> subreddits = Objects.requireNonNull(subredditListing).getSubreddits();
-            for (Subreddit subreddit : subreddits) {
-                menu.add(subreddit.getDisplayName());
-            }
-        });
     }
 
     private void initDrawer() {
@@ -226,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     @SuppressWarnings("ConstantConditions")
     private void initToolbar() {
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private boolean isNavigationDrawerFragmentDisplayed() {
@@ -244,9 +226,5 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         if (Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN.equals(key)) {
             refreshUsernameDisplayed();
         }
-    }
-
-    public LiveData<SubredditListing> getObservableSubredditListing() {
-        return mViewModel.getObservableSubredditListing();
     }
 }
