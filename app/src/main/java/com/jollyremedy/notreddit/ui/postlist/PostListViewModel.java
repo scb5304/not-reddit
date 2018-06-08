@@ -98,7 +98,7 @@ public class PostListViewModel extends ViewModel {
     }
 
     //region Posts
-    LiveData<NotRedditPostListData> getObservableListing(String subredditName) {
+    LiveData<NotRedditPostListData> getObservablePostListing(String subredditName) {
         mSubredditName = subredditName;
         if (mPostListLiveData.getValue() == null) {
             fetchPosts(FetchMode.START_FRESH);

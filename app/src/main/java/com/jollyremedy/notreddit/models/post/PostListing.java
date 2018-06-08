@@ -37,6 +37,10 @@ public class PostListing extends RedditType implements Parcelable {
         data.after = after;
     }
 
+    public PostListing() {
+        this.data = new PostListingData();
+    }
+
     private PostListing(Parcel in) {
         super(in);
         data = (PostListingData) in.readValue(PostListingData.class.getClassLoader());

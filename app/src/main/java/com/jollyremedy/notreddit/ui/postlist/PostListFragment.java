@@ -169,7 +169,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
 
     private void subscribeUi() {
         //https://medium.com/@BladeCoder/architecture-components-pitfalls-part-1-9300dd969808
-        LiveData<NotRedditPostListData> liveData = mViewModel.getObservableListing(getSubredditName());
+        LiveData<NotRedditPostListData> liveData = mViewModel.getObservablePostListing(getSubredditName());
         liveData.removeObserver(mPostListDataObserver);
         liveData.observe(this, mPostListDataObserver);
 

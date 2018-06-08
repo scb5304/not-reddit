@@ -14,6 +14,10 @@ public class PostListingData extends ListingData implements Parcelable {
     @SerializedName("children")
     public List<Post> posts;
 
+    public PostListingData() {
+
+    }
+
     private PostListingData(Parcel in) {
         super(in);
         if (in.readByte() == 0x01) {
