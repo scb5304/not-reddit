@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -87,7 +86,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mPostRecyclerView = mBinding.postListPostRecyclerView;
-        mSubredditRecyclerView = mBinding.postListSubredditRecyclerView;
+        //mSubredditRecyclerView = mBinding.postListSubredditRecyclerView;
         mTabLayout = mBinding.postListTabLayout;
         mSwipeRefreshLayout = mBinding.postListSwipeRefreshLayout;
 
@@ -108,7 +107,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
 
         subscribeUi();
         initPostRecyclerView();
-        initSubredditRecyclerView();
+        //initSubredditRecyclerView();
         initSwipeRefreshLayout();
         initTabLayout();
     }
@@ -180,11 +179,11 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
 
         mViewModel.observeCloseBottomSheet().observe(this, __ -> {
             refreshTitle();
-            BottomSheetBehavior.from(mBinding.bottomSheet).setState(BottomSheetBehavior.STATE_COLLAPSED);
+//            BottomSheetBehavior.from(mBinding.bottomSheet).setState(BottomSheetBehavior.STATE_COLLAPSED);
         });
 
         mViewModel.getObservableSubredditListing().observe(this, subreddits -> {
-            mSubredditAdapter.updateData(subreddits);
+            //mSubredditAdapter.updateData(subreddits);
         });
     }
 
