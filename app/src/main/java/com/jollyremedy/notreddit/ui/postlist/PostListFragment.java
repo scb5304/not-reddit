@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -34,6 +35,9 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class PostListFragment extends Fragment implements Injectable, DrawerFragment, SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -85,8 +89,9 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
         mPostRecyclerView = mBinding.postListPostRecyclerView;
-        //mSubredditRecyclerView = mBinding.postListSubredditRecyclerView;
+        mSubredditRecyclerView = mBinding.postListSubredditRecyclerView;
         mTabLayout = mBinding.postListTabLayout;
         mSwipeRefreshLayout = mBinding.postListSwipeRefreshLayout;
 
@@ -95,6 +100,15 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
             TabLayout.Tab tab = mTabLayout.newTab();
             tab.setText(postSort);
             mTabLayout.addTab(tab);
+        }
+    }
+
+    @OnClick(R.id.fab)
+    void onFabClicked() {
+        if (BottomSheetBehavior.from(mBinding.bottomSheet).getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            BottomSheetBehavior.from(mBinding.bottomSheet).setState(BottomSheetBehavior.STATE_COLLAPSED);
+        } else {
+            BottomSheetBehavior.from(mBinding.bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
         }
     }
 
@@ -107,7 +121,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
 
         subscribeUi();
         initPostRecyclerView();
-        //initSubredditRecyclerView();
+        initSubredditRecyclerView();
         initSwipeRefreshLayout();
         initTabLayout();
     }
@@ -179,11 +193,11 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
 
         mViewModel.observeCloseBottomSheet().observe(this, __ -> {
             refreshTitle();
-//            BottomSheetBehavior.from(mBinding.bottomSheet).setState(BottomSheetBehavior.STATE_COLLAPSED);
+            BottomSheetBehavior.from(mBinding.bottomSheet).setState(BottomSheetBehavior.STATE_COLLAPSED);
         });
 
         mViewModel.getObservableSubredditListing().observe(this, subreddits -> {
-            //mSubredditAdapter.updateData(subreddits);
+            mSubredditAdapter.updateData(subreddits);
         });
     }
 

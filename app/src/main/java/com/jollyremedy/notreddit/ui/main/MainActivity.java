@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     public void onBackPressed() {
-        if (closeDrawer()) {
+        if (closeDrawer() || closeBottomSheet()) {
             return;
         }
         super.onBackPressed();
@@ -165,6 +166,19 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return true;
+        }
+        return false;
+    }
+
+    private boolean closeBottomSheet() {
+        try {
+            BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                return true;
+            }
+        } catch (NullPointerException | IllegalArgumentException e) {
+            //No bottom sheet available, and that's fine.
         }
         return false;
     }
