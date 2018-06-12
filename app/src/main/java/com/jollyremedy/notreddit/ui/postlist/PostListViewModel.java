@@ -166,7 +166,6 @@ public class PostListViewModel extends ViewModel {
         postListData.getPostListing().setAfter(newPostListing.getAfter());
 
         mPostListLiveData.postValue(postListData);
-        mEndlessScrollResetLiveData.call();
     }
 
     public void onPostClicked(Post post) {
