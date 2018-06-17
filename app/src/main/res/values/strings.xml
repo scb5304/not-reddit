@@ -30,4 +30,6 @@
     <string name="post_listing_sort_top">Top</string>
     <string name="post_listing_sort_rising">Rising</string>
     <string name="post_listing_sort_controversial">Controversial</string>
+
+    <string name="subreddit_search_hint">Subreddit</string>
 </resources>

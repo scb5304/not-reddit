@@ -158,7 +158,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     }
 
     private void initSubredditRecyclerView() {
-        mSubredditAdapter = new BottomSheetSubredditAdapter(mViewModel);
+        mSubredditAdapter = new BottomSheetSubredditAdapter(getActivity(), mViewModel);
         mSubredditRecyclerView.setAdapter(mSubredditAdapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
