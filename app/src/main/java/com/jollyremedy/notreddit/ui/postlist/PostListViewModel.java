@@ -23,6 +23,7 @@ import com.jollyremedy.notreddit.util.SingleLiveEvent;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -44,7 +45,6 @@ public class PostListViewModel extends ViewModel {
     private SingleLiveEvent<Object> mCloseBottomSheetLiveData;
 
     private ObservableBoolean mDataBindIsRefreshing;
-    private String mSubredditName = "all";
     private @PostListingSort String mCurrentSort;
 
     private enum FetchMode {
@@ -57,7 +57,10 @@ public class PostListViewModel extends ViewModel {
         mSubredditRepository = subredditRepository;
         mPostRepository = postRepository;
         mCloseBottomSheetLiveData = new SingleLiveEvent<>();
+
         mPostListLiveData = new MutableLiveData<>();
+        mPostListLiveData.setValue(new NotRedditPostListData());
+
         mEndlessScrollResetLiveData = new SingleLiveEvent<>();
         mDataBindIsRefreshing = new ObservableBoolean();
         mCurrentSort = PostListingSort.HOT;
@@ -73,11 +76,15 @@ public class PostListViewModel extends ViewModel {
 
     @Nullable
     private String getCurrentAfter() {
-        if (mPostListLiveData.getValue() != null && mPostListLiveData.getValue().getPostListing() != null) {
+        if (Objects.requireNonNull(mPostListLiveData.getValue()).getPostListing() != null) {
             return mPostListLiveData.getValue().getPostListing().getAfter();
         } else {
             return null;
         }
+    }
+
+    private void updateCurrentSubredditName(String currentSubredditName) {
+        mPostListLiveData.postValue(mPostListLiveData.getValue().setCurrentSubredditName(currentSubredditName));
     }
 
     public void setNavigationController(NavigationController navigationController) {
@@ -101,7 +108,8 @@ public class PostListViewModel extends ViewModel {
     }
 
     public void onBottomSheetSubredditEntered(String subredditName) {
-        mSubredditName = subredditName.replaceFirst("/r", "");
+        String subredditNameCleansed = subredditName.replaceFirst("/r", "");
+        updateCurrentSubredditName(subredditNameCleansed);
         fetchPosts(FetchMode.START_FRESH);
 
         //Because the keyboard being dismissed messes with the bottom sheet being dismissed.
@@ -114,8 +122,10 @@ public class PostListViewModel extends ViewModel {
 
     //region Posts
     LiveData<NotRedditPostListData> getObservablePostListing(String subredditName) {
-        mSubredditName = subredditName;
-        if (mPostListLiveData.getValue() == null) {
+        if (mPostListLiveData.getValue().getCurrentSubreddit() == null) {
+            updateCurrentSubredditName(subredditName);
+        }
+        if (mPostListLiveData.getValue().getPostListing() == null) {
             fetchPosts(FetchMode.START_FRESH);
         }
         return mPostListLiveData;
@@ -140,7 +150,7 @@ public class PostListViewModel extends ViewModel {
     private void fetchPosts(FetchMode fetchMode) {
         mDataBindIsRefreshing.set(true);
         String after = fetchMode == FetchMode.ADD_TO_EXISTING_POSTS ? getCurrentAfter() : null;
-        mPostRepository.getPostListing(mSubredditName, mCurrentSort, after)
+        mPostRepository.getPostListing(mPostListLiveData.getValue().getCurrentSubreddit(), mCurrentSort, after)
                 .doFinally(() -> mDataBindIsRefreshing.set(false))
                 .subscribe(postListing -> this.onNewPostListingReceived(fetchMode, postListing), this::onPostListingFetchError);
     }
@@ -160,9 +170,7 @@ public class PostListViewModel extends ViewModel {
     }
 
     private void onPostListingStartingFresh(PostListing newPostListing) {
-        NotRedditPostListData postListViewData = new NotRedditPostListData();
-        postListViewData.setPostListing(newPostListing);
-        mPostListLiveData.postValue(postListViewData);
+        mPostListLiveData.postValue(mPostListLiveData.getValue().setPostListing(newPostListing).clearRanges());
         mEndlessScrollResetLiveData.call();
     }
 
@@ -224,7 +232,7 @@ public class PostListViewModel extends ViewModel {
     }
 
     public void onSubredditClicked(Subreddit subreddit) {
-        mSubredditName = subreddit.getDisplayName();
+        updateCurrentSubredditName(subreddit.getDisplayName());
         fetchPosts(FetchMode.START_FRESH);
         mCloseBottomSheetLiveData.call();
     }

@@ -31,9 +31,10 @@ public class NavigationController {
         mFragmentManager.registerFragmentLifecycleCallbacks(new MainActivityFragmentLifecycleListener(), false);
     }
 
-    public void navigateToPostList(@NonNull String subredditName) {
-        PostListFragment fragment = PostListFragment.newInstance(subredditName);
-        mFragmentManager.beginTransaction().replace(mContainerId, fragment, PostListFragment.TAG)
+    public void navigateToPostList() {
+        PostListFragment fragment = PostListFragment.newInstance();
+        mFragmentManager.beginTransaction()
+                .replace(mContainerId, fragment, PostListFragment.TAG)
                 .commit();
     }
 

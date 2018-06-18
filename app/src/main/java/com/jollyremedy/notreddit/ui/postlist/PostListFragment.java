@@ -63,21 +63,26 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     private TabLayout mTabLayout;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    public static PostListFragment newInstance(String subredditName) {
+    //TODO
+    public static final String DEFAULT_SUBREDDIT = "";
+
+    public static PostListFragment newInstance() {
         PostListFragment fragment = new PostListFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(EXTRA_SUBREDDIT_NAME, subredditName);
         fragment.setArguments(bundle);
         return fragment;
     }
 
     private final Observer<NotRedditPostListData> mPostListDataObserver = new Observer<NotRedditPostListData>() {
         @Override
-        public void onChanged(@Nullable NotRedditPostListData postListing) {
-            if (postListing != null) {
-                List<Post> posts = postListing.getPostListing().getPosts();
-                mPostListAdapter.updateData(posts, postListing.getPostsChangingRange(), postListing.getPostsDeletingRange());
-                postListing.clearRanges();
+        public void onChanged(@Nullable NotRedditPostListData postListData) {
+            if (postListData != null) {
+                refreshTitle(postListData.getCurrentSubreddit());
+                if (postListData.getPostListing() != null) {
+                    List<Post> posts = postListData.getPostListing().getPosts();
+                    mPostListAdapter.updateData(posts, postListData.getPostsChangingRange(), postListData.getPostsDeletingRange());
+                    postListData.clearRanges();
+                }
             }
         }
     };
@@ -94,6 +99,14 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
             }
         }
     };
+
+    private void refreshTitle(String title) {
+        if (Strings.isNullOrEmpty(title)) {
+            getParent().setTitle(getString(R.string.app_name));
+        } else {
+            getParent().setTitle(title);
+        }
+    }
 
     @Nullable
     @Override
@@ -146,7 +159,6 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     public void onResume() {
         super.onResume();
         mSharedPreferences.registerOnSharedPreferenceChangeListener(mSharedPrefListener);
-        refreshTitle();
     }
 
     @Override
@@ -205,7 +217,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
 
     private void subscribeUi() {
         //https://medium.com/@BladeCoder/architecture-components-pitfalls-part-1-9300dd969808
-        LiveData<NotRedditPostListData> liveData = mViewModel.getObservablePostListing(getSubredditName());
+        LiveData<NotRedditPostListData> liveData = mViewModel.getObservablePostListing(DEFAULT_SUBREDDIT);
         liveData.removeObserver(mPostListDataObserver);
         liveData.observe(this, mPostListDataObserver);
 
@@ -215,23 +227,13 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         });
 
         mViewModel.observeCloseBottomSheet().observe(this, __ -> {
-            refreshTitle();
             BottomSheetBehavior.from(mBinding.bottomSheet).setState(BottomSheetBehavior.STATE_COLLAPSED);
+            mBinding.postListSubredditRecyclerView.postDelayed(() ->  mBinding.postListSubredditRecyclerView.scrollToPosition(0), 100);
         });
 
         mViewModel.getObservableSubredditListing().observe(this, subreddits -> {
             mSubredditAdapter.updateData(subreddits);
         });
-    }
-
-    //FIXME: Not accurate after changing subreddit....
-    private String getSubredditName() {
-        return Objects.requireNonNull(getArguments()).getString(EXTRA_SUBREDDIT_NAME);
-    }
-
-    private void refreshTitle() {
-        String title = Strings.isNullOrEmpty(getSubredditName()) ? getString(R.string.app_name) : getSubredditName();
-        getParent().setTitle(title);
     }
 
     private MainActivity getParent() {

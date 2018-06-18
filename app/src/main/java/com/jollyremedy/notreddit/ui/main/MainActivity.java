@@ -14,14 +14,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.base.Strings;
 import com.jollyremedy.notreddit.Constants;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.auth.accounting.Accountant;
@@ -39,7 +35,7 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 
-public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector, SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
 
     @BindView(R.id.activity_main_toolbar) Toolbar mToolbar;
     @BindView(R.id.activity_main_drawer_layout) DrawerLayout mDrawerLayout;
@@ -73,11 +69,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         ButterKnife.bind(this);
 
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MainViewModel.class);
-        initDrawer();
         initToolbar();
 
         if (savedInstanceState == null) {
-            mNavigationController.navigateToPostList("");
+            mNavigationController.navigateToPostList();
         }
     }
 
@@ -93,18 +88,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         logoutMenuItem.setVisible(loggedIn);
 
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -135,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             mSharedPreferences.edit()
                     .putString(Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN, selectedAccountName)
                     .apply();
-            refreshUsernameDisplayed();
             Toast.makeText(this, getString(R.string.login_success, selectedAccountName), Toast.LENGTH_SHORT).show();
             invalidateOptionsMenu();
         }
@@ -183,32 +165,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         return false;
     }
 
-    private void initDrawer() {
-        mDrawerNavigationView.setNavigationItemSelectedListener(item -> {
-            mNavigationController.navigateToPostList(item.getTitle().toString());
-            mDrawerLayout.closeDrawer(Gravity.START);
-            return true;
-        });
-        refreshUsernameDisplayed();
-    }
-
-    private void refreshUsernameDisplayed() {
-        String currentUsername = mSharedPreferences.getString(Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN, null);
-        TextView usernameTextView = mDrawerNavigationView
-                .getHeaderView(0)
-                .findViewById(R.id.drawer_username_textview);
-        if (Strings.isNullOrEmpty(currentUsername)) {
-            usernameTextView.setVisibility(View.GONE);
-        } else {
-            usernameTextView.setVisibility(View.VISIBLE);
-            usernameTextView.setText(currentUsername);
-        }
-    }
 
     @SuppressWarnings("ConstantConditions")
     private void initToolbar() {
         setSupportActionBar(mToolbar);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private boolean isNavigationDrawerFragmentDisplayed() {
@@ -219,12 +179,5 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             }
         }
         return false;
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN.equals(key)) {
-            refreshUsernameDisplayed();
-        }
     }
 }
