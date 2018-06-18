@@ -9,6 +9,7 @@
         android:orientation="horizontal">
 
         <EditText
+            android:autoText="false"
             android:id="@+id/subreddit_goto_edittext"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -17,7 +18,7 @@
             android:layout_weight="9"
             android:hint="@string/subreddit_search_hint"
             android:imeOptions="actionGo"
-            android:inputType="text"
+            android:inputType="textNoSuggestions"
             android:singleLine="true" />
 
         <ImageButton

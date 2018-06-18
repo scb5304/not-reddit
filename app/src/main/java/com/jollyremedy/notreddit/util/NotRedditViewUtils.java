@@ -6,8 +6,12 @@ import android.content.res.Resources;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.jollyremedy.notreddit.R;
+
+import java.util.Objects;
 
 public class NotRedditViewUtils {
 
@@ -26,5 +30,10 @@ public class NotRedditViewUtils {
         customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return customTabsIntent;
+    }
+
+    public static void hideKeyboard(View v) {
+        InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        Objects.requireNonNull(imm).hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 }

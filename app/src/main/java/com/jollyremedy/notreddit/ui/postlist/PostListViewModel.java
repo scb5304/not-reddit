@@ -97,6 +97,12 @@ public class PostListViewModel extends ViewModel {
         fetchSubreddits();
     }
 
+    public void onBottomSheetSubredditEntered(String subredditName) {
+        mCloseBottomSheetLiveData.call();
+        mSubredditName = subredditName.replaceFirst("/r", "");
+        fetchPosts(FetchMode.START_FRESH);
+    }
+
     //region Posts
     LiveData<NotRedditPostListData> getObservablePostListing(String subredditName) {
         mSubredditName = subredditName;

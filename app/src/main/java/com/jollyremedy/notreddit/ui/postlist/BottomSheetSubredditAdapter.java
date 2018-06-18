@@ -6,16 +6,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
 import com.jollyremedy.notreddit.databinding.ItemSubredditBinding;
 import com.jollyremedy.notreddit.databinding.PartialSubredditHeaderBinding;
 import com.jollyremedy.notreddit.models.subreddit.Subreddit;
+import com.jollyremedy.notreddit.util.NotRedditViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class BottomSheetSubredditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -53,9 +51,8 @@ public class BottomSheetSubredditAdapter extends RecyclerView.Adapter<RecyclerVi
                 PartialSubredditHeaderBinding headerBinding = PartialSubredditHeaderBinding.inflate(mLayoutInflater, parent, false);
                 headerBinding.subredditGotoEdittext.setOnEditorActionListener((v, actionId, event) -> {
                     if (actionId == EditorInfo.IME_ACTION_GO) {
-                        Toast.makeText(v.getContext(), "You want subreddit " + v.getText().toString(), Toast.LENGTH_SHORT).show();
-                        InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        Objects.requireNonNull(imm).hideSoftInputFromWindow(v.getWindowToken(), 0);
+                        mViewModel.onBottomSheetSubredditEntered(v.getText().toString());
+                        NotRedditViewUtils.hideKeyboard(v);
                         return true;
                     }
                     return false;
