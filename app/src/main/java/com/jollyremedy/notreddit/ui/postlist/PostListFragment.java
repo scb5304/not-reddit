@@ -39,13 +39,16 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class PostListFragment extends Fragment implements Injectable, DrawerFragment, SharedPreferences.OnSharedPreferenceChangeListener {
+public class PostListFragment extends Fragment implements Injectable, DrawerFragment {
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
 
     @Inject
     NavigationController mNavigationController;
+
+    @Inject
+    SharedPreferences mSharedPreferences;
 
     public static final String TAG = "PostListFragment";
     private static final String EXTRA_SUBREDDIT_NAME = "extra_subreddit_name";
@@ -75,6 +78,19 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
                 List<Post> posts = postListing.getPostListing().getPosts();
                 mPostListAdapter.updateData(posts, postListing.getPostsChangingRange(), postListing.getPostsDeletingRange());
                 postListing.clearRanges();
+            }
+        }
+    };
+
+    private final SharedPreferences.OnSharedPreferenceChangeListener mSharedPrefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN.equals(key)) {
+                if (sharedPreferences.getString(key, null) != null) {
+                    mViewModel.onLoggedIn();
+                } else {
+                    mViewModel.onLoggedOut();
+                }
             }
         }
     };
@@ -129,7 +145,14 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     @Override
     public void onResume() {
         super.onResume();
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(mSharedPrefListener);
         refreshTitle();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(mSharedPrefListener);
     }
 
     private void initPostRecyclerView() {
@@ -213,16 +236,5 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
 
     private MainActivity getParent() {
         return (MainActivity) Objects.requireNonNull(getActivity());
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (Constants.SharedPreferenceKeys.CURRENT_USERNAME_LOGGED_IN.equals(key)) {
-            if (sharedPreferences.getBoolean(key, false)) {
-                mViewModel.onLoggedIn();
-            } else {
-                mViewModel.onLoggedOut();
-            }
-        }
     }
 }
