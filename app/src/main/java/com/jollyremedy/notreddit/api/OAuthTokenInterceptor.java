@@ -18,7 +18,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import timber.log.Timber;
 
-import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
 public class OAuthTokenInterceptor implements Interceptor {
@@ -151,6 +150,6 @@ public class OAuthTokenInterceptor implements Interceptor {
     }
 
     private boolean responseIsNotAuthFailure(Response response) {
-        return response.code() != HTTP_FORBIDDEN && response.code() != HTTP_UNAUTHORIZED;
+        return response.code() != HTTP_UNAUTHORIZED;
     }
 }

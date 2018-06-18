@@ -69,7 +69,7 @@ class AppModule {
     @Singleton
     HttpLoggingInterceptor provideLoggingInterceptor() {
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         return httpLoggingInterceptor;
     }
 

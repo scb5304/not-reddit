@@ -6,7 +6,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 
+import com.google.common.base.Strings;
 import com.jollyremedy.notreddit.databinding.ItemSubredditBinding;
 import com.jollyremedy.notreddit.databinding.PartialSubredditHeaderBinding;
 import com.jollyremedy.notreddit.models.subreddit.Subreddit;
@@ -49,10 +51,10 @@ public class BottomSheetSubredditAdapter extends RecyclerView.Adapter<RecyclerVi
         switch (viewType) {
             case HEADER:
                 PartialSubredditHeaderBinding headerBinding = PartialSubredditHeaderBinding.inflate(mLayoutInflater, parent, false);
+                headerBinding.subredditGotoIcon.setOnClickListener(__-> this.onGoToSubreddit(headerBinding));
                 headerBinding.subredditGotoEdittext.setOnEditorActionListener((v, actionId, event) -> {
                     if (actionId == EditorInfo.IME_ACTION_GO) {
-                        mViewModel.onBottomSheetSubredditEntered(v.getText().toString());
-                        NotRedditViewUtils.hideKeyboard(v);
+                        onGoToSubreddit(headerBinding);
                         return true;
                     }
                     return false;
@@ -61,6 +63,15 @@ public class BottomSheetSubredditAdapter extends RecyclerView.Adapter<RecyclerVi
             default:
                 ItemSubredditBinding subredditItemBinding = ItemSubredditBinding.inflate(mLayoutInflater, parent, false);
                 return new BottomSheetSubredditAdapter.SubredditViewHolder(subredditItemBinding);
+        }
+    }
+
+    private void onGoToSubreddit(PartialSubredditHeaderBinding headerBinding) {
+        EditText editText = headerBinding.subredditGotoEdittext;
+        if (!Strings.isNullOrEmpty(editText.getText().toString().trim())) {
+            mViewModel.onBottomSheetSubredditEntered(editText.getText().toString());
+            editText.setText(null);
+            NotRedditViewUtils.hideKeyboard(editText.getRootView());
         }
     }
 

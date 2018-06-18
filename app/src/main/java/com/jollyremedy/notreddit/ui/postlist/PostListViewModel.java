@@ -23,10 +23,13 @@ import com.jollyremedy.notreddit.util.SingleLiveEvent;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import timber.log.Timber;
 
 public class PostListViewModel extends ViewModel {
@@ -98,9 +101,15 @@ public class PostListViewModel extends ViewModel {
     }
 
     public void onBottomSheetSubredditEntered(String subredditName) {
-        mCloseBottomSheetLiveData.call();
         mSubredditName = subredditName.replaceFirst("/r", "");
         fetchPosts(FetchMode.START_FRESH);
+
+        //Because the keyboard being dismissed messes with the bottom sheet being dismissed.
+        Completable.complete()
+                .delay(250, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete(() -> mCloseBottomSheetLiveData.call())
+                .subscribe();
     }
 
     //region Posts
