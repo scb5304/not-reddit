@@ -17,7 +17,6 @@ public interface RequestTokenApi {
     @FormUrlEncoded
     @POST("api/v1/access_token")
     Single<Token> getRefreshedToken(@Field("grant_type") String grantType,
-                                  @Field("device_id") String deviceId,
                                   @Field("refresh_token") String refreshToken);
 
     @FormUrlEncoded

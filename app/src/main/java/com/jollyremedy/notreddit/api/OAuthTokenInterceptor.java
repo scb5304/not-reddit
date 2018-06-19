@@ -76,7 +76,7 @@ public class OAuthTokenInterceptor implements Interceptor {
             return initialResult;
         }
 
-        Timber.w("This initial request failed due to a 401 or 403.");
+        Timber.w("This initial request failed due to a 401.");
         Token refreshedToken = mTokenRepository.getRefreshedUserToken(currentRefreshToken);
 
         if (refreshedToken != null) {

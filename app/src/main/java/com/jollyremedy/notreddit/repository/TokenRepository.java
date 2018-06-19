@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.jollyremedy.notreddit.BuildConfig;
-import com.jollyremedy.notreddit.Constants;
 import com.jollyremedy.notreddit.api.AuthConstants;
 import com.jollyremedy.notreddit.api.RequestTokenApi;
 import com.jollyremedy.notreddit.models.auth.Token;
@@ -46,8 +45,7 @@ public class TokenRepository {
      */
     @Nullable
     public Token getRefreshedUserToken(String refreshToken) throws RuntimeException {
-        String deviceId = mSharedPreferences.getString(Constants.SharedPreferenceKeys.DEVICE_ID, null);
-        return mRequestTokenApi.getRefreshedToken(AuthConstants.AUTH_GRANT_TYPE_INSTALLED, deviceId, refreshToken)
+        return mRequestTokenApi.getRefreshedToken(AuthConstants.AUTH_GRANT_TYPE_REFRESH, refreshToken)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .blockingGet();
