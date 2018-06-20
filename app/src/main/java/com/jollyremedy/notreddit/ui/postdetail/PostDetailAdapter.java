@@ -1,11 +1,13 @@
 package com.jollyremedy.notreddit.ui.postdetail;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.common.collect.Range;
 import com.jollyremedy.notreddit.R;
 import com.jollyremedy.notreddit.databinding.ItemCommentBinding;
 import com.jollyremedy.notreddit.databinding.PartialPostHeaderBinding;
@@ -15,6 +17,8 @@ import com.jollyremedy.notreddit.util.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 import static com.jollyremedy.notreddit.util.Utility.isEven;
 
@@ -35,12 +39,31 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
         mViewModel = viewModel;
     }
 
-    public void setPost(Post post) {
-        mPost = post;
-    }
 
-    public void setComments(List<Comment> comments) {
-        mComments = comments;
+    public void updateData(PostDetailData postDetailData) {
+        mPost = postDetailData.getPost();
+        mComments = postDetailData.getComments();
+
+        Range<Integer> changeRange = postDetailData.getCommentsChangingRange();
+        Range<Integer> deleteRange = postDetailData.getCommentsDeletingRange();
+
+        if (changeRange != null) {
+            //Add one to the end. If the items from [1, 2] are changing, that's a start at 1 and a count 2 changing
+            //Also, add one to the beginning index: there's a post at index 1.
+            Integer numberOfItemsChanging = changeRange.upperEndpoint() - changeRange.lowerEndpoint() + 1;
+            notifyItemRangeChanged(changeRange.lowerEndpoint() + 1, numberOfItemsChanging);
+        }
+        if (deleteRange != null) {
+            Integer numberOfItemsRemoving = deleteRange.upperEndpoint() - deleteRange.lowerEndpoint() + 1;
+            notifyItemRangeRemoved(deleteRange.lowerEndpoint() + 1, numberOfItemsRemoving);
+        }
+
+        if (changeRange == null && deleteRange == null){
+            Timber.w("No change or delete range!");
+            notifyDataSetChanged();
+        }
+
+        postDetailData.clearRanges();
     }
 
     @Override
@@ -51,8 +74,9 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
         return COMMENTS;
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch (viewType) {
             case HEADER:
                 PartialPostHeaderBinding headerBinding = PartialPostHeaderBinding.inflate(mLayoutInflater, parent, false);
@@ -64,7 +88,7 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof HeaderViewHolder) {
             ((HeaderViewHolder) holder).bind(mPost);
         } else if (holder instanceof CommentViewHolder) {
@@ -109,7 +133,6 @@ public class PostDetailAdapter extends RecyclerView.Adapter {
 
             binding.setViewModel(mViewModel);
             binding.setComment(currentComment);
-            binding.setCommentIndex(commentPosition);
             binding.executePendingBindings();
         }
     }

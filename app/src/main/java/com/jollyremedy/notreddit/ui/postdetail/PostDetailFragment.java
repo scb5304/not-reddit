@@ -86,9 +86,7 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     }
 
     private void onPostDetailDataChanged(PostDetailData postDetailData) {
-        mPostDetailAdapter.setPost(postDetailData.getPost());
-        mPostDetailAdapter.setComments(postDetailData.getComments());
-        mPostDetailAdapter.notifyDataSetChanged();
+        mPostDetailAdapter.updateData(postDetailData);
     }
 
     private void onCommentClicked(CommentClick commentClick) {

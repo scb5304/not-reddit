@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
+import com.google.common.collect.Range;
 import com.jollyremedy.notreddit.models.comment.Comment;
 import com.jollyremedy.notreddit.models.comment.PostWithCommentListing;
 import com.jollyremedy.notreddit.models.comment.more.MoreChildren;
@@ -12,7 +13,10 @@ import com.jollyremedy.notreddit.models.post.Post;
 import com.jollyremedy.notreddit.repository.CommentRepository;
 import com.jollyremedy.notreddit.util.SingleLiveEvent;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -25,7 +29,9 @@ public class PostDetailViewModel extends ViewModel {
     private MutableLiveData<PostDetailData> mPostDetailLiveData;
     private SingleLiveEvent<CommentClick> mCommentClickLiveData;
     private PostDetailViewModelHelper mHelper;
+
     private Integer mCurrentCommentSelectedIndex;
+    private Map<String, List<Comment>> mCollapsedComments;
 
     @Inject
     PostDetailViewModel(CommentRepository commentRepository, PostDetailViewModelHelper helper) {
@@ -34,6 +40,7 @@ public class PostDetailViewModel extends ViewModel {
         mPostDetailLiveData = new MutableLiveData<>();
         mCommentClickLiveData = new SingleLiveEvent<>();
         mCurrentCommentSelectedIndex = -1;
+        mCollapsedComments = new HashMap<>();
     }
 
     LiveData<PostDetailData> getObservablePostDetailData(String postId) {
@@ -67,6 +74,7 @@ public class PostDetailViewModel extends ViewModel {
 
         List<Comment> moreComments = moreChildren.getComments();
 
+        //TODO: Insert range instead of notifyDataSetChanged
         if (moreComments != null && !moreComments.isEmpty()) {
             postDetailData.getComments().remove(moreCommentsPosition); //Remove "MORE"
             postDetailData.getComments().addAll(moreCommentsPosition, moreComments);
@@ -78,19 +86,59 @@ public class PostDetailViewModel extends ViewModel {
         Timber.e(throwable, "Failed to get more comments.");
     }
 
-    public void onCommentClicked(int commentPosition) {
-        mCommentClickLiveData.postValue(new CommentClick(mCurrentCommentSelectedIndex, commentPosition));
-        mCurrentCommentSelectedIndex = commentPosition;
+    public void onCommentClicked(Comment comment) {
+        int index = indexOfComment(comment);
+        mCommentClickLiveData.postValue(new CommentClick(mCurrentCommentSelectedIndex, index));
+        mCurrentCommentSelectedIndex = index;
     }
 
-    public void onCommentMoreClicked(Comment comment, int commentPosition) {
+    public void onCommentCollapseClicked(Comment comment) {
+        onCommentClicked(comment);
+        int commentIndex = indexOfComment(comment);
+
+        List<Comment> commentsToCollapse = collapseComments(comment, commentIndex);
+
+        PostDetailData postDetailData = mPostDetailLiveData.getValue();
+        postDetailData.getComments().removeAll(commentsToCollapse);
+        postDetailData.setCommentsChangingRange(Range.singleton(commentIndex));
+
+        if (!commentsToCollapse.isEmpty()) {
+            int deleteRangeStart = commentIndex + 1;
+            int deleteRangeEnd = deleteRangeStart + commentsToCollapse.size() - 1;
+            postDetailData.setCommentsDeletingRange(Range.closed(deleteRangeStart, deleteRangeEnd));
+        }
+
+        mPostDetailLiveData.postValue(postDetailData);
+    }
+
+    private List<Comment> collapseComments(Comment comment, int commentIndex) {
+        List<Comment> comments = mPostDetailLiveData.getValue().getComments();
+        List<Comment> commentsToCollapse = new ArrayList<>();
+        int commentDepth = comment.getDepth();
+        int loopCommentIndex = commentIndex + 1;
+
+        while (loopCommentIndex < comments.size()) {
+            Comment potentialComment = comments.get(loopCommentIndex);
+            if (potentialComment.getDepth() > commentDepth) {
+                commentsToCollapse.add(potentialComment);
+            } else {
+                break;
+            }
+            loopCommentIndex++;
+        }
+
+        mCollapsedComments.put(comment.getFullName(), commentsToCollapse);
+        return commentsToCollapse;
+    }
+
+    public void onCommentMoreClicked(Comment comment) {
         Post post = Objects.requireNonNull(mPostDetailLiveData.getValue()).getPost();
 
         String postFullName = post.getFullName();
         List<String> commentIdsToGet = comment.getChildren();
 
         mCommentRepository.getMoreCommentsByIds(postFullName, commentIdsToGet).subscribe(
-                moreChildren -> onMoreCommentsFetched(commentPosition, moreChildren),
+                moreChildren -> onMoreCommentsFetched(indexOfComment(comment), moreChildren),
                 this::onMoreCommentsFailure);
     }
 
@@ -106,8 +154,8 @@ public class PostDetailViewModel extends ViewModel {
         return comment.getKind() != RedditType.Kind.MORE;
     }
 
-    public boolean isCommentBottomLineVisible(Integer commentIndex) {
-        return Objects.equals(mCurrentCommentSelectedIndex, commentIndex);
+    public boolean isCommentBottomLineVisible(Comment comment) {
+        return Objects.equals(mCurrentCommentSelectedIndex, indexOfComment(comment));
     }
 
     public boolean isCommentMoreWrapperVisible(Comment comment) {
@@ -119,7 +167,11 @@ public class PostDetailViewModel extends ViewModel {
     }
 
     public String getCommentBody(Comment comment) {
-        return comment.getBodyHtml();
+        if (mCollapsedComments.containsKey(comment.getFullName())) {
+            return "(collapsed placeholder)";
+        } else {
+            return comment.getBodyHtml();
+        }
     }
 
     public String getCommentTimeSince(Comment comment) {
@@ -128,5 +180,9 @@ public class PostDetailViewModel extends ViewModel {
 
     public String getCommentAuthor(Comment comment) {
         return comment.getAuthor();
+    }
+
+    private int indexOfComment(Comment comment) {
+        return mPostDetailLiveData.getValue().getComments().indexOf(comment);
     }
 }

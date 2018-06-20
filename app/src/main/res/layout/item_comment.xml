@@ -9,10 +9,6 @@
             type="com.jollyremedy.notreddit.models.comment.Comment" />
 
         <variable
-            name="commentIndex"
-            type="Integer" />
-
-        <variable
             name="viewModel"
             type="com.jollyremedy.notreddit.ui.postdetail.PostDetailViewModel" />
 
@@ -34,7 +30,7 @@
             android:background="?android:attr/selectableItemBackground"
             android:clickable="@{viewModel.isCommentClickable(comment)}"
             android:focusable="@{viewModel.isCommentClickable(comment)}"
-            android:onClick="@{() -> viewModel.onCommentClicked(commentIndex)}"
+            android:onClick="@{() -> viewModel.onCommentClicked(comment)}"
             android:orientation="vertical"
             tools:ignore="UselessParent">
 
@@ -112,7 +108,7 @@
                 android:background="@color/secondary_background_gray"
                 android:clickable="false"
                 android:orientation="horizontal"
-                android:visibility="@{viewModel.isCommentBottomLineVisible(commentIndex) ? View.VISIBLE : View.GONE}">
+                android:visibility="@{viewModel.isCommentBottomLineVisible(comment) ? View.VISIBLE : View.GONE}">
 
                 <android.support.v4.widget.Space
                     android:layout_width="0dp"
@@ -132,10 +128,11 @@
                     android:src="@drawable/arrow_down" />
 
                 <ImageButton
+                    android:onClick="@{() -> viewModel.onCommentCollapseClicked(comment)}"
                     android:layout_width="52dp"
                     android:layout_height="match_parent"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/eye_gray" />
+                    android:src="@drawable/arrow_collapse_vertical" />
 
                 <ImageButton
                     android:layout_width="52dp"
@@ -151,7 +148,7 @@
                 android:layout_height=".5dp"
                 android:background="@android:color/darker_gray"
                 android:clickable="false"
-                android:visibility="@{viewModel.isCommentBottomLineVisible(commentIndex) ? View.VISIBLE : View.GONE}" />
+                android:visibility="@{viewModel.isCommentBottomLineVisible(comment) ? View.VISIBLE : View.GONE}" />
 
             <!-- The "MORE" section of the card, only visible in that exact situation -->
             <LinearLayout
@@ -171,7 +168,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="start|center_vertical"
-                    android:onClick="@{() -> viewModel.onCommentMoreClicked(comment, commentIndex)}"
+                    android:onClick="@{() -> viewModel.onCommentMoreClicked(comment)}"
                     android:paddingEnd="8dp"
                     android:paddingStart="8dp"
                     android:text="@string/item_comment_more"
