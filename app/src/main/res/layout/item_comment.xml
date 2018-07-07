@@ -6,11 +6,11 @@
 
         <variable
             name="comment"
-            type="com.jollyremedy.notreddit.models.comment.Comment" />
+            type="com.stevenbrown.notreddit.models.comment.Comment" />
 
         <variable
             name="viewModel"
-            type="com.jollyremedy.notreddit.ui.postdetail.PostDetailViewModel" />
+            type="com.stevenbrown.notreddit.ui.postdetail.PostDetailViewModel" />
 
         <import type="android.view.View" />
     </data>

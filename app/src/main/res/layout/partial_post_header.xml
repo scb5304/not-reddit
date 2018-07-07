@@ -6,7 +6,7 @@
 
         <variable
             name="post"
-            type="com.jollyremedy.notreddit.models.post.Post" />
+            type="com.stevenbrown.notreddit.models.post.Post" />
 
         <import type="android.view.View" />
     </data>

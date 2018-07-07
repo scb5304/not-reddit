@@ -6,11 +6,11 @@
 
         <variable
             name="postListViewModel"
-            type="com.jollyremedy.notreddit.ui.postlist.PostListViewModel" />
+            type="com.stevenbrown.notreddit.ui.postlist.PostListViewModel" />
 
         <variable
             name="subreddit"
-            type="com.jollyremedy.notreddit.models.subreddit.Subreddit" />
+            type="com.stevenbrown.notreddit.models.subreddit.Subreddit" />
     </data>
 
     <LinearLayout

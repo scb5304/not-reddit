@@ -8,7 +8,7 @@ clientProperties.load(new FileInputStream(clientPropsFile))
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.jollyremedy.notreddit"
+        applicationId "com.stevenbrown.notreddit"
         minSdkVersion 23
         targetSdkVersion 27
         versionCode 1

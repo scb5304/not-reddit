@@ -6,7 +6,7 @@
 
         <variable
             name="postListViewModel"
-            type="com.jollyremedy.notreddit.ui.postlist.PostListViewModel" />
+            type="com.stevenbrown.notreddit.ui.postlist.PostListViewModel" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -55,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior="com.jollyremedy.notreddit.ui.common.UserLockBottomSheetBehavior">
+            app:layout_behavior="com.stevenbrown.notreddit.ui.common.UserLockBottomSheetBehavior">
 
             <LinearLayout
                 android:layout_width="match_parent"

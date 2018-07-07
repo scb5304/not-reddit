@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">NotReddit</string>
     <string name="oauth_scheme">notreddit</string>
-    <string name="sync_account_type" translatable="false">notreddit.jollyremedy.com</string>
+    <string name="sync_account_type" translatable="false">notreddit.stevenbrown.com</string>
 
     <string name="item_post_comment_count">%1$d</string>
 
