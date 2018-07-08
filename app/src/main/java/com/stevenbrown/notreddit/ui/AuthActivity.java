@@ -2,6 +2,7 @@ package com.stevenbrown.notreddit.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -16,15 +17,12 @@ import com.stevenbrown.notreddit.BuildConfig;
 import com.stevenbrown.notreddit.Constants;
 import com.stevenbrown.notreddit.R;
 import com.stevenbrown.notreddit.auth.accounting.Accountant;
+import com.stevenbrown.notreddit.databinding.ActivityAuthBinding;
 import com.stevenbrown.notreddit.ui.main.MainActivity;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class AuthActivity extends AppCompatActivity {
 
-    @BindView(R.id.auth_webview) WebView mWebView;
-
+    private WebView mWebView;
     private SharedPreferences mSharedPreferences;
 
     private WebViewClient mWebViewClient = new WebViewClient() {
@@ -42,8 +40,8 @@ public class AuthActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_auth);
-        ButterKnife.bind(this);
+        ActivityAuthBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_auth);
+        mWebView = binding.authWebview;
 
         CookieManager.getInstance().removeAllCookies(value -> launchRedditAuthentication());
         mWebView.setWebViewClient(mWebViewClient);

@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.stevenbrown.notreddit.R;
+import com.stevenbrown.notreddit.databinding.FragmentPostDetailBinding;
 import com.stevenbrown.notreddit.di.auto.Injectable;
 import com.stevenbrown.notreddit.models.post.Post;
 import com.stevenbrown.notreddit.ui.common.UpNavigationFragment;
@@ -21,13 +21,9 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class PostDetailFragment extends Fragment implements Injectable, UpNavigationFragment {
 
-    @BindView(R.id.post_detail_comments_recycler_view)
-    RecyclerView mCommentsRecyclerView;
+    private RecyclerView mCommentsRecyclerView;
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
@@ -49,13 +45,9 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_post_detail, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
+        FragmentPostDetailBinding binding = FragmentPostDetailBinding.inflate(inflater, container, false);
+        mCommentsRecyclerView = binding.postDetailCommentsRecyclerView;
+        return binding.getRoot();
     }
 
     @Override

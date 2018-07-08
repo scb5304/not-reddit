@@ -5,10 +5,10 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.stevenbrown.notreddit.Constants;
 import com.stevenbrown.notreddit.R;
 import com.stevenbrown.notreddit.auth.accounting.Accountant;
+import com.stevenbrown.notreddit.databinding.ActivityMainBinding;
 import com.stevenbrown.notreddit.ui.common.DrawerFragment;
 import com.stevenbrown.notreddit.ui.common.NavigationController;
 
@@ -28,8 +29,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
@@ -37,9 +36,8 @@ import dagger.android.support.HasSupportFragmentInjector;
 
 public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
 
-    @BindView(R.id.activity_main_toolbar) Toolbar mToolbar;
-    @BindView(R.id.activity_main_drawer_layout) DrawerLayout mDrawerLayout;
-    @BindView(R.id.activity_main_drawer_navigation_view) NavigationView mDrawerNavigationView;
+    private Toolbar mToolbar;
+    private DrawerLayout mDrawerLayout;
 
     @Inject
     DispatchingAndroidInjector<Fragment> mFragmentDispatchingAndroidInjector;
@@ -65,8 +63,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        mToolbar = binding.activityMainToolbar;
+        mDrawerLayout = binding.activityMainDrawerLayout;
 
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MainViewModel.class);
         initToolbar();

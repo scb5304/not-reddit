@@ -36,9 +36,6 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 public class PostListFragment extends Fragment implements Injectable, DrawerFragment {
 
     @Inject
@@ -118,11 +115,11 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
         mPostRecyclerView = mBinding.postListPostRecyclerView;
         mSubredditRecyclerView = mBinding.postListSubredditRecyclerView;
         mTabLayout = mBinding.postListTabLayout;
         mSwipeRefreshLayout = mBinding.postListSwipeRefreshLayout;
+        mBinding.fab.setOnClickListener(__ -> onFabClicked());
 
         String[] postSorts = getResources().getStringArray(R.array.post_listing_sorts);
         for (String postSort : postSorts) {
@@ -132,8 +129,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         }
     }
 
-    @OnClick(R.id.fab)
-    void onFabClicked() {
+    public void onFabClicked() {
         if (BottomSheetBehavior.from(mBinding.bottomSheet).getState() == BottomSheetBehavior.STATE_EXPANDED) {
             BottomSheetBehavior.from(mBinding.bottomSheet).setState(BottomSheetBehavior.STATE_COLLAPSED);
         } else {
