@@ -3,7 +3,7 @@ package com.stevenbrown.notreddit.ui.postlist;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -36,12 +36,14 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class PostListFragment extends Fragment implements Injectable, DrawerFragment {
 
     @Inject
     PostListViewModel mViewModel;
 
-    @Inject
     NavigationController mNavigationController;
 
     @Inject
@@ -69,7 +71,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         return fragment;
     }
 
-    private final Observer<NotRedditPostListData> mPostListDataObserver = new Observer<NotRedditPostListData>() {
+    private final Observer<NotRedditPostListData> mPostListDataObserver = new Observer<>() {
         @Override
         public void onChanged(@Nullable NotRedditPostListData postListData) {
             if (postListData != null) {
@@ -139,7 +141,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel.setNavigationController(mNavigationController);
+        mNavigationController = new NavigationController((MainActivity) requireActivity());
         mBinding.setPostListViewModel(mViewModel);
 
         subscribeUi();
@@ -218,6 +220,13 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         mViewModel.observeResetEndlessScroll().observe(getViewLifecycleOwner(), __ -> {
             mEndlessScrollListener.resetState();
             mPostRecyclerView.postDelayed(() -> mPostRecyclerView.scrollToPosition(0), 100);
+        });
+
+        mViewModel.observePostClicked().observe(getViewLifecycleOwner(), post -> {
+            mNavigationController.navigateToPostGeneric(post);
+        });
+        mViewModel.observePostCommentsClicked().observe(getViewLifecycleOwner(), post -> {
+            mNavigationController.navigateToPostDetail(post);
         });
 
         mViewModel.observeCloseBottomSheet().observe(getViewLifecycleOwner(), __ -> {

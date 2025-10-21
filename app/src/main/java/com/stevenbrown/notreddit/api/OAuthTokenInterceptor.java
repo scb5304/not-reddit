@@ -1,6 +1,5 @@
 package com.stevenbrown.notreddit.api;
 
-import android.accounts.Account;
 import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

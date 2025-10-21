@@ -14,14 +14,11 @@ import com.stevenbrown.notreddit.api.OAuthTokenInterceptor;
 import com.stevenbrown.notreddit.api.RequestTokenApi;
 import com.stevenbrown.notreddit.api.RequestTokenInterceptor;
 import com.stevenbrown.notreddit.api.adapter.LocalDateTimeAdapter;
-import com.stevenbrown.notreddit.auth.accounting.Accountant;
-import com.stevenbrown.notreddit.auth.accounting.TokenProvider;
 import com.stevenbrown.notreddit.repository.TokenRepository;
 
 import org.threeten.bp.LocalDateTime;
 
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -118,12 +115,11 @@ public class AppModule {
     @Named("oauth")
     OkHttpClient provideOAuthOkHttpClient(HttpLoggingInterceptor httpLoggingInterceptor,
                                           SharedPreferences sharedPreferences,
-                                          TokenRepository tokenRepository,
-                                          Provider<Accountant> accountantProvider) {
+                                          TokenRepository tokenRepository) {
         return new OkHttpClient.Builder()
                 .addNetworkInterceptor(httpLoggingInterceptor)
-                //TODO: Replace lazy instantiation with actually breaking the cyclical dependency cycle
-                .addInterceptor(new OAuthTokenInterceptor(sharedPreferences, tokenRepository, accountantProvider.get()))
+                //TODO: Accountant can't be passed in here due to dependency cycle
+                .addInterceptor(new OAuthTokenInterceptor(sharedPreferences, tokenRepository, null))
                 .build();
     }
 

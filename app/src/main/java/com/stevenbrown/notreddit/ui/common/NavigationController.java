@@ -1,6 +1,7 @@
 package com.stevenbrown.notreddit.ui.common;
 
 import android.net.Uri;
+
 import androidx.annotation.NonNull;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
@@ -13,14 +14,11 @@ import com.stevenbrown.notreddit.ui.postdetail.PostDetailFragment;
 import com.stevenbrown.notreddit.ui.postlist.PostListFragment;
 import com.stevenbrown.notreddit.util.NotRedditViewUtils;
 
-import javax.inject.Inject;
-
 public class NavigationController {
     private MainActivity mMainActivity;
     private final int mContainerId;
     private final FragmentManager mFragmentManager;
 
-    //TODO: really?
     public NavigationController(MainActivity mainActivity) {
         mMainActivity = mainActivity;
         mContainerId = R.id.fragment_container;
@@ -63,11 +61,7 @@ public class NavigationController {
 
     public void navigateToWebPage(@NonNull String url) {
         CustomTabsIntent customTabsIntent = NotRedditViewUtils.createBaseCustomTabsIntent(mMainActivity);
-        //TODO: androidx.browser
-//        CustomTabsHelper.addKeepAliveExtra(mMainActivity, customTabsIntent.intent);
-//        CustomTabsHelper.openCustomTab(mMainActivity, customTabsIntent,
-//                Uri.parse(url),
-//                new WebViewFallback());
+        customTabsIntent.launchUrl(mMainActivity, Uri.parse(url));
     }
 
     /**

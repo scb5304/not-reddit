@@ -1,7 +1,7 @@
 package com.stevenbrown.notreddit.ui.postdetail;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,8 +16,6 @@ import com.stevenbrown.notreddit.databinding.FragmentPostDetailBinding;
 import com.stevenbrown.notreddit.di.auto.Injectable;
 import com.stevenbrown.notreddit.models.post.Post;
 import com.stevenbrown.notreddit.ui.common.UpNavigationFragment;
-
-import java.util.Objects;
 
 import javax.inject.Inject;
 

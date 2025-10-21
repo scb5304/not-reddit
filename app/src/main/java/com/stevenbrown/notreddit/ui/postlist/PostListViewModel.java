@@ -18,7 +18,6 @@ import com.stevenbrown.notreddit.models.subreddit.SubredditListing;
 import com.stevenbrown.notreddit.models.subreddit.SubredditWhere;
 import com.stevenbrown.notreddit.repository.PostRepository;
 import com.stevenbrown.notreddit.repository.SubredditRepository;
-import com.stevenbrown.notreddit.ui.common.NavigationController;
 import com.stevenbrown.notreddit.util.SingleLiveEvent;
 
 import java.util.Collections;
@@ -38,12 +37,13 @@ public class PostListViewModel extends ViewModel {
     private Accountant mAccountant;
     private SubredditRepository mSubredditRepository;
     private PostRepository mPostRepository;
-    private NavigationController mNavigationController;
 
     private MutableLiveData<NotRedditPostListData> mPostListLiveData;
     private MutableLiveData<List<Subreddit>> mSubredditLiveData;
     private SingleLiveEvent<Void> mEndlessScrollResetLiveData;
     private SingleLiveEvent<Void> mCloseBottomSheetLiveData;
+    private SingleLiveEvent<Post> mPostClickedLiveData;
+    private SingleLiveEvent<Post> mPostCommentsClickedLiveData;
 
     private ObservableBoolean mDataBindIsRefreshing;
     private @PostListingSort String mCurrentSort;
@@ -61,11 +61,14 @@ public class PostListViewModel extends ViewModel {
         mSubredditRepository = subredditRepository;
         mPostRepository = postRepository;
         mCloseBottomSheetLiveData = new SingleLiveEvent<>();
+        mPostClickedLiveData = new SingleLiveEvent<>();
+        mPostCommentsClickedLiveData = new SingleLiveEvent<>();
 
         mPostListLiveData = new MutableLiveData<>();
         mPostListLiveData.setValue(new NotRedditPostListData());
 
         mEndlessScrollResetLiveData = new SingleLiveEvent<>();
+
         mDataBindIsRefreshing = new ObservableBoolean();
         mCurrentSort = PostListingSort.HOT;
     }
@@ -76,6 +79,14 @@ public class PostListViewModel extends ViewModel {
 
     SingleLiveEvent<Void> observeResetEndlessScroll() {
         return mEndlessScrollResetLiveData;
+    }
+
+    SingleLiveEvent<Post> observePostClicked() {
+        return mPostClickedLiveData;
+    }
+
+    SingleLiveEvent<Post> observePostCommentsClicked() {
+        return mPostCommentsClickedLiveData;
     }
 
     @Nullable
@@ -89,10 +100,6 @@ public class PostListViewModel extends ViewModel {
 
     private void updateCurrentSubredditName(String currentSubredditName) {
         mPostListLiveData.postValue(mPostListLiveData.getValue().setCurrentSubredditName(currentSubredditName));
-    }
-
-    public void setNavigationController(NavigationController navigationController) {
-        mNavigationController = navigationController;
     }
 
     public void onRefresh() {
@@ -196,11 +203,11 @@ public class PostListViewModel extends ViewModel {
     }
 
     public void onPostClicked(Post post) {
-        mNavigationController.navigateToPostGeneric(post);
+        mPostClickedLiveData.postValue(post);
     }
 
     public void onPostCommentsClicked(Post post) {
-        mNavigationController.navigateToPostDetail(post);
+        mPostCommentsClickedLiveData.postValue(post);
     }
 
     public void onPostSortSelected(@PostListingSort String postListingSort) {

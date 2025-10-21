@@ -26,27 +26,23 @@ android {
         dataBinding {
             enabled = true
         }
-
-        buildConfigField "String", "CLIENT_ID", "\"" + clientProperties['CLIENT_ID'] + "\""
-        buildConfigField "String", "REDIRECT_URI", "\"" + clientProperties['REDIRECT_URI'] + "\""
     }
     buildTypes {
+        debug {
+            buildConfigField "String", "CLIENT_ID", "\"" + clientProperties['CLIENT_ID'] + "\""
+            buildConfigField "String", "REDIRECT_URI", "\"" + clientProperties['REDIRECT_URI'] + "\""
+        }
         release {
+            buildConfigField "String", "CLIENT_ID", "\"" + clientProperties['CLIENT_ID'] + "\""
+            buildConfigField "String", "REDIRECT_URI", "\"" + clientProperties['REDIRECT_URI'] + "\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    configurations.all {
-        resolutionStrategy.force 'com.android.support:support-v4:27.1.1'
-        resolutionStrategy.force 'com.android.support:support-v7:27.1.1'
-        resolutionStrategy.force 'com.android.support:appcompat-v7:27.1.1'
-        resolutionStrategy.force 'com.android.support:customtabs:27.1.1'
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
 }
