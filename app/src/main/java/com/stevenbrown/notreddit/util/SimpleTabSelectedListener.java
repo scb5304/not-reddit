@@ -1,6 +1,6 @@
 package com.stevenbrown.notreddit.util;
 
-import android.support.design.widget.TabLayout;
+import com.google.android.material.tabs.TabLayout;
 
 public abstract class SimpleTabSelectedListener implements TabLayout.OnTabSelectedListener {
     public abstract void onTabSelected(TabLayout.Tab tab);

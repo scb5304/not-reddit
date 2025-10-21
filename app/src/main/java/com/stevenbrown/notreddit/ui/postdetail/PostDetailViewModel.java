@@ -1,8 +1,8 @@
 package com.stevenbrown.notreddit.ui.postdetail;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.google.common.collect.Range;
 import com.stevenbrown.notreddit.models.comment.Comment;

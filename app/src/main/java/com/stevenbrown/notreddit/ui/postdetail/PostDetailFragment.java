@@ -1,13 +1,13 @@
 package com.stevenbrown.notreddit.ui.postdetail;
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,17 +21,19 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class PostDetailFragment extends Fragment implements Injectable, UpNavigationFragment {
-
-    private RecyclerView mCommentsRecyclerView;
-
-    @Inject
-    ViewModelProvider.Factory mViewModelFactory;
 
     public static final String TAG = "PostDetailFragment";
     public static final String EXTRA_POST = "extra_post";
 
-    private PostDetailViewModel mViewModel;
+    @Inject
+    PostDetailViewModel mViewModel;
+
+    private RecyclerView mCommentsRecyclerView;
+
     private PostDetailAdapter mPostDetailAdapter;
 
     public static PostDetailFragment newInstance(Post post) {
@@ -53,7 +55,6 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(PostDetailViewModel.class);
         subscribeUi();
         initRecyclerView();
     }
@@ -61,7 +62,7 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     @Override
     public void onResume() {
         super.onResume();
-        Objects.requireNonNull(getActivity()).setTitle(getPassedPost().getTitle());
+        requireActivity().setTitle(getPassedPost().getTitle());
     }
 
     private void initRecyclerView() {
@@ -73,8 +74,8 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     }
 
     private void subscribeUi() {
-        mViewModel.getObservablePostDetailData(getPassedPost().getId()).observe(this, this::onPostDetailDataChanged);
-        mViewModel.getObservableCommentClick().observe(this, this::onCommentClicked);
+        mViewModel.getObservablePostDetailData(getPassedPost().getId()).observe(getViewLifecycleOwner(), this::onPostDetailDataChanged);
+        mViewModel.getObservableCommentClick().observe(getViewLifecycleOwner(), this::onCommentClicked);
     }
 
     private void onPostDetailDataChanged(PostDetailData postDetailData) {
@@ -92,6 +93,6 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     }
 
     private Post getPassedPost() {
-        return Objects.requireNonNull(getArguments()).getParcelable(EXTRA_POST);
+        return requireArguments().getParcelable(EXTRA_POST);
     }
 }

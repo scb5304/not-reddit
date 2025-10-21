@@ -1,6 +1,6 @@
 package com.stevenbrown.notreddit.models.subreddit;
 
-import android.support.annotation.StringDef;
+import androidx.annotation.StringDef;
 
 import java.util.Arrays;
 import java.util.List;

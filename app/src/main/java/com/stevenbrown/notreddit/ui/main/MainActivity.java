@@ -1,23 +1,23 @@
 package com.stevenbrown.notreddit.ui.main;
 
 import android.accounts.AccountManager;
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.stevenbrown.notreddit.Constants;
 import com.stevenbrown.notreddit.R;
 import com.stevenbrown.notreddit.auth.accounting.Accountant;
@@ -29,45 +29,34 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjection;
-import dagger.android.AndroidInjector;
-import dagger.android.DispatchingAndroidInjector;
-import dagger.android.support.HasSupportFragmentInjector;
+import dagger.hilt.android.AndroidEntryPoint;
 
-public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
+@AndroidEntryPoint
+public class MainActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
 
     @Inject
-    DispatchingAndroidInjector<Fragment> mFragmentDispatchingAndroidInjector;
-
-    @Inject
     SharedPreferences mSharedPreferences;
 
     @Inject
-    NavigationController mNavigationController;
+    MainViewModel mViewModel;
 
     @Inject
-    ViewModelProvider.Factory mViewModelFactory;
+    Accountant mAccountant;
 
-    private MainViewModel mViewModel;
-
-    @Override
-    public AndroidInjector<Fragment> supportFragmentInjector() {
-        return mFragmentDispatchingAndroidInjector;
-    }
+    private NavigationController mNavigationController;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
+        mNavigationController = new NavigationController(this);
 
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mToolbar = binding.activityMainToolbar;
         mDrawerLayout = binding.activityMainDrawerLayout;
 
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MainViewModel.class);
         initToolbar();
 
         if (savedInstanceState == null) {
@@ -99,13 +88,13 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                return onHomePressed();
-            case R.id.menu_post_list_log_in:
-                return onLoginPressed();
-            case R.id.menu_post_list_log_out:
-                return onLogoutPressed();
+        int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {
+            return onHomePressed();
+        } else if (itemId == R.id.menu_post_list_log_in) {
+            return onLoginPressed();
+        } else if (itemId == R.id.menu_post_list_log_out) {
+            return onLogoutPressed();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -133,13 +122,13 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     private boolean onLoginPressed() {
-        Accountant.getInstance().login(this);
+        mAccountant.login(this);
         return true;
     }
 
     private boolean onLogoutPressed() {
         invalidateOptionsMenu();
-        Accountant.getInstance().logout();
+        mAccountant.logout();
         return true;
     }
 

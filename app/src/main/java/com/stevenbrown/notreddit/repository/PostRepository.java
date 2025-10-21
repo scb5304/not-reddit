@@ -1,7 +1,7 @@
 package com.stevenbrown.notreddit.repository;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.base.Strings;
 import com.stevenbrown.notreddit.api.OAuthRedditApi;

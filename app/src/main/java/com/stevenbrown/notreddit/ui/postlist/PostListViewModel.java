@@ -1,11 +1,11 @@
 package com.stevenbrown.notreddit.ui.postlist;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.databinding.ObservableBoolean;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.databinding.ObservableBoolean;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.Range;
 import com.stevenbrown.notreddit.auth.accounting.Accountant;
@@ -35,14 +35,15 @@ import timber.log.Timber;
 
 public class PostListViewModel extends ViewModel {
 
+    private Accountant mAccountant;
     private SubredditRepository mSubredditRepository;
     private PostRepository mPostRepository;
     private NavigationController mNavigationController;
 
     private MutableLiveData<NotRedditPostListData> mPostListLiveData;
     private MutableLiveData<List<Subreddit>> mSubredditLiveData;
-    private SingleLiveEvent<Object> mEndlessScrollResetLiveData;
-    private SingleLiveEvent<Object> mCloseBottomSheetLiveData;
+    private SingleLiveEvent<Void> mEndlessScrollResetLiveData;
+    private SingleLiveEvent<Void> mCloseBottomSheetLiveData;
 
     private ObservableBoolean mDataBindIsRefreshing;
     private @PostListingSort String mCurrentSort;
@@ -53,7 +54,10 @@ public class PostListViewModel extends ViewModel {
     }
 
     @Inject
-    PostListViewModel(SubredditRepository subredditRepository, PostRepository postRepository) {
+    PostListViewModel(Accountant accountant,
+                      SubredditRepository subredditRepository,
+                      PostRepository postRepository) {
+        mAccountant = accountant;
         mSubredditRepository = subredditRepository;
         mPostRepository = postRepository;
         mCloseBottomSheetLiveData = new SingleLiveEvent<>();
@@ -66,11 +70,11 @@ public class PostListViewModel extends ViewModel {
         mCurrentSort = PostListingSort.HOT;
     }
 
-    SingleLiveEvent<Object> observeCloseBottomSheet() {
+    SingleLiveEvent<Void> observeCloseBottomSheet() {
         return mCloseBottomSheetLiveData;
     }
 
-    LiveData<Object> observeResetEndlessScroll() {
+    SingleLiveEvent<Void> observeResetEndlessScroll() {
         return mEndlessScrollResetLiveData;
     }
 
@@ -220,7 +224,7 @@ public class PostListViewModel extends ViewModel {
     private void fetchSubreddits() {
         Single<SubredditListing> fetchSingle;
 
-        if (Accountant.getInstance().getCurrentAccessToken() != null) {
+        if (mAccountant.getCurrentAccessToken() != null) {
             List<String> subredditWheres = Collections.singletonList(SubredditWhere.DEFAULT);
             List<String> subredditForUserWheres = Collections.singletonList(SubredditForUserWhere.SUBSCRIBER);
             fetchSingle = mSubredditRepository.getSubredditsForParams(subredditWheres, subredditForUserWheres);

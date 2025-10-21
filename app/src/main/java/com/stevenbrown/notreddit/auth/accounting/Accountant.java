@@ -7,9 +7,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import android.widget.Toast;
 
 import com.stevenbrown.notreddit.Constants;
@@ -23,13 +23,9 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
-public class Accountant {
+public class Accountant implements TokenProvider {
 
     public static final int CHOOSE_ACCOUNT_REQUEST_CODE = 5;
-
-    //Using application context.
-    @SuppressLint("StaticFieldLeak")
-    private static Accountant sInstance;
 
     @Inject
     Context mContext;
@@ -43,20 +39,15 @@ public class Accountant {
     @Inject
     FullTokenRepository mFullTokenRepository;
 
-    private Accountant() {
-        NotRedditApplication.getAppComponent().inject(this);
-    }
-
-    public static Accountant getInstance() {
-        if (sInstance == null) {
-            sInstance = new Accountant();
-        }
-        return sInstance;
-    }
-
-    @VisibleForTesting
-    public static void setInstance(Accountant accountant) {
-        sInstance = accountant;
+    @Inject
+    public Accountant(Context context,
+                      SharedPreferences sharedPreferences,
+                      AccountManager accountManager,
+                      FullTokenRepository fullTokenRepository) {
+        mContext = context;
+        mSharedPreferences = sharedPreferences;
+        mAccountManager = accountManager;
+        mFullTokenRepository = fullTokenRepository;
     }
 
     /**

@@ -1,8 +1,8 @@
 package com.stevenbrown.notreddit.ui.postlist;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.stevenbrown.notreddit.BaseUnitTest;
 import com.stevenbrown.notreddit.RxTestHelper;

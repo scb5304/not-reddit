@@ -1,8 +1,9 @@
 package com.stevenbrown.notreddit.api;
 
+import android.accounts.Account;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.stevenbrown.notreddit.Constants.SharedPreferenceKeys;
 import com.stevenbrown.notreddit.auth.accounting.Accountant;
@@ -23,9 +24,12 @@ import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 public class OAuthTokenInterceptor implements Interceptor {
     private SharedPreferences mSharedPreferences;
     private TokenRepository mTokenRepository;
+    private Accountant mAccountant;
 
     @Inject
-    public OAuthTokenInterceptor(SharedPreferences sharedPreferences, TokenRepository tokenRepository) {
+    public OAuthTokenInterceptor(SharedPreferences sharedPreferences,
+                                 TokenRepository tokenRepository,
+                                 Accountant accountant) {
         mSharedPreferences = sharedPreferences;
         mTokenRepository = tokenRepository;
     }
@@ -55,8 +59,8 @@ public class OAuthTokenInterceptor implements Interceptor {
 
     @Nullable
     private Response performAuthenticatedCallForCurrentUser(Chain chain) throws IOException {
-        String currentAccountToken = Accountant.getInstance().getCurrentAccessToken();
-        String currentRefreshToken = Accountant.getInstance().getCurrentRefreshToken();
+        String currentAccountToken = mAccountant.getCurrentAccessToken();
+        String currentRefreshToken = mAccountant.getCurrentRefreshToken();
 
         if (currentAccountToken == null || currentRefreshToken == null) {
             return null;
@@ -72,7 +76,7 @@ public class OAuthTokenInterceptor implements Interceptor {
         if (refreshedToken != null) {
             Response resultFromRequestWithRefreshedToken = chain.proceed(requestWithToken(chain.request(), refreshedToken.getAccessToken()));
             if (responseIsNotAuthFailure(resultFromRequestWithRefreshedToken)) {
-                Accountant.getInstance().updateCurrentAccessToken(refreshedToken.getAccessToken());
+                mAccountant.updateCurrentAccessToken(refreshedToken.getAccessToken());
                 return resultFromRequestWithRefreshedToken;
             }
         } else {

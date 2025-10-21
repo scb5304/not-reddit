@@ -1,6 +1,6 @@
 package com.stevenbrown.notreddit.ui.main;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 import javax.inject.Inject;
 

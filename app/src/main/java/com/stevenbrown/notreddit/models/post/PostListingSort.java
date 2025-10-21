@@ -1,6 +1,6 @@
 package com.stevenbrown.notreddit.models.post;
 
-import android.support.annotation.StringDef;
+import androidx.annotation.StringDef;
 
 import static com.stevenbrown.notreddit.models.post.PostListingSort.BEST;
 import static com.stevenbrown.notreddit.models.post.PostListingSort.CONTROVERSIAL;

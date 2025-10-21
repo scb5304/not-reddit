@@ -1,23 +1,23 @@
 package com.stevenbrown.notreddit.ui.postlist;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.tabs.TabLayout;
 import com.google.common.base.Strings;
 import com.stevenbrown.notreddit.Constants;
 import com.stevenbrown.notreddit.R;
@@ -39,7 +39,7 @@ import javax.inject.Inject;
 public class PostListFragment extends Fragment implements Injectable, DrawerFragment {
 
     @Inject
-    ViewModelProvider.Factory mViewModelFactory;
+    PostListViewModel mViewModel;
 
     @Inject
     NavigationController mNavigationController;
@@ -51,7 +51,6 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     private static final String EXTRA_SUBREDDIT_NAME = "extra_subreddit_name";
     private BottomSheetSubredditAdapter mSubredditAdapter;
     private PostListAdapter mPostListAdapter;
-    private PostListViewModel mViewModel;
     private EndlessRecyclerViewScrollListener mEndlessScrollListener;
     private FragmentPostListBinding mBinding;
 
@@ -140,7 +139,6 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(PostListViewModel.class);
         mViewModel.setNavigationController(mNavigationController);
         mBinding.setPostListViewModel(mViewModel);
 
@@ -215,24 +213,24 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
         //https://medium.com/@BladeCoder/architecture-components-pitfalls-part-1-9300dd969808
         LiveData<NotRedditPostListData> liveData = mViewModel.getObservablePostListing(DEFAULT_SUBREDDIT);
         liveData.removeObserver(mPostListDataObserver);
-        liveData.observe(this, mPostListDataObserver);
+        liveData.observe(getViewLifecycleOwner(), mPostListDataObserver);
 
-        mViewModel.observeResetEndlessScroll().observe(this, __ -> {
+        mViewModel.observeResetEndlessScroll().observe(getViewLifecycleOwner(), __ -> {
             mEndlessScrollListener.resetState();
             mPostRecyclerView.postDelayed(() -> mPostRecyclerView.scrollToPosition(0), 100);
         });
 
-        mViewModel.observeCloseBottomSheet().observe(this, __ -> {
+        mViewModel.observeCloseBottomSheet().observe(getViewLifecycleOwner(), __ -> {
             BottomSheetBehavior.from(mBinding.bottomSheet).setState(BottomSheetBehavior.STATE_COLLAPSED);
             mBinding.postListSubredditRecyclerView.postDelayed(() ->  mBinding.postListSubredditRecyclerView.scrollToPosition(0), 100);
         });
 
-        mViewModel.getObservableSubredditListing().observe(this, subreddits -> {
+        mViewModel.getObservableSubredditListing().observe(getViewLifecycleOwner(), subreddits -> {
             mSubredditAdapter.updateData(subreddits);
         });
     }
 
     private MainActivity getParent() {
-        return (MainActivity) Objects.requireNonNull(getActivity());
+        return (MainActivity) requireActivity();
     }
 }

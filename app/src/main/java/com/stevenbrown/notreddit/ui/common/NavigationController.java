@@ -1,10 +1,10 @@
 package com.stevenbrown.notreddit.ui.common;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import androidx.annotation.NonNull;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.stevenbrown.notreddit.R;
 import com.stevenbrown.notreddit.models.post.Post;
@@ -15,15 +15,12 @@ import com.stevenbrown.notreddit.util.NotRedditViewUtils;
 
 import javax.inject.Inject;
 
-import saschpe.android.customtabs.CustomTabsHelper;
-import saschpe.android.customtabs.WebViewFallback;
-
 public class NavigationController {
     private MainActivity mMainActivity;
     private final int mContainerId;
     private final FragmentManager mFragmentManager;
 
-    @Inject
+    //TODO: really?
     public NavigationController(MainActivity mainActivity) {
         mMainActivity = mainActivity;
         mContainerId = R.id.fragment_container;
@@ -66,10 +63,11 @@ public class NavigationController {
 
     public void navigateToWebPage(@NonNull String url) {
         CustomTabsIntent customTabsIntent = NotRedditViewUtils.createBaseCustomTabsIntent(mMainActivity);
-        CustomTabsHelper.addKeepAliveExtra(mMainActivity, customTabsIntent.intent);
-        CustomTabsHelper.openCustomTab(mMainActivity, customTabsIntent,
-                Uri.parse(url),
-                new WebViewFallback());
+        //TODO: androidx.browser
+//        CustomTabsHelper.addKeepAliveExtra(mMainActivity, customTabsIntent.intent);
+//        CustomTabsHelper.openCustomTab(mMainActivity, customTabsIntent,
+//                Uri.parse(url),
+//                new WebViewFallback());
     }
 
     /**

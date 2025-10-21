@@ -2,11 +2,12 @@ package com.stevenbrown.notreddit.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.databinding.DataBindingUtil;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
 import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -20,7 +21,15 @@ import com.stevenbrown.notreddit.auth.accounting.Accountant;
 import com.stevenbrown.notreddit.databinding.ActivityAuthBinding;
 import com.stevenbrown.notreddit.ui.main.MainActivity;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class AuthActivity extends AppCompatActivity {
+
+    @Inject
+    Accountant mAccountant;
 
     private WebView mWebView;
     private SharedPreferences mSharedPreferences;
@@ -64,7 +73,7 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     private void onLoginCallback(String uriString) {
-        Accountant.getInstance().onLoginCallback(uriString, this);
+        mAccountant.onLoginCallback(uriString, this);
     }
 
     private void openMainActivity() {

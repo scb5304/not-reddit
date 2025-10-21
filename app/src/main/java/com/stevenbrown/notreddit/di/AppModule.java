@@ -14,24 +14,29 @@ import com.stevenbrown.notreddit.api.OAuthTokenInterceptor;
 import com.stevenbrown.notreddit.api.RequestTokenApi;
 import com.stevenbrown.notreddit.api.RequestTokenInterceptor;
 import com.stevenbrown.notreddit.api.adapter.LocalDateTimeAdapter;
-import com.stevenbrown.notreddit.di.viewmodel.ViewModelModule;
+import com.stevenbrown.notreddit.auth.accounting.Accountant;
+import com.stevenbrown.notreddit.auth.accounting.TokenProvider;
 import com.stevenbrown.notreddit.repository.TokenRepository;
 
 import org.threeten.bp.LocalDateTime;
 
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.components.SingletonComponent;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-@Module(includes = ViewModelModule.class)
-class AppModule {
+@Module
+@InstallIn(SingletonComponent.class)
+public class AppModule {
 
     @Singleton
     @Provides
@@ -113,10 +118,12 @@ class AppModule {
     @Named("oauth")
     OkHttpClient provideOAuthOkHttpClient(HttpLoggingInterceptor httpLoggingInterceptor,
                                           SharedPreferences sharedPreferences,
-                                          TokenRepository tokenRepository) {
+                                          TokenRepository tokenRepository,
+                                          Provider<Accountant> accountantProvider) {
         return new OkHttpClient.Builder()
                 .addNetworkInterceptor(httpLoggingInterceptor)
-                .addInterceptor(new OAuthTokenInterceptor(sharedPreferences, tokenRepository))
+                //TODO: Replace lazy instantiation with actually breaking the cyclical dependency cycle
+                .addInterceptor(new OAuthTokenInterceptor(sharedPreferences, tokenRepository, accountantProvider.get()))
                 .build();
     }
 
