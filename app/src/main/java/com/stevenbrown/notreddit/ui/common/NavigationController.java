@@ -37,7 +37,7 @@ public class NavigationController {
      * Navigates to either the post's web page, if exists, or its comments page.
      */
     public void navigateToPostGeneric(@NonNull Post post) {
-        if (post.hasSelfText()) {
+        if (post.isSelf()) {
             navigateToPostDetail(post);
         } else {
             openPostLink(post);

@@ -19,6 +19,9 @@ public class PostData implements Parcelable {
     @SerializedName("selftext")
     public String selfText;
 
+    @SerializedName("is_self")
+    public boolean isSelf;
+
     @SerializedName("selftext_html")
     public String selfTextHtml;
 

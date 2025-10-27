@@ -2,18 +2,16 @@ package com.stevenbrown.notreddit.auth.accounting;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
+
 import android.widget.Toast;
 
 import com.stevenbrown.notreddit.Constants;
-import com.stevenbrown.notreddit.NotRedditApplication;
 import com.stevenbrown.notreddit.api.AuthConstants;
 import com.stevenbrown.notreddit.models.auth.Token;
 import com.stevenbrown.notreddit.repository.FullTokenRepository;

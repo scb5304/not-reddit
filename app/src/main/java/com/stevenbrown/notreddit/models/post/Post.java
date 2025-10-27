@@ -17,8 +17,12 @@ public class Post extends RedditType implements Parcelable {
         data = (PostData) in.readValue(PostData.class.getClassLoader());
     }
 
+    public boolean isSelf() {
+        return data.isSelf;
+    }
+
     public boolean hasSelfText() {
-        return !Strings.isNullOrEmpty(data.selfText);
+        return isSelf() && !Strings.isNullOrEmpty(data.selfText);
     }
 
     public String getId() {

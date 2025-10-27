@@ -66,7 +66,7 @@ public class OAuthTokenInterceptor implements Interceptor {
         }
 
         Response initialResult = chain.proceed(requestWithToken(chain.request(), currentAccountToken));
-        if (responseIsNotAuthFailure(initialResult)) {
+        if (!responseIsAuthFailure(initialResult)) {
             return initialResult;
         }
 
@@ -74,7 +74,7 @@ public class OAuthTokenInterceptor implements Interceptor {
 
         if (refreshedToken != null) {
             Response resultFromRequestWithRefreshedToken = chain.proceed(requestWithToken(chain.request(), refreshedToken.getAccessToken()));
-            if (responseIsNotAuthFailure(resultFromRequestWithRefreshedToken)) {
+            if (!responseIsAuthFailure(resultFromRequestWithRefreshedToken)) {
                 mAccountant.updateCurrentAccessToken(refreshedToken.getAccessToken());
                 return resultFromRequestWithRefreshedToken;
             }
@@ -91,16 +91,19 @@ public class OAuthTokenInterceptor implements Interceptor {
 
         if (currentAppToken != null) {
             Response appAuthenticatedResponse = chain.proceed(requestWithToken(chain.request(), currentAppToken));
-            if (responseIsNotAuthFailure(appAuthenticatedResponse)) {
-                return appAuthenticatedResponse;
+            if (responseIsAuthFailure(appAuthenticatedResponse)) {
+                mSharedPreferences.edit()
+                        .putString(SharedPreferenceKeys.APPLICATION_TOKEN, null)
+                        .apply();
             }
+            return appAuthenticatedResponse;
         }
 
         try {
             Token appToken = mTokenRepository.getAppToken(mSharedPreferences.getString(SharedPreferenceKeys.DEVICE_ID, null));
             Response appRetryAuthenticatedResponse = chain.proceed(requestWithToken(chain.request(), appToken.getAccessToken()));
 
-            if (responseIsNotAuthFailure(appRetryAuthenticatedResponse)) {
+            if (!responseIsAuthFailure(appRetryAuthenticatedResponse)) {
                 mSharedPreferences.edit()
                         .putString(SharedPreferenceKeys.APPLICATION_TOKEN, appToken.getAccessToken())
                         .apply();
@@ -119,7 +122,7 @@ public class OAuthTokenInterceptor implements Interceptor {
                 .build();
     }
 
-    private boolean responseIsNotAuthFailure(Response response) {
-        return response.code() != HTTP_UNAUTHORIZED;
+    private boolean responseIsAuthFailure(Response response) {
+        return response.code() == HTTP_UNAUTHORIZED;
     }
 }
