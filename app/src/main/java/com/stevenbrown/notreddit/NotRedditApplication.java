@@ -23,12 +23,10 @@ public class NotRedditApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        //AppInjector.init(this); TODO hilt
         Stetho.initializeWithDefaults(this); //TODO flipper?
         AndroidThreeTen.init(this);
 
         ensureHaveDeviceId();
-       // registerActivityLifecycleCallbacks(new CustomTabsActivityLifecycleCallbacks()); TODO androidx.browser
     }
 
     private void ensureHaveDeviceId() {
