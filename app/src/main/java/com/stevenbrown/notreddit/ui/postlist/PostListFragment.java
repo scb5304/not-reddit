@@ -62,7 +62,7 @@ public class PostListFragment extends Fragment implements Injectable, DrawerFrag
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     //TODO
-    public static final String DEFAULT_SUBREDDIT = "";
+    public static final String DEFAULT_SUBREDDIT = "all";
 
     public static PostListFragment newInstance() {
         PostListFragment fragment = new PostListFragment();

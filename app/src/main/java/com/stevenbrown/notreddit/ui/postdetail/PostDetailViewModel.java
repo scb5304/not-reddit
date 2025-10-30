@@ -1,5 +1,8 @@
 package com.stevenbrown.notreddit.ui.postdetail;
 
+import android.view.View;
+
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -13,6 +16,8 @@ import com.stevenbrown.notreddit.models.post.Post;
 import com.stevenbrown.notreddit.repository.CommentRepository;
 import com.stevenbrown.notreddit.util.SingleLiveEvent;
 
+import org.sufficientlysecure.htmltextview.OnClickATagListener;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,9 +30,11 @@ import timber.log.Timber;
 
 public class PostDetailViewModel extends ViewModel {
 
+    private static final String TAG = "PostDetailViewModel";
     private CommentRepository mCommentRepository;
     private MutableLiveData<PostDetailData> mPostDetailLiveData;
     private SingleLiveEvent<CommentClick> mCommentClickLiveData;
+    private SingleLiveEvent<String> mLinkClickedLiveData;
     private PostDetailViewModelHelper mHelper;
 
     private Integer mCurrentCommentSelectedIndex;
@@ -39,6 +46,7 @@ public class PostDetailViewModel extends ViewModel {
         mHelper = helper;
         mPostDetailLiveData = new MutableLiveData<>();
         mCommentClickLiveData = new SingleLiveEvent<>();
+        mLinkClickedLiveData = new SingleLiveEvent<>();
         mCurrentCommentSelectedIndex = -1;
         mCollapsedComments = new HashMap<>();
     }
@@ -52,6 +60,10 @@ public class PostDetailViewModel extends ViewModel {
 
     SingleLiveEvent<CommentClick> getObservableCommentClick() {
         return mCommentClickLiveData;
+    }
+
+    SingleLiveEvent<String> getObservableLinkClicked() {
+        return mLinkClickedLiveData;
     }
 
     private void onPostWithCommentListingFetched(PostWithCommentListing postWithCommentListing) {
@@ -130,6 +142,15 @@ public class PostDetailViewModel extends ViewModel {
         mCollapsedComments.put(comment.getFullName(), commentsToCollapse);
         return commentsToCollapse;
     }
+
+    public final OnClickATagListener onLinkClick = new OnClickATagListener() {
+        @Override
+        public boolean onClick(View widget, String spannedText, @Nullable String href) {
+            Timber.tag(TAG).i("Link clicked: %s", href);
+            mLinkClickedLiveData.postValue(href);
+            return true;
+        }
+    };
 
     public void onCommentMoreClicked(Comment comment) {
         Post post = Objects.requireNonNull(mPostDetailLiveData.getValue()).getPost();

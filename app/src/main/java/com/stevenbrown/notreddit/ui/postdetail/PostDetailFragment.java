@@ -15,7 +15,9 @@ import android.view.ViewGroup;
 import com.stevenbrown.notreddit.databinding.FragmentPostDetailBinding;
 import com.stevenbrown.notreddit.di.auto.Injectable;
 import com.stevenbrown.notreddit.models.post.Post;
+import com.stevenbrown.notreddit.ui.common.NavigationController;
 import com.stevenbrown.notreddit.ui.common.UpNavigationFragment;
+import com.stevenbrown.notreddit.ui.main.MainActivity;
 
 import javax.inject.Inject;
 
@@ -29,6 +31,8 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
 
     @Inject
     PostDetailViewModel mViewModel;
+
+    NavigationController mNavigationController;
 
     private RecyclerView mCommentsRecyclerView;
 
@@ -47,6 +51,7 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         FragmentPostDetailBinding binding = FragmentPostDetailBinding.inflate(inflater, container, false);
         mCommentsRecyclerView = binding.postDetailCommentsRecyclerView;
+        mNavigationController = new NavigationController((MainActivity) requireActivity());
         return binding.getRoot();
     }
 
@@ -74,6 +79,7 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
     private void subscribeUi() {
         mViewModel.getObservablePostDetailData(getPassedPost().getId()).observe(getViewLifecycleOwner(), this::onPostDetailDataChanged);
         mViewModel.getObservableCommentClick().observe(getViewLifecycleOwner(), this::onCommentClicked);
+        mViewModel.getObservableLinkClicked().observe(getViewLifecycleOwner(), this::onLinkClicked);
     }
 
     private void onPostDetailDataChanged(PostDetailData postDetailData) {
@@ -88,6 +94,10 @@ public class PostDetailFragment extends Fragment implements Injectable, UpNaviga
         if ((index = commentClick.getNewSelectedIndex()) != -1) {
             mPostDetailAdapter.notifyItemChanged(index + 1);
         }
+    }
+
+    private void onLinkClicked(String href) {
+        mNavigationController.navigateToWebPage(href);
     }
 
     private Post getPassedPost() {

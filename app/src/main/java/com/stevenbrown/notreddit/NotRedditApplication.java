@@ -13,6 +13,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import dagger.hilt.android.HiltAndroidApp;
+import timber.log.Timber;
 
 @HiltAndroidApp
 public class NotRedditApplication extends Application {
@@ -25,6 +26,7 @@ public class NotRedditApplication extends Application {
         super.onCreate();
         Stetho.initializeWithDefaults(this); //TODO flipper?
         AndroidThreeTen.init(this);
+        Timber.plant(new Timber.DebugTree());
 
         ensureHaveDeviceId();
     }

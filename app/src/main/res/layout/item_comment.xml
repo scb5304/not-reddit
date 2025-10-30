@@ -99,6 +99,7 @@
                 android:textColor="@android:color/black"
                 android:visibility="@{viewModel.isCommentBodyVisible(comment) ? View.VISIBLE : View.GONE}"
                 app:html="@{viewModel.getCommentBody(comment)}"
+                app:onLinkClick="@{viewModel.onLinkClick}"
                 tools:text="This game is literally the Dark Souls of Monster Hunter 2D platformers." />
 
             <LinearLayout
