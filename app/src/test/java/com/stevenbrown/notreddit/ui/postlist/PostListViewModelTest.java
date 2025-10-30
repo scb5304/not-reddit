@@ -1,6 +1,6 @@
 package com.stevenbrown.notreddit.ui.postlist;
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
@@ -46,6 +46,9 @@ public class PostListViewModelTest extends BaseUnitTest {
     private PostListViewModel mPostListViewModel;
 
     @Mock
+    private Accountant mAccountant;
+
+    @Mock
     private SubredditRepository mSubredditRepository;
 
     @Mock
@@ -55,7 +58,7 @@ public class PostListViewModelTest extends BaseUnitTest {
     public void setup() {
         mPostRepository = mock(PostRepository.class, RxTestHelper.defaultRepositoryAnswer());
         mSubredditRepository = mock(SubredditRepository.class, RxTestHelper.defaultRepositoryAnswer());
-        mPostListViewModel = new PostListViewModel(mSubredditRepository, mPostRepository);
+        mPostListViewModel = new PostListViewModel(mAccountant, mSubredditRepository, mPostRepository);
     }
 
     private void prepareMockPostListing() {
@@ -123,9 +126,7 @@ public class PostListViewModelTest extends BaseUnitTest {
 
     @Test
     public void userLoggedIn_fetchesSubreddits() {
-        Accountant accountant = mock(Accountant.class);
-        when(accountant.getCurrentAccessToken()).thenReturn("123");
-        Accountant.setInstance(accountant);
+        when(mAccountant.getCurrentAccessToken()).thenReturn("123");
 
         mPostListViewModel.onLoggedIn();
         verify(mSubredditRepository).getSubredditsForParams(anyList(), anyList());

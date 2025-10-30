@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
 
+import okhttp3.Call;
 import okhttp3.Connection;
 import okhttp3.Interceptor;
 import okhttp3.Protocol;
@@ -12,6 +13,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import static org.mockito.Mockito.mock;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * A stubbed OkHttp3 {@link okhttp3.Interceptor.Chain} that allows assertions on constructed requests.
@@ -76,5 +79,44 @@ public class StubbedOkHttpChain implements Interceptor.Chain {
      */
     public void setResponseCode(int code) {
         mResponseCode = code;
+    }
+
+    @NonNull
+    @Override
+    public Call call() {
+        return null;
+    }
+
+    @Override
+    public int connectTimeoutMillis() {
+        return 0;
+    }
+
+    @NonNull
+    @Override
+    public Interceptor.Chain withConnectTimeout(int i, @NonNull TimeUnit timeUnit) {
+        return null;
+    }
+
+    @Override
+    public int readTimeoutMillis() {
+        return 0;
+    }
+
+    @NonNull
+    @Override
+    public Interceptor.Chain withReadTimeout(int i, @NonNull TimeUnit timeUnit) {
+        return null;
+    }
+
+    @Override
+    public int writeTimeoutMillis() {
+        return 0;
+    }
+
+    @NonNull
+    @Override
+    public Interceptor.Chain withWriteTimeout(int i, @NonNull TimeUnit timeUnit) {
+        return null;
     }
 }
