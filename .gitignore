@@ -3,8 +3,11 @@
 local.properties
 client.properties
 .idea/workspace.xml
-.idea/libraries
-.idea/dictionaries
+.idea/libraries/
+.idea/modules.xml
+.idea/gradle.xml
+.idea/*.iml
+.idea/dictionaries/
 .DS_Store
 build
 captures
