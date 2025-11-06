@@ -22,7 +22,6 @@ import com.google.common.base.Strings;
 import com.stevenbrown.notreddit.Constants;
 import com.stevenbrown.notreddit.R;
 import com.stevenbrown.notreddit.databinding.FragmentPostListBinding;
-import com.stevenbrown.notreddit.di.auto.Injectable;
 import com.stevenbrown.notreddit.models.post.Post;
 import com.stevenbrown.notreddit.ui.EndlessRecyclerViewScrollListener;
 import com.stevenbrown.notreddit.ui.common.DrawerFragment;
@@ -39,7 +38,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class PostListFragment extends Fragment implements Injectable, DrawerFragment {
+public class PostListFragment extends Fragment implements DrawerFragment {
 
     @Inject
     PostListViewModel mViewModel;

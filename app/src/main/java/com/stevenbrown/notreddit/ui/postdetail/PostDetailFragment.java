@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.stevenbrown.notreddit.databinding.FragmentPostDetailBinding;
-import com.stevenbrown.notreddit.di.auto.Injectable;
 import com.stevenbrown.notreddit.models.post.Post;
 import com.stevenbrown.notreddit.ui.common.NavigationController;
 import com.stevenbrown.notreddit.ui.common.UpNavigationFragment;
@@ -24,7 +23,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class PostDetailFragment extends Fragment implements Injectable, UpNavigationFragment {
+public class PostDetailFragment extends Fragment implements UpNavigationFragment {
 
     public static final String TAG = "PostDetailFragment";
     public static final String EXTRA_POST = "extra_post";

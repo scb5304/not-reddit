@@ -95,8 +95,10 @@ public class OAuthTokenInterceptor implements Interceptor {
                 mSharedPreferences.edit()
                         .putString(SharedPreferenceKeys.APPLICATION_TOKEN, null)
                         .apply();
+                appAuthenticatedResponse.close();
+            } else {
+                return appAuthenticatedResponse;
             }
-            return appAuthenticatedResponse;
         }
 
         try {

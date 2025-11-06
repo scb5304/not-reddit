@@ -8,6 +8,7 @@ client.properties
 .idea/gradle.xml
 .idea/*.iml
 .idea/dictionaries/
+.idea/caches
 .DS_Store
 build
 captures
