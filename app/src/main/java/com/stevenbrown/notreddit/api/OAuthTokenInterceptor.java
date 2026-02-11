@@ -121,6 +121,7 @@ public class OAuthTokenInterceptor implements Interceptor {
     private Request requestWithToken(Request request, String token) {
         return request.newBuilder()
                 .addHeader("Authorization", "Bearer " + token)
+                .addHeader("User-Agent", "NotReddit")
                 .build();
     }
 
